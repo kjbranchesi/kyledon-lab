@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Kylē Don (丼) Workshop 🍚</title>
+  <title>Kylē Don (丼) Rice Lab 🍚</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -260,6 +260,14 @@
       gap: 12px;
     }
 
+    .layout.welcome-mode {
+      grid-template-columns: 1fr;
+    }
+
+    .layout.welcome-mode #recipeList {
+      display: none;
+    }
+
     @media (max-width: 860px) {
       .layout {
         grid-template-columns: 1fr;
@@ -381,6 +389,86 @@
       animation: sparkle 0.6s ease-out;
     }
 
+    .mascot-welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      min-height: 500px;
+    }
+
+    .mascot-welcome img {
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      margin-bottom: 30px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 10px 25px rgba(255, 107, 107, 0.3));
+    }
+
+    @media (max-width: 768px) {
+      .mascot-welcome img {
+        max-width: 280px;
+      }
+    }
+
+    .mascot-welcome h3 {
+      font-size: 1.5rem;
+      margin: 0 0 10px 0;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .mascot-welcome p {
+      font-size: 1rem;
+      color: var(--text-subtle);
+      max-width: 400px;
+    }
+
+    .floating-mascot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(100px) scale(0.8);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .floating-mascot.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .floating-mascot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(255, 107, 107, 0.4));
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 768px) {
+      .floating-mascot {
+        width: 80px;
+        height: 80px;
+        bottom: 10px;
+        right: 10px;
+      }
+    }
+
     #recipeDetail h2 {
       margin-top: 0;
       margin-bottom: 2px;
@@ -487,7 +575,7 @@
       <div class="emoji-banner">🇯🇵 🍚 🇯🇵</div>
       <div class="title-row">
         <div>
-          <h1>Kylē Don (丼) Workshop</h1>
+          <h1>Kylē Don (丼) Rice Lab</h1>
           <p class="subtitle">One Zojirushi, many experiments.</p>
           <p class="description">A wee web app for experimenting with Zojirushi-friendly one-pot rice cooker recipes.</p>
         </div>
@@ -576,6 +664,17 @@
             <span class="emoji">🍽️</span> Other
           </button>
         </div>
+
+        <!-- Batch size toggle -->
+        <div class="chip-row" id="batchChips">
+          <span class="chip-group-label">Batch</span>
+          <button class="chip active" data-value="2">
+            <span class="emoji">🍚</span> 2 cups
+          </button>
+          <button class="chip" data-value="1">
+            <span class="emoji">🍙</span> 1 cup
+          </button>
+        </div>
       </section>
 
       <section class="layout">
@@ -599,9 +698,17 @@
     </footer>
   </div>
 
+  <!-- Floating mascot that appears when browsing recipes -->
+  <div class="floating-mascot" id="floatingMascot">
+    <img src="images/mascot.png" alt="Rice Cooker Chef" />
+  </div>
+
   <script>
     // Current batch size: "2" (2 rice-cooker cups) or "1" (1 rice-cooker cup)
     let currentBatchSize = "2";
+
+    // Track if we're showing the welcome screen or browsing recipes
+    let isWelcomeMode = true;
 
     /* === Base 100 recipes === */
     const recipes = [
@@ -2282,10 +2389,23 @@
 
     function renderRecipeDetail(recipe) {
       const detail = document.getElementById("recipeDetail");
-      if (!recipe) {
-        detail.innerHTML = "<p>No recipes found for the current filters.</p>";
+      const floatingMascot = document.getElementById("floatingMascot");
+
+      // Show welcome screen if no recipe or in welcome mode
+      if (!recipe || isWelcomeMode) {
+        detail.innerHTML = `
+          <div class="mascot-welcome">
+            <img src="images/mascot.png" alt="Kylē Don Rice Cooker Chef" />
+            <h3>Welcome to the Rice Lab! 👋</h3>
+            <p>Choose a protein or cuisine filter above to explore 112 one-pot rice cooker recipes designed for your Zojirushi.</p>
+          </div>
+        `;
+        floatingMascot.classList.remove("show");
         return;
       }
+
+      // Show floating mascot when browsing recipes
+      floatingMascot.classList.add("show");
 
       // Add sparkle animation to detail panel
       detail.classList.add("sparkle");
@@ -2389,8 +2509,16 @@
 
     function renderRecipeList() {
       const listEl = document.getElementById("recipeList");
+      const layoutEl = document.querySelector(".layout");
       const filtered = applyFilters();
       const resultCount = document.getElementById("resultCount");
+
+      // Toggle welcome mode class on layout
+      if (isWelcomeMode) {
+        layoutEl.classList.add("welcome-mode");
+      } else {
+        layoutEl.classList.remove("welcome-mode");
+      }
 
       resultCount.textContent =
         filtered.length === recipes.length
@@ -2400,6 +2528,12 @@
       const existingHeader = listEl.querySelector(".list-header");
       listEl.innerHTML = "";
       if (existingHeader) listEl.appendChild(existingHeader);
+
+      // Show welcome screen and skip rendering recipe list when in welcome mode
+      if (isWelcomeMode) {
+        renderRecipeDetail(null);
+        return;
+      }
 
       if (!filtered.length) {
         const msg = document.createElement("p");
@@ -2473,6 +2607,10 @@
         if (!btn) return;
         group.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
         btn.classList.add("active");
+
+        // Exit welcome mode on any filter click (never return to welcome mode)
+        isWelcomeMode = false;
+
         renderRecipeList();
       });
     }
@@ -2496,7 +2634,13 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       const searchInput = document.getElementById("searchInput");
-      searchInput.addEventListener("input", renderRecipeList);
+      searchInput.addEventListener("input", (e) => {
+        // Exit welcome mode when user starts searching
+        if (e.target.value.trim().length > 0) {
+          isWelcomeMode = false;
+        }
+        renderRecipeList();
+      });
 
       setupChips("proteinChips");
       setupChips("cuisineChips");
