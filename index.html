@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rice Cooker Studio 🍚</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-gradient-top: #f9fafc;
+      --bg-gradient-bottom: #e5e5ea;
+      --card-bg: rgba(255, 255, 255, 0.86);
+      --card-border: rgba(0, 0, 0, 0.06);
+      --accent: #0a84ff;
+      --accent-soft: rgba(10, 132, 255, 0.14);
+      --text-main: #111827;
+      --text-subtle: #6b7280;
+      --radius-large: 18px;
+      --radius-medium: 12px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+      --shadow-light: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+        "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #ffffff 0%, #f2f2f7 42%, #e5e5ea 100%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px 14px 24px;
+    }
+
+    header {
+      margin-bottom: 14px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffcc80, #ff8a65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: var(--shadow-light);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      font-size: 0.92rem;
+      color: var(--text-subtle);
+    }
+
+    .pill-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-subtle);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      margin-top: 6px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .shell {
+      border-radius: 28px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1 1 210px;
+    }
+
+    .search-wrapper span {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      opacity: 0.75;
+    }
+
+    .controls input {
+      width: 100%;
+      padding: 8px 10px 8px 30px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(248, 250, 252, 0.9);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .controls input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+      background: #ffffff;
+    }
+
+    .chip-group-label {
+      font-size: 0.76rem;
+      color: var(--text-subtle);
+      margin-right: 4px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .chip {
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(246, 248, 252, 0.9);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease,
+        transform 0.1s ease, box-shadow 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .chip span.emoji {
+      font-size: 0.9rem;
+    }
+
+    .chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .chip:hover {
+      background: rgba(241, 245, 249, 0.9);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #recipeList {
+      background: var(--card-bg);
+      border-radius: var(--radius-large);
+      padding: 8px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-light);
+    }
+
+    #recipeList::-webkit-scrollbar,
+    #recipeDetail::-webkit-scrollbar {
+      width: 6px;
+    }
+    #recipeList::-webkit-scrollbar-thumb,
+    #recipeDetail::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.55);
+      border-radius: 999px;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 4px 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      margin-bottom: 4px;
+      font-size: 0.78rem;
+      color: var(--text-subtle);
+    }
+
+    .list-header span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .recipe-list-item {
+      padding: 7px 9px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 4px;
+      transition: background 0.12s ease, transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .recipe-list-item:hover {
+      background: rgba(248, 250, 252, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(148, 163, 184, 0.25);
+    }
+
+    .recipe-list-item.active {
+      background: rgba(10, 132, 255, 0.08);
+      box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.38);
+      transform: translateY(-1px);
+    }
+
+    .recipe-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .recipe-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .protein-pill {
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(248, 250, 252, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-subtle);
+    }
+
+    .small-meta {
+      font-size: 0.76rem;
+      color: var(--text-subtle);
+    }
+
+    #recipeDetail {
+      background: var(--card-bg);
+      border-radius: var(--radius-large);
+      padding: 12px 14px 14px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-light);
+      max-height: 70vh;
+      overflow-y: auto;
+      font-size: 0.94rem;
+    }
+
+    #recipeDetail h2 {
+      margin-top: 0;
+      margin-bottom: 2px;
+      font-size: 1.3rem;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-subtitle {
+      font-size: 0.84rem;
+      color: var(--text-subtle);
+      margin-bottom: 4px;
+    }
+
+    .meta-row {
+      font-size: 0.82rem;
+      color: var(--text-subtle);
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .emoji-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+    }
+
+    .emoji-meta span.emoji {
+      font-size: 1rem;
+    }
+
+    .tag-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 4px 0 8px 0;
+    }
+
+    .tag-badge {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(239, 246, 255, 0.9);
+      color: #1e3a8a;
+      border: 1px solid rgba(191, 219, 254, 0.9);
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-subtle);
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
+
+    .info-row {
+      margin: 2px 0;
+      display: flex;
+      gap: 4px;
+    }
+
+    .info-row strong {
+      min-width: 106px;
+      font-size: 0.82rem;
+      color: #4b5563;
+    }
+
+    .info-row span {
+      font-size: 0.9rem;
+    }
+
+    ol {
+      padding-left: 20px;
+      margin-top: 4px;
+      margin-bottom: 0;
+    }
+
+    ol li {
+      margin: 3px 0;
+      line-height: 1.4;
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <div class="app-icon">🍚</div>
+        <div>
+          <h1>Rice Cooker Studio</h1>
+          <p>112 one-pot recipes tuned for Zojirushi-style induction cookers.</p>
+        </div>
+      </div>
+      <div class="pill-note">
+        <span class="pill-dot"></span>
+        <span>Defaults assume <strong>2 rice-cooker cups</strong> and the matching water line.</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <section class="controls">
+        <div class="search-wrapper">
+          <span>🔍</span>
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search recipes by ingredient, sauce, or name..."
+          />
+        </div>
+
+        <div class="chip-row" id="proteinChips">
+          <span class="chip-group-label">Protein</span>
+          <button class="chip active" data-value="all">
+            <span class="emoji">🍱</span> All
+          </button>
+          <button class="chip" data-value="Tofu">
+            <span class="emoji">🧊</span> Tofu
+          </button>
+          <button class="chip" data-value="Chicken">
+            <span class="emoji">🍗</span> Chicken
+          </button>
+          <button class="chip" data-value="Beef">
+            <span class="emoji">🥩</span> Beef
+          </button>
+          <button class="chip" data-value="Pork">
+            <span class="emoji">🥓</span> Pork
+          </button>
+          <button class="chip" data-value="Seafood">
+            <span class="emoji">🐟</span> Seafood
+          </button>
+          <button class="chip" data-value="Vegan">
+            <span class="emoji">🥦</span> Vegan
+          </button>
+          <button class="chip" data-value="Egg">
+            <span class="emoji">🥚</span> Egg
+          </button>
+          <button class="chip" data-value="Mixed">
+            <span class="emoji">🍲</span> Mixed
+          </button>
+        </div>
+
+        <div class="chip-row" id="cuisineChips">
+          <span class="chip-group-label">Cuisine</span>
+          <button class="chip active" data-value="all">
+            <span class="emoji">🌏</span> All
+          </button>
+          <button class="chip" data-value="Chinese">
+            <span class="emoji">🥡</span> Chinese
+          </button>
+          <button class="chip" data-value="Japanese">
+            <span class="emoji">🍱</span> Japanese
+          </button>
+          <button class="chip" data-value="Korean">
+            <span class="emoji">🔥</span> Korean
+          </button>
+          <button class="chip" data-value="Thai">
+            <span class="emoji">🌶️</span> Thai
+          </button>
+          <button class="chip" data-value="Vietnamese">
+            <span class="emoji">🍜</span> Viet
+          </button>
+          <button class="chip" data-value="Indian">
+            <span class="emoji">🪔</span> Indian
+          </button>
+          <button class="chip" data-value="Mediterranean">
+            <span class="emoji">🌿</span> Med
+          </button>
+          <button class="chip" data-value="Mexican">
+            <span class="emoji">🌮</span> Mex
+          </button>
+          <button class="chip" data-value="Fusion">
+            <span class="emoji">✨</span> Fusion
+          </button>
+          <button class="chip" data-value="Other">
+            <span class="emoji">🍽️</span> Other
+          </button>
+        </div>
+      </section>
+
+      <section class="layout">
+        <aside id="recipeList">
+          <div class="list-header">
+            <span>🥘 Recipes</span>
+            <span id="resultCount"></span>
+          </div>
+        </aside>
+
+        <section id="recipeDetail"></section>
+      </section>
+    </div>
+
+    <footer>
+      <span>⚠️</span>
+      <span>
+        Always respect your cooker's max fill line. For mixed dishes, Keep Warm is best for
+        <strong>6–12 hours max</strong>; refrigerate if holding longer.
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    /* === Base 100 recipes === */
+    const recipes = [
+      /* 1–10: Tofu & veggie focused */
+      {
+        id: 1,
+        name: "Tofu, Bok Choy & Oyster Mushroom Rice",
+        cuisine: "Chinese",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice (rinsed)",
+        liquid: "Fill to the 2-cup line with half water and half light broth",
+        protein: "Firm tofu, pressed and cubed",
+        veggies: "Bok choy, oyster mushrooms, sliced green onion",
+        sauces: "Soy sauce, oyster sauce, mirin, optional chili oil",
+        setting: "White",
+        tags: ["tofu", "greens", "mild", "umami"]
+      },
+      {
+        id: 2,
+        name: "Ginger Soy Tofu & Kale Rice",
+        cuisine: "Japanese",
+        proteinType: "Tofu",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups Japanese short-grain rice",
+        liquid: "Fill to the 2-cup line with water or light dashi",
+        protein: "Firm tofu, pressed and sliced",
+        veggies: "Shredded kale and a handful of green onions",
+        sauces: "Soy sauce, mirin, grated ginger, a touch of sugar",
+        setting: "White",
+        tags: ["tofu", "kale", "ginger", "light"]
+      },
+      {
+        id: 3,
+        name: "Spicy Chili Tofu & Greens Rice",
+        cuisine: "Korean",
+        proteinType: "Tofu",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or mild broth",
+        protein: "Cubed firm tofu",
+        veggies: "Kale or bok choy, sliced onion",
+        sauces: "Soy sauce, chili flakes or gochugaru, a little sugar and sesame oil after cooking",
+        setting: "White",
+        tags: ["tofu", "spicy", "greens", "korean-inspired"]
+      },
+      {
+        id: 4,
+        name: "Tofu, Carrot & Pea Fried-Rice Style Pot",
+        cuisine: "Fusion",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to just under the 2-cup line with water for a slightly drier result",
+        protein: "Diced firm tofu",
+        veggies: "Frozen peas, diced carrots, green onion",
+        sauces: "Soy sauce, splash of oyster or hoisin, white pepper",
+        setting: "White",
+        tags: ["tofu", "peas", "comfort", "fried-rice-style"]
+      },
+      {
+        id: 5,
+        name: "Coconut Curry Tofu & Veg Rice",
+        cuisine: "Thai",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use about 1 rice-cooker cup coconut milk then top to the 2-cup line with water",
+        protein: "Firm tofu cubes",
+        veggies: "Bell pepper strips, green beans, a handful of greens",
+        sauces: "Thai red or yellow curry paste, a little fish sauce or soy, sugar to balance",
+        setting: "White",
+        tags: ["tofu", "curry", "coconut", "thai"]
+      },
+      {
+        id: 6,
+        name: "Garlic Tofu & Eggplant Rice",
+        cuisine: "Chinese",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Cubed firm tofu",
+        veggies: "Eggplant cubes, green onion, optional bok choy",
+        sauces: "Soy sauce, oyster sauce, lots of garlic, chili flakes if desired",
+        setting: "White",
+        tags: ["tofu", "eggplant", "garlic", "savory"]
+      },
+      {
+        id: 7,
+        name: "Black Pepper Tofu & Bell Pepper Rice",
+        cuisine: "Chinese",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water",
+        protein: "Firm tofu, pressed and cubed",
+        veggies: "Red and green bell peppers, onion slices",
+        sauces: "Soy sauce, oyster sauce, plenty of freshly ground black pepper",
+        setting: "White",
+        tags: ["tofu", "peppery", "bell-pepper"]
+      },
+      {
+        id: 8,
+        name: "Miso Tofu & Spinach Rice",
+        cuisine: "Japanese",
+        proteinType: "Tofu",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or dashi; stir a spoon of miso in after cooking",
+        protein: "Cubed firm tofu",
+        veggies: "Baby spinach, green onions",
+        sauces: "Soy sauce, miso paste (mixed into hot rice), mirin",
+        setting: "White",
+        tags: ["tofu", "miso", "spinach", "gentle"]
+      },
+      {
+        id: 9,
+        name: "Sesame Tofu & Broccoli Rice",
+        cuisine: "Chinese",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Firm tofu, cubed or sliced",
+        veggies: "Broccoli florets, green onion",
+        sauces: "Soy sauce, oyster sauce, drizzle of toasted sesame oil after cooking",
+        setting: "White",
+        tags: ["tofu", "broccoli", "sesame"]
+      },
+      {
+        id: 10,
+        name: "Smoky Paprika Tofu & Corn Rice",
+        cuisine: "Fusion",
+        proteinType: "Tofu",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Cubed firm tofu",
+        veggies: "Corn kernels, diced bell pepper, onion",
+        sauces: "Soy sauce, smoked paprika, pinch of chili, a touch of sugar",
+        setting: "White",
+        tags: ["tofu", "corn", "smoky", "fusion"]
+      },
+
+      /* 11–20: Chicken-based */
+      {
+        id: 11,
+        name: "Classic Chicken & Mushroom Rice",
+        cuisine: "Chinese",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with chicken broth",
+        protein: "Diced chicken thigh or breast",
+        veggies: "Sliced mushrooms, green onion",
+        sauces: "Soy sauce, oyster sauce, ginger and garlic",
+        setting: "White",
+        tags: ["chicken", "mushroom", "comfort"]
+      },
+      {
+        id: 12,
+        name: "Chicken, Bok Choy & Ginger Rice",
+        cuisine: "Chinese",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with chicken broth and a splash of water",
+        protein: "Small pieces of chicken thigh",
+        veggies: "Bok choy, sliced carrot if you like",
+        sauces: "Soy sauce, grated ginger, a little sesame oil after cooking",
+        setting: "White",
+        tags: ["chicken", "bok-choy", "ginger"]
+      },
+      {
+        id: 13,
+        name: "Lemon Herb Chicken & Zucchini Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Basmati",
+        riceAmount: "2 rice-cooker cups basmati rice",
+        liquid: "Fill to the 2-cup line with chicken broth",
+        protein: "Diced chicken breast or thigh",
+        veggies: "Zucchini half-moons, onion, optional spinach",
+        sauces: "Olive oil, lemon zest, oregano, garlic, lemon juice after cooking",
+        setting: "White",
+        tags: ["chicken", "lemon", "mediterranean"]
+      },
+      {
+        id: 14,
+        name: "Teriyaki Chicken & Veggie Rice",
+        cuisine: "Japanese",
+        proteinType: "Chicken",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Use mostly water and replace a few tablespoons with teriyaki sauce",
+        protein: "Bite-sized chicken pieces",
+        veggies: "Carrot matchsticks, peas, green onion",
+        sauces: "Teriyaki sauce, extra soy if needed, mirin",
+        setting: "White",
+        tags: ["chicken", "teriyaki", "family-friendly"]
+      },
+      {
+        id: 15,
+        name: "Chicken & Corn Fried-Rice Style Pot",
+        cuisine: "Fusion",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Slightly under the 2-cup line with chicken broth for drier rice",
+        protein: "Diced cooked or raw chicken",
+        veggies: "Corn, peas, green onion",
+        sauces: "Soy sauce, a little butter or oil, white pepper",
+        setting: "White",
+        tags: ["chicken", "corn", "fried-rice-style"]
+      },
+      {
+        id: 16,
+        name: "Chicken Tikka-Style Spiced Rice",
+        cuisine: "Indian",
+        proteinType: "Chicken",
+        riceType: "Basmati",
+        riceAmount: "2 rice-cooker cups basmati rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Chicken pieces tossed in yogurt and tikka-style spices if possible",
+        veggies: "Onion, peas, maybe bell pepper",
+        sauces: "Garam masala or curry powder, garlic, ginger, salt",
+        setting: "White",
+        tags: ["chicken", "spiced", "indian-inspired"]
+      },
+      {
+        id: 17,
+        name: "Coconut Lime Chicken Rice",
+        cuisine: "Thai",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use some coconut milk then top to 2-cup line with water",
+        protein: "Chicken thigh pieces",
+        veggies: "Green beans or snap peas, a bit of onion",
+        sauces: "Fish sauce or soy, lime zest, chili flakes",
+        setting: "White",
+        tags: ["chicken", "coconut", "lime", "thai-inspired"]
+      },
+      {
+        id: 18,
+        name: "Tomato Basil Chicken Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use some crushed tomato and top to 2-cup line with broth",
+        protein: "Chicken pieces",
+        veggies: "Onion, bell pepper, spinach",
+        sauces: "Garlic, dried basil or Italian herbs, olive oil",
+        setting: "White",
+        tags: ["chicken", "tomato", "herb"]
+      },
+      {
+        id: 19,
+        name: "Chipotle Chicken & Bean Rice",
+        cuisine: "Mexican",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with chicken broth; stir in a spoon of salsa if you like",
+        protein: "Chicken pieces and canned black beans (rinsed)",
+        veggies: "Corn, bell pepper, onion",
+        sauces: "Chipotle chili, cumin, garlic, splash of lime after cooking",
+        setting: "White",
+        tags: ["chicken", "beans", "spicy", "mexican-inspired"]
+      },
+      {
+        id: 20,
+        name: "Garlic Butter Chicken & Green Bean Rice",
+        cuisine: "Fusion",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with chicken broth",
+        protein: "Chicken pieces",
+        veggies: "Green beans, onion",
+        sauces: "Butter, garlic, black pepper, a bit of soy or salt",
+        setting: "White",
+        tags: ["chicken", "butter", "green-bean", "comfort"]
+      },
+
+      /* 21–30: Beef-based */
+      {
+        id: 21,
+        name: "Beef & Broccoli Rice",
+        cuisine: "Chinese",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with beef or chicken broth",
+        protein: "Thinly sliced beef",
+        veggies: "Broccoli florets, green onion",
+        sauces: "Soy sauce, oyster sauce, garlic, a little sugar",
+        setting: "White",
+        tags: ["beef", "broccoli", "classic"]
+      },
+      {
+        id: 22,
+        name: "Black Pepper Beef & Onion Rice",
+        cuisine: "Chinese",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth or water",
+        protein: "Sliced beef",
+        veggies: "Onion slices, bell pepper if you like",
+        sauces: "Soy sauce, oyster sauce, heavy black pepper, garlic",
+        setting: "White",
+        tags: ["beef", "peppery", "onion"]
+      },
+      {
+        id: 23,
+        name: "Beef, Carrot & Pea Comfort Rice",
+        cuisine: "Other",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with beef broth",
+        protein: "Ground or finely chopped beef",
+        veggies: "Carrots, peas, onion",
+        sauces: "Soy or Worcestershire, garlic, a little butter or oil",
+        setting: "White",
+        tags: ["beef", "peas", "comfort"]
+      },
+      {
+        id: 24,
+        name: "Bulgogi-Style Beef Rice",
+        cuisine: "Korean",
+        proteinType: "Beef",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Thinly sliced beef marinated in soy, sugar, garlic, sesame",
+        veggies: "Onion, carrot, green onion",
+        sauces: "Leftover bulgogi-style marinade, extra soy if needed",
+        setting: "White",
+        tags: ["beef", "sweet-savory", "korean-inspired"]
+      },
+      {
+        id: 25,
+        name: "Beef & Kimchi Rice",
+        cuisine: "Korean",
+        proteinType: "Beef",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill near the 2-cup line with water; some liquid comes from kimchi",
+        protein: "Ground or sliced beef",
+        veggies: "Chopped kimchi, green onion",
+        sauces: "Kimchi juice, soy sauce, sesame oil after cooking",
+        setting: "White",
+        tags: ["beef", "kimchi", "spicy"]
+      },
+      {
+        id: 26,
+        name: "Mediterranean Beef & Eggplant Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Beef",
+        riceType: "Basmati",
+        riceAmount: "2 rice-cooker cups basmati rice",
+        liquid: "Fill to the 2-cup line with light broth",
+        protein: "Ground beef",
+        veggies: "Diced eggplant, onion, maybe tomato",
+        sauces: "Olive oil, garlic, oregano, paprika",
+        setting: "White",
+        tags: ["beef", "eggplant", "mediterranean"]
+      },
+      {
+        id: 27,
+        name: "Chili-Style Beef & Bean Rice",
+        cuisine: "Mexican",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth plus some crushed tomato",
+        protein: "Ground beef",
+        veggies: "Onion, bell pepper, corn",
+        sauces: "Cumin, chili powder, garlic, canned beans",
+        setting: "White",
+        tags: ["beef", "beans", "chili-style"]
+      },
+      {
+        id: 28,
+        name: "Beef & Mushroom Brown Rice Pot",
+        cuisine: "Other",
+        proteinType: "Beef",
+        riceType: "Brown",
+        riceAmount: "2 rice-cooker cups brown rice",
+        liquid: "Fill to the 2-cup brown rice line with broth",
+        protein: "Beef chunks or strips",
+        veggies: "Mushrooms, onion, maybe carrot",
+        sauces: "Soy sauce, black pepper, a touch of Worcestershire",
+        setting: "Brown",
+        tags: ["beef", "brown-rice", "mushroom"]
+      },
+      {
+        id: 29,
+        name: "Spiced Beef & Lentil Rice",
+        cuisine: "Indian",
+        proteinType: "Beef",
+        riceType: "Basmati",
+        riceAmount: "1.5 rice-cooker cups basmati plus 0.5 cup lentils",
+        liquid: "Fill a little above the 2-cup line with water or broth for lentils",
+        protein: "Ground or minced beef",
+        veggies: "Onion, carrot, maybe peas",
+        sauces: "Curry spices, garlic, ginger, salt",
+        setting: "White",
+        tags: ["beef", "lentil", "spiced"]
+      },
+      {
+        id: 30,
+        name: "Ginger Beef & Green Bean Rice",
+        cuisine: "Chinese",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Thin strips of beef",
+        veggies: "Green beans, onion",
+        sauces: "Soy sauce, ginger, garlic, touch of sugar",
+        setting: "White",
+        tags: ["beef", "green-bean", "ginger"]
+      },
+
+      /* 31–40: Pork-based */
+      {
+        id: 31,
+        name: "Japanese Ginger Pork Rice",
+        cuisine: "Japanese",
+        proteinType: "Pork",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Thin-sliced pork",
+        veggies: "Onion slices, maybe cabbage",
+        sauces: "Soy sauce, mirin, sake if available, grated ginger, sugar",
+        setting: "White",
+        tags: ["pork", "ginger", "japanese"]
+      },
+      {
+        id: 32,
+        name: "Sweet Soy Pork & Cabbage Rice",
+        cuisine: "Chinese",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or broth",
+        protein: "Ground pork or small pieces",
+        veggies: "Shredded cabbage, carrot, green onion",
+        sauces: "Soy sauce, oyster sauce, sugar, garlic",
+        setting: "White",
+        tags: ["pork", "cabbage", "sweet-savory"]
+      },
+      {
+        id: 33,
+        name: "Pork & Kimchi Rice",
+        cuisine: "Korean",
+        proteinType: "Pork",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill near the 2-cup line with water, allowing for kimchi liquid",
+        protein: "Thin sliced pork belly or shoulder",
+        veggies: "Kimchi, green onion",
+        sauces: "Kimchi juice, soy sauce, sesame oil after cooking",
+        setting: "White",
+        tags: ["pork", "kimchi", "spicy"]
+      },
+      {
+        id: 34,
+        name: "Char Siu-Style Pork Rice",
+        cuisine: "Chinese",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or broth",
+        protein: "Char siu-style marinated pork pieces",
+        veggies: "Bok choy or other greens, green onion",
+        sauces: "Leftover char siu marinade, soy sauce, a touch of honey or sugar",
+        setting: "White",
+        tags: ["pork", "sweet-savory", "char-siu-inspired"]
+      },
+      {
+        id: 35,
+        name: "Pork, Apple & Onion Rice",
+        cuisine: "Other",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with light broth or water",
+        protein: "Small pork pieces or sausage",
+        veggies: "Onion slices and small apple cubes",
+        sauces: "Butter or oil, thyme, salt, black pepper",
+        setting: "White",
+        tags: ["pork", "apple", "comfort"]
+      },
+      {
+        id: 36,
+        name: "Pork & Bell Pepper Rice",
+        cuisine: "Mexican",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Pork strips or ground pork",
+        veggies: "Bell peppers, onion, corn optional",
+        sauces: "Cumin, chili powder, garlic, lime after cooking",
+        setting: "White",
+        tags: ["pork", "bell-pepper", "mexican-inspired"]
+      },
+      {
+        id: 37,
+        name: "Cuban-Style Pork & Black Bean Rice",
+        cuisine: "Other",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Pork pieces or leftover roast pork",
+        veggies: "Onion, bell pepper",
+        sauces: "Canned black beans, cumin, garlic, oregano, lime",
+        setting: "White",
+        tags: ["pork", "beans", "cuban-inspired"]
+      },
+      {
+        id: 38,
+        name: "Pork & Pineapple Rice Pot",
+        cuisine: "Fusion",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or broth plus pineapple juice if desired",
+        protein: "Pork chunks or sausage",
+        veggies: "Bell pepper, onion",
+        sauces: "Soy sauce, a little sugar, pineapple chunks",
+        setting: "White",
+        tags: ["pork", "pineapple", "sweet-savory"]
+      },
+      {
+        id: 39,
+        name: "Pork Sausage & Kale Rice",
+        cuisine: "Other",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Crumbled or sliced sausage",
+        veggies: "Kale, onion, maybe carrot",
+        sauces: "Garlic, herbs, black pepper",
+        setting: "White",
+        tags: ["pork", "sausage", "kale"]
+      },
+      {
+        id: 40,
+        name: "Pork & Mushroom Brown Rice",
+        cuisine: "Other",
+        proteinType: "Pork",
+        riceType: "Brown",
+        riceAmount: "2 rice-cooker cups brown rice",
+        liquid: "Fill to the 2-cup brown rice line with broth",
+        protein: "Pork chunks or sausage",
+        veggies: "Mushrooms, onion, greens if desired",
+        sauces: "Soy sauce, black pepper, thyme or rosemary",
+        setting: "Brown",
+        tags: ["pork", "brown-rice", "mushroom"]
+      },
+
+      /* 41–50: Seafood-based */
+      {
+        id: 41,
+        name: "Teriyaki Salmon Rice",
+        cuisine: "Japanese",
+        proteinType: "Seafood",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Use mostly water, replacing some with teriyaki sauce to reach the 2-cup line",
+        protein: "Salmon fillet placed on top",
+        veggies: "Green onion, peas or small greens",
+        sauces: "Teriyaki sauce, soy if needed",
+        setting: "White",
+        tags: ["salmon", "teriyaki", "seafood"]
+      },
+      {
+        id: 42,
+        name: "Garlic Butter Shrimp Rice",
+        cuisine: "Other",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth or water",
+        protein: "Shrimp scattered on top",
+        veggies: "Peas, green onion, maybe spinach",
+        sauces: "Butter, garlic, lemon juice after cooking, black pepper",
+        setting: "White",
+        tags: ["shrimp", "garlic", "butter"]
+      },
+      {
+        id: 43,
+        name: "Chili-Lime Shrimp & Corn Rice",
+        cuisine: "Mexican",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Shrimp pieces",
+        veggies: "Corn, bell pepper, onion",
+        sauces: "Chili powder, cumin, garlic, lime zest and juice",
+        setting: "White",
+        tags: ["shrimp", "corn", "chili-lime"]
+      },
+      {
+        id: 44,
+        name: "Coconut Curry Shrimp Rice",
+        cuisine: "Thai",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use coconut milk plus water to reach the 2-cup line",
+        protein: "Shrimp",
+        veggies: "Green beans or peas, onion",
+        sauces: "Curry paste, fish sauce or soy, sugar, lime",
+        setting: "White",
+        tags: ["shrimp", "coconut", "curry"]
+      },
+      {
+        id: 45,
+        name: "Tuna & Green Onion Rice",
+        cuisine: "Japanese",
+        proteinType: "Seafood",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or light dashi",
+        protein: "Canned tuna drained and folded in after cooking",
+        veggies: "Green onions, maybe corn",
+        sauces: "Soy sauce, mirin, a little mayo or sesame oil if desired",
+        setting: "White",
+        tags: ["tuna", "pantry", "simple"]
+      },
+      {
+        id: 46,
+        name: "Miso Salmon & Spinach Rice",
+        cuisine: "Japanese",
+        proteinType: "Seafood",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to the 2-cup line with water or dashi",
+        protein: "Salmon fillet brushed with miso mixture",
+        veggies: "Spinach added on top, green onion",
+        sauces: "Miso paste, soy sauce, mirin",
+        setting: "White",
+        tags: ["salmon", "miso", "spinach"]
+      },
+      {
+        id: 47,
+        name: "Lemon Herb Fish & Veg Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with light broth",
+        protein: "White fish fillets on top",
+        veggies: "Zucchini, bell pepper, onion",
+        sauces: "Olive oil, lemon zest, garlic, herbs",
+        setting: "White",
+        tags: ["fish", "lemon", "herb"]
+      },
+      {
+        id: 48,
+        name: "Shrimp & Pea Fried-Rice Style Pot",
+        cuisine: "Other",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Slightly under the 2-cup line with water for drier rice",
+        protein: "Shrimp added on top",
+        veggies: "Peas, carrot, green onion",
+        sauces: "Soy sauce, sesame oil after cooking, white pepper",
+        setting: "White",
+        tags: ["shrimp", "peas", "fried-rice-style"]
+      },
+      {
+        id: 49,
+        name: "Anchovy & Garlic Umami Rice",
+        cuisine: "Italian",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Anchovy fillets melted into oil or butter",
+        veggies: "Garlic, parsley, maybe spinach",
+        sauces: "Anchovy-garlic oil, black pepper, lemon",
+        setting: "White",
+        tags: ["anchovy", "garlic", "umami"]
+      },
+      {
+        id: 50,
+        name: "Salmon, Kale & Mushroom Brown Rice",
+        cuisine: "Other",
+        proteinType: "Seafood",
+        riceType: "Brown",
+        riceAmount: "2 rice-cooker cups brown rice",
+        liquid: "Fill to the brown-rice 2-cup line with broth",
+        protein: "Salmon pieces or fillet",
+        veggies: "Kale, mushrooms, onion",
+        sauces: "Soy sauce, black pepper, a little butter or oil",
+        setting: "Brown",
+        tags: ["salmon", "kale", "brown-rice"]
+      },
+
+      /* 51–60: Vegan/bean-based */
+      {
+        id: 51,
+        name: "Chickpea & Spinach Curry Rice",
+        cuisine: "Indian",
+        proteinType: "Vegan",
+        riceType: "Basmati",
+        riceAmount: "2 rice-cooker cups basmati rice",
+        liquid: "Fill to the 2-cup line with water or light broth",
+        protein: "Canned chickpeas rinsed",
+        veggies: "Spinach, onion, tomato",
+        sauces: "Curry powder or garam masala, garlic, ginger",
+        setting: "White",
+        tags: ["vegan", "chickpea", "curry"]
+      },
+      {
+        id: 52,
+        name: "Lentil & Carrot Masala Rice",
+        cuisine: "Indian",
+        proteinType: "Vegan",
+        riceType: "Basmati",
+        riceAmount: "1.5 rice-cooker cups rice plus 0.5 cup lentils",
+        liquid: "Fill slightly above 2-cup line with water or broth",
+        protein: "Brown or green lentils",
+        veggies: "Carrots, onion, peas",
+        sauces: "Masala spices, garlic, ginger",
+        setting: "White",
+        tags: ["vegan", "lentil", "spiced"]
+      },
+      {
+        id: 53,
+        name: "Black Bean & Corn Mexican Rice",
+        cuisine: "Mexican",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth and a spoon of tomato or salsa",
+        protein: "Black beans",
+        veggies: "Corn, bell pepper, onion",
+        sauces: "Cumin, chili powder, garlic, lime",
+        setting: "White",
+        tags: ["vegan", "beans", "mexican-inspired"]
+      },
+      {
+        id: 54,
+        name: "Red Bean & Kale Rice",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Red kidney beans or similar",
+        veggies: "Kale, onion, carrot",
+        sauces: "Garlic, smoked paprika, black pepper",
+        setting: "White",
+        tags: ["vegan", "kale", "beans"]
+      },
+      {
+        id: 55,
+        name: "Coconut Dal Rice Pot",
+        cuisine: "Indian",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "1.5 rice-cooker cups rice plus 0.5 cup split lentils",
+        liquid: "Use coconut milk plus water to reach a bit above 2-cup line",
+        protein: "Split lentils (dal)",
+        veggies: "Onion, tomato, spinach",
+        sauces: "Turmeric, cumin, coriander, garlic, ginger",
+        setting: "White",
+        tags: ["vegan", "lentil", "coconut"]
+      },
+      {
+        id: 56,
+        name: "Tomato Basil White Bean Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use some crushed tomato and top to 2-cup line with broth",
+        protein: "Canned white beans",
+        veggies: "Onion, spinach, maybe zucchini",
+        sauces: "Garlic, basil or Italian herbs, olive oil",
+        setting: "White",
+        tags: ["vegan", "beans", "tomato"]
+      },
+      {
+        id: 57,
+        name: "Moroccan-Spiced Chickpea & Veg Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Chickpeas",
+        veggies: "Carrot, zucchini, onion",
+        sauces: "Cumin, coriander, cinnamon, paprika",
+        setting: "White",
+        tags: ["vegan", "chickpea", "spiced"]
+      },
+      {
+        id: 58,
+        name: "Smoky Paprika Bean & Rice Pot",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Mixed beans or black beans",
+        veggies: "Onion, bell pepper, corn",
+        sauces: "Smoked paprika, garlic, chili, a little oil",
+        setting: "White",
+        tags: ["vegan", "beans", "smoky"]
+      },
+      {
+        id: 59,
+        name: "Herb Lemon Chickpea Brown Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Brown",
+        riceAmount: "2 rice-cooker cups brown rice",
+        liquid: "Fill to the brown-rice 2-cup line with broth",
+        protein: "Chickpeas",
+        veggies: "Spinach or kale, onion",
+        sauces: "Olive oil, lemon zest and juice, herbs, garlic",
+        setting: "Brown",
+        tags: ["vegan", "brown-rice", "lemon"]
+      },
+      {
+        id: 60,
+        name: "Three-Bean Veggie Rice",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup line with broth",
+        protein: "Any mix of canned beans",
+        veggies: "Corn, bell pepper, onion, greens",
+        sauces: "Garlic, chili, cumin, or your favorite spice blend",
+        setting: "White",
+        tags: ["vegan", "beans", "pantry"]
+      },
+
+      /* 61–70: Brothy / porridge-ish */
+      {
+        id: 61,
+        name: "Simple Chicken Congee-Style Rice",
+        cuisine: "Chinese",
+        proteinType: "Chicken",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Fill to at least the 3 or 4-cup porridge line with broth",
+        protein: "Shredded chicken or small pieces",
+        veggies: "Ginger slices, green onion, maybe carrot",
+        sauces: "Salt, white pepper, soy sauce at the table",
+        setting: "Porridge",
+        tags: ["porridge", "chicken", "congee-style"]
+      },
+      {
+        id: 62,
+        name: "Ginger Scallion Tofu Porridge",
+        cuisine: "Chinese",
+        proteinType: "Tofu",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Fill to porridge line with water or light broth",
+        protein: "Soft tofu cubes or silken tofu added after cooking",
+        veggies: "Ginger, green onion, maybe a bit of bok choy",
+        sauces: "Soy sauce, sesame oil, white pepper",
+        setting: "Porridge",
+        tags: ["porridge", "tofu", "ginger"]
+      },
+      {
+        id: 63,
+        name: "Mushroom & Kale Zosui-Style Rice Soup",
+        cuisine: "Japanese",
+        proteinType: "Vegan",
+        riceType: "Short-grain",
+        riceAmount: "1–1.5 rice-cooker cups cooked or uncooked rice",
+        liquid: "Fill well above rice with dashi or light broth",
+        protein: "Optional tofu or leftover chicken",
+        veggies: "Mushrooms, kale or spinach, green onion",
+        sauces: "Soy sauce, a little mirin, optional miso stirred in",
+        setting: "Porridge",
+        tags: ["porridge", "mushroom", "kale"]
+      },
+      {
+        id: 64,
+        name: "Kimchi & Egg Brothy Rice",
+        cuisine: "Korean",
+        proteinType: "Egg",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Plenty of water or broth for soupy texture",
+        protein: "Egg stirred in at the end or cracked on top",
+        veggies: "Kimchi, green onion",
+        sauces: "Kimchi juice, soy sauce, sesame oil",
+        setting: "Porridge",
+        tags: ["porridge", "kimchi", "egg"]
+      },
+      {
+        id: 65,
+        name: "Garlic Beef Bone Broth Rice",
+        cuisine: "Other",
+        proteinType: "Mixed",
+        riceType: "Jasmine",
+        riceAmount: "1–1.5 rice-cooker cups rice",
+        liquid: "Use beef bone broth up to soup-like level",
+        protein: "Small bits of beef or tofu, optional",
+        veggies: "Garlic, onion, greens if you like",
+        sauces: "Salt, pepper, soy sauce to taste",
+        setting: "Porridge",
+        tags: ["porridge", "bone-broth", "garlic"]
+      },
+      {
+        id: 66,
+        name: "Seafood Porridge with Shrimp",
+        cuisine: "Other",
+        proteinType: "Seafood",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Fill well above for a soupy porridge with broth",
+        protein: "Shrimp and small fish pieces",
+        veggies: "Ginger, green onion, maybe carrot",
+        sauces: "Fish sauce or soy, white pepper",
+        setting: "Porridge",
+        tags: ["porridge", "seafood"]
+      },
+      {
+        id: 67,
+        name: "Turmeric Chicken & Rice Soup Pot",
+        cuisine: "Indian",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Fill high with broth for a soupy texture",
+        protein: "Chicken pieces",
+        veggies: "Carrot, celery, onion",
+        sauces: "Turmeric, pepper, garlic, ginger",
+        setting: "Porridge",
+        tags: ["porridge", "chicken", "turmeric"]
+      },
+      {
+        id: 68,
+        name: "Miso Vegetable Porridge",
+        cuisine: "Japanese",
+        proteinType: "Vegan",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Fill with water or dashi to porridge level",
+        protein: "Optional tofu",
+        veggies: "Carrot, greens, mushrooms",
+        sauces: "Miso paste stirred in after cooking, soy sauce to taste",
+        setting: "Porridge",
+        tags: ["porridge", "miso", "veggie"]
+      },
+      {
+        id: 69,
+        name: "Coconut Lime Rice Soup",
+        cuisine: "Thai",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Coconut milk plus water to make a soupy level",
+        protein: "Optional tofu or chickpeas",
+        veggies: "Greens, onion, carrot",
+        sauces: "Lime juice, chili, fish sauce or soy",
+        setting: "Porridge",
+        tags: ["porridge", "coconut", "lime"]
+      },
+      {
+        id: 70,
+        name: "Tomato & Herb Brothy Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Broth plus crushed tomato to create soup level",
+        protein: "Optional beans or chickpeas",
+        veggies: "Onion, carrot, greens",
+        sauces: "Garlic, basil or Italian herbs, olive oil",
+        setting: "Porridge",
+        tags: ["porridge", "tomato", "herb"]
+      },
+
+      /* 71–80: Mediterranean / European-ish */
+      {
+        id: 71,
+        name: "Greek Lemon Chicken Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Chicken broth to the 2-cup line",
+        protein: "Chicken pieces",
+        veggies: "Spinach, onion",
+        sauces: "Olive oil, lemon zest and juice, oregano, garlic",
+        setting: "White",
+        tags: ["chicken", "lemon", "greek-inspired"]
+      },
+      {
+        id: 72,
+        name: "Tomato Olive Veggie Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth plus some crushed tomato to 2-cup line",
+        protein: "Optional chickpeas or white beans",
+        veggies: "Bell pepper, onion, spinach",
+        sauces: "Olives, garlic, herbs, olive oil",
+        setting: "White",
+        tags: ["vegan", "olive", "tomato"]
+      },
+      {
+        id: 73,
+        name: "Herbed Lentil & Rice Pilaf",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "1.5 rice-cooker cups rice plus 0.5 cup lentils",
+        liquid: "Just above 2-cup line with broth",
+        protein: "Lentils",
+        veggies: "Onion, carrot, celery",
+        sauces: "Olive oil, bay leaf, herbs, garlic",
+        setting: "White",
+        tags: ["vegan", "lentil", "pilaf"]
+      },
+      {
+        id: 74,
+        name: "Garlic Mushroom & Herb Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Optional beans or tofu",
+        veggies: "Mushrooms, onion, parsley",
+        sauces: "Garlic, thyme, olive oil, pepper",
+        setting: "White",
+        tags: ["vegan", "mushroom", "garlic"]
+      },
+      {
+        id: 75,
+        name: "Spanish-Inspired Chorizo Rice",
+        cuisine: "Other",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth plus a little tomato to the 2-cup line",
+        protein: "Chorizo or spicy sausage slices",
+        veggies: "Onion, bell pepper, peas",
+        sauces: "Garlic, smoked paprika, olive oil",
+        setting: "White",
+        tags: ["pork", "chorizo", "spanish-inspired"]
+      },
+      {
+        id: 76,
+        name: "Simple Herb Butter Rice",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to the 2-cup line",
+        protein: "Optional beans or tofu",
+        veggies: "Green onion or herbs",
+        sauces: "Butter or olive oil, mixed herbs, salt, pepper",
+        setting: "White",
+        tags: ["simple", "herb", "side-or-base"]
+      },
+      {
+        id: 77,
+        name: "Roasted Pepper & Feta-Style Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Optional chickpeas",
+        veggies: "Roasted red peppers, onion, spinach",
+        sauces: "Garlic, olive oil, herbs; crumble cheese on top if you use dairy",
+        setting: "White",
+        tags: ["vegan", "pepper", "mediterranean"]
+      },
+      {
+        id: 78,
+        name: "Lemon Garlic Shrimp Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Shrimp on top",
+        veggies: "Zucchini or spinach, onion",
+        sauces: "Olive oil, garlic, lemon, parsley",
+        setting: "White",
+        tags: ["shrimp", "lemon", "garlic"]
+      },
+      {
+        id: 79,
+        name: "Italian Tomato Basil Sausage Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth plus tomato to 2-cup line",
+        protein: "Sausage slices",
+        veggies: "Onion, bell pepper, maybe spinach",
+        sauces: "Garlic, basil, olive oil",
+        setting: "White",
+        tags: ["sausage", "tomato", "italian-inspired"]
+      },
+      {
+        id: 80,
+        name: "Olive, Chickpea & Herb Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Chickpeas",
+        veggies: "Onion, greens",
+        sauces: "Olives, garlic, herbs, olive oil",
+        setting: "White",
+        tags: ["vegan", "olive", "chickpea"]
+      },
+
+      /* 81–90: Mexican / Tex-Mex-ish */
+      {
+        id: 81,
+        name: "Chicken Fajita Rice Pot",
+        cuisine: "Mexican",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth and a spoon of salsa to the 2-cup line",
+        protein: "Chicken strips",
+        veggies: "Bell peppers, onion, corn",
+        sauces: "Cumin, chili powder, garlic, lime",
+        setting: "White",
+        tags: ["chicken", "fajita", "mexican-inspired"]
+      },
+      {
+        id: 82,
+        name: "Beef Taco Rice",
+        cuisine: "Mexican",
+        proteinType: "Beef",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Seasoned ground beef",
+        veggies: "Onion, corn, bell pepper",
+        sauces: "Taco seasoning, garlic, optional salsa",
+        setting: "White",
+        tags: ["beef", "taco", "mexican-inspired"]
+      },
+      {
+        id: 83,
+        name: "Vegan Fajita Pepper Rice",
+        cuisine: "Mexican",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Black beans or chickpeas",
+        veggies: "Bell peppers, onion, corn",
+        sauces: "Cumin, chili, garlic, lime",
+        setting: "White",
+        tags: ["vegan", "pepper", "fajita"]
+      },
+      {
+        id: 84,
+        name: "Chorizo & Black Bean Rice",
+        cuisine: "Mexican",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth to the 2-cup line",
+        protein: "Chorizo or spicy sausage",
+        veggies: "Onion, bell pepper, corn",
+        sauces: "Cumin, chili powder, garlic, black beans",
+        setting: "White",
+        tags: ["pork", "chorizo", "beans"]
+      },
+      {
+        id: 85,
+        name: "Chipotle Chicken & Corn Rice",
+        cuisine: "Mexican",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth with chipotle in adobo blended in to 2-cup line",
+        protein: "Chicken pieces",
+        veggies: "Corn, onion, bell pepper",
+        sauces: "Chipotle, garlic, cumin, lime",
+        setting: "White",
+        tags: ["chicken", "chipotle", "spicy"]
+      },
+      {
+        id: 86,
+        name: "Salsa Rice with Beans",
+        cuisine: "Mexican",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use some salsa and top up with water or broth to 2-cup line",
+        protein: "Black or pinto beans",
+        veggies: "Corn, onion, bell pepper",
+        sauces: "Cumin, chili, garlic",
+        setting: "White",
+        tags: ["vegan", "salsa", "beans"]
+      },
+      {
+        id: 87,
+        name: "Green Chili Pork Rice",
+        cuisine: "Mexican",
+        proteinType: "Pork",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Broth plus green chili sauce to 2-cup line",
+        protein: "Pork pieces",
+        veggies: "Onion, corn, bell pepper",
+        sauces: "Green chili, garlic, cumin",
+        setting: "White",
+        tags: ["pork", "green-chili", "spicy"]
+      },
+      {
+        id: 88,
+        name: "Cilantro Lime Rice with Pinto Beans",
+        cuisine: "Mexican",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to the 2-cup line",
+        protein: "Pinto beans",
+        veggies: "Corn, onion",
+        sauces: "Lime juice and zest, chopped cilantro, garlic, salt",
+        setting: "White",
+        tags: ["vegan", "cilantro-lime", "beans"]
+      },
+      {
+        id: 89,
+        name: "Shrimp & Chili Lime Rice",
+        cuisine: "Mexican",
+        proteinType: "Seafood",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to the 2-cup line",
+        protein: "Shrimp",
+        veggies: "Corn, bell pepper, onion",
+        sauces: "Chili powder, lime, garlic",
+        setting: "White",
+        tags: ["shrimp", "chili-lime", "mexican-inspired"]
+      },
+      {
+        id: 90,
+        name: "Breakfast Rice with Egg, Salsa & Beans",
+        cuisine: "Mexican",
+        proteinType: "Egg",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to the 2-cup line",
+        protein: "Beans cooked in with rice; eggs added at end or on top",
+        veggies: "Onion, maybe bell pepper and corn",
+        sauces: "Salsa, cumin, chili, cheese if you use dairy",
+        setting: "White",
+        tags: ["egg", "breakfast", "beans"]
+      },
+
+      /* 91–100: Breakfast / simple / eggy etc. */
+      {
+        id: 91,
+        name: "Soy Sauce Butter Egg Rice",
+        cuisine: "Japanese",
+        proteinType: "Egg",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Water to the 2-cup line",
+        protein: "Eggs stirred into hot rice after cooking",
+        veggies: "Green onion",
+        sauces: "Soy sauce, butter, pepper",
+        setting: "White",
+        tags: ["egg", "butter", "simple"]
+      },
+      {
+        id: 92,
+        name: "Tamago-Style Egg & Rice Pot",
+        cuisine: "Japanese",
+        proteinType: "Egg",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Water or light dashi to 2-cup line",
+        protein: "Beaten eggs added in last minutes or right after cooking",
+        veggies: "Green onion, maybe spinach",
+        sauces: "Soy sauce, mirin, sugar to taste",
+        setting: "White",
+        tags: ["egg", "tamago-style", "japanese"]
+      },
+      {
+        id: 93,
+        name: "Mushroom & Egg Rice",
+        cuisine: "Other",
+        proteinType: "Egg",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to 2-cup line",
+        protein: "Eggs cracked on top or stirred in after cooking",
+        veggies: "Mushrooms, green onions",
+        sauces: "Soy sauce, butter or oil, pepper",
+        setting: "White",
+        tags: ["egg", "mushroom", "comfort"]
+      },
+      {
+        id: 94,
+        name: "Breakfast Sausage, Egg & Rice",
+        cuisine: "Other",
+        proteinType: "Mixed",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to 2-cup line",
+        protein: "Breakfast sausage pieces; eggs added at the end",
+        veggies: "Onion, maybe bell pepper",
+        sauces: "Salt, pepper, herbs, a little butter",
+        setting: "White",
+        tags: ["sausage", "egg", "breakfast"]
+      },
+      {
+        id: 95,
+        name: "Oat & Rice Breakfast Porridge",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice plus some oats",
+        liquid: "Milk of choice or water to porridge line",
+        protein: "Oats and optional nuts",
+        veggies: "None, or small fruit pieces",
+        sauces: "Sugar or honey, cinnamon, vanilla",
+        setting: "Porridge",
+        tags: ["porridge", "breakfast", "sweet"]
+      },
+      {
+        id: 96,
+        name: "Apple Cinnamon Rice Porridge",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Short-grain",
+        riceAmount: "1 rice-cooker cup rice",
+        liquid: "Milk of choice or water to porridge level",
+        protein: "Optional nuts or seeds",
+        veggies: "Apple cubes",
+        sauces: "Cinnamon, sugar or honey, pinch of salt",
+        setting: "Porridge",
+        tags: ["porridge", "apple", "sweet"]
+      },
+      {
+        id: 97,
+        name: "Banana Coconut Breakfast Rice",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Jasmine",
+        riceAmount: "1–1.5 rice-cooker cups rice",
+        liquid: "Coconut milk plus water to porridge or soft-rice level",
+        protein: "Optional nuts or seeds",
+        veggies: "Banana slices added after cooking",
+        sauces: "Sugar or honey, vanilla, pinch of salt",
+        setting: "Porridge",
+        tags: ["porridge", "banana", "coconut"]
+      },
+      {
+        id: 98,
+        name: "Savory Miso Breakfast Rice with Greens",
+        cuisine: "Japanese",
+        proteinType: "Vegan",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Water or dashi to 2-cup line",
+        protein: "Optional tofu or egg",
+        veggies: "Spinach or kale, green onion",
+        sauces: "Miso stirred in after cooking, soy sauce, sesame oil",
+        setting: "White",
+        tags: ["miso", "breakfast", "greens"]
+      },
+      {
+        id: 99,
+        name: "Herb & Cheese Breakfast Rice",
+        cuisine: "Other",
+        proteinType: "Egg",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Water or broth to 2-cup line",
+        protein: "Eggs stirred in or served on top; cheese if you use dairy",
+        veggies: "Green onion, maybe spinach",
+        sauces: "Butter or oil, mixed herbs, pepper",
+        setting: "White",
+        tags: ["egg", "cheesy", "breakfast"]
+      },
+      {
+        id: 100,
+        name: "Simple Plain Rice Template",
+        cuisine: "Other",
+        proteinType: "Vegan",
+        riceType: "Any",
+        riceAmount: "Any amount according to your cooker lines",
+        liquid: "Fill to the matching water line for the rice type",
+        protein: "Add leftover protein on top after cooking",
+        veggies: "Any quick-cooking veggies stirred in at the end",
+        sauces: "Season at the table with soy, chili oil, butter, or your sauces",
+        setting: "White",
+        tags: ["base", "template", "simple"]
+      }
+    ];
+
+    /* === Extra bone-in, skin-on chicken thigh recipes (101–112) === */
+    const extraChickenThighRecipes = [
+      {
+        id: 101,
+        name: "Soy-Garlic Bone-In Chicken Thigh & Mushroom Rice",
+        cuisine: "Chinese",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with chicken or beef bone broth plus a little water if needed",
+        protein: "2–4 small bone-in, skin-on chicken thighs, trimmed, patted dry and arranged skin side up over the rice",
+        veggies: "Sliced mushrooms and green onion",
+        sauces: "Soy sauce, oyster sauce, minced garlic and grated ginger",
+        setting: "White",
+        tags: ["chicken", "thigh", "bone-in", "mushroom", "soy-garlic"]
+      },
+      {
+        id: 102,
+        name: "Lemon-Mirin Chicken Thigh Rice",
+        cuisine: "Japanese",
+        proteinType: "Chicken",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups Japanese short-grain rice",
+        liquid: "Fill to the 2-cup white-rice line with water or light dashi, including a few tablespoons soy sauce and mirin within that level",
+        protein: "2–4 bone-in, skin-on chicken thighs, skin lightly scored and arranged skin side up over the rice",
+        veggies: "Sliced onion, green onion and optional bok choy or kale around the edges",
+        sauces: "Soy sauce, mirin, a little sugar, grated ginger and lemon zest",
+        setting: "White",
+        tags: ["chicken", "thigh", "bone-in", "mirin", "lemon"]
+      },
+      {
+        id: 103,
+        name: "Korean Gochujang Chicken Thigh Rice",
+        cuisine: "Korean",
+        proteinType: "Chicken",
+        riceType: "Short-grain",
+        riceAmount: "2 rice-cooker cups short-grain rice",
+        liquid: "Fill to slightly under the 2-cup white-rice line with water or broth to allow for gochujang and soy sauce",
+        protein: "Bone-in, skin-on chicken thighs coated in a gochujang marinade and arranged skin side up over the rice",
+        veggies: "Onion, green onion and sliced carrot or cabbage",
+        sauces: "Gochujang, soy sauce, garlic, ginger, a little sugar or honey and sesame oil after cooking",
+        setting: "White",
+        tags: ["chicken", "thigh", "spicy", "gochujang", "korean-inspired"]
+      },
+      {
+        id: 104,
+        name: "Thai Coconut Curry Chicken Thigh Rice",
+        cuisine: "Thai",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Use about 1 rice-cooker cup coconut milk, then top to the 2-cup white-rice line with water or light broth",
+        protein: "Bone-in, skin-on chicken thighs nestled into the rice, skin side up",
+        veggies: "Bell pepper strips, green beans or snap peas and a little onion",
+        sauces: "Thai red or yellow curry paste, fish sauce or soy sauce, a little sugar and lime at the table",
+        setting: "White",
+        tags: ["chicken", "thigh", "curry", "coconut", "thai"]
+      },
+      {
+        id: 105,
+        name: "Garlic Herb Chicken Thigh & Kale Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with chicken or beef bone broth",
+        protein: "Bone-in, skin-on chicken thighs seasoned with salt, pepper and dried herbs, arranged skin side up over the rice",
+        veggies: "Kale ribbons, sliced onion and optional carrot",
+        sauces: "Olive oil or butter, garlic, dried thyme or oregano and lemon at the end",
+        setting: "White",
+        tags: ["chicken", "thigh", "bone-in", "kale", "herb"]
+      },
+      {
+        id: 106,
+        name: "Smoky Paprika Chicken Thigh & Chickpea Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with chicken broth",
+        protein: "Bone-in, skin-on chicken thighs rubbed with smoked paprika, salt and garlic, arranged skin side up over the rice",
+        veggies: "Canned chickpeas, onion and bell pepper",
+        sauces: "Smoked paprika, garlic, cumin, olive oil and lemon at the end",
+        setting: "White",
+        tags: ["chicken", "thigh", "chickpea", "smoky"]
+      },
+      {
+        id: 107,
+        name: "Adobo-Style Chicken Thigh Rice Pot",
+        cuisine: "Other",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to just under the 2-cup white-rice line with water, adding soy sauce and vinegar as part of the liquid",
+        protein: "Bone-in, skin-on chicken thighs briefly marinated in soy sauce, vinegar, garlic and bay leaf, arranged skin side up over the rice",
+        veggies: "Onion slices and optional carrot or bok choy",
+        sauces: "Soy sauce, cane or rice vinegar, garlic, bay leaf and black pepper",
+        setting: "White",
+        tags: ["chicken", "thigh", "adobo-inspired", "vinegar"]
+      },
+      {
+        id: 108,
+        name: "Butter Chicken Thigh Rice (Simplified)",
+        cuisine: "Indian",
+        proteinType: "Chicken",
+        riceType: "Basmati",
+        riceAmount: "2 rice-cooker cups basmati rice",
+        liquid: "Use some tomato puree and cream or coconut milk and top to the 2-cup white-rice line with water or light broth",
+        protein: "Bone-in, skin-on chicken thighs coated in yogurt and garam masala if available, arranged skin side up over the rice",
+        veggies: "Onion and optional spinach or peas",
+        sauces: "Tomato puree, butter or ghee, garam masala or curry powder, garlic and ginger",
+        setting: "White",
+        tags: ["chicken", "thigh", "butter-chicken-inspired"]
+      },
+      {
+        id: 109,
+        name: "Chipotle Lime Chicken Thigh Rice",
+        cuisine: "Mexican",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with chicken broth blended with a little chipotle in adobo",
+        protein: "Bone-in, skin-on chicken thighs arranged skin side up over the rice",
+        veggies: "Corn, black beans, onion and bell pepper",
+        sauces: "Chipotle chili, cumin, garlic and lime zest and juice added after cooking",
+        setting: "White",
+        tags: ["chicken", "thigh", "chipotle", "spicy"]
+      },
+      {
+        id: 110,
+        name: "Honey Soy Glazed Chicken Thigh Rice",
+        cuisine: "Chinese",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with water or light broth, including soy sauce and mirin within that level",
+        protein: "Bone-in, skin-on chicken thighs brushed with a honey soy glaze and arranged skin side up over the rice",
+        veggies: "Bok choy or green beans and sliced onion",
+        sauces: "Soy sauce, mirin, honey or sugar, garlic, ginger and sesame seeds after cooking",
+        setting: "White",
+        tags: ["chicken", "thigh", "honey-soy", "glaze"]
+      },
+      {
+        id: 111,
+        name: "Lemony Garlic Chicken Thigh Brothy Rice",
+        cuisine: "Mediterranean",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "1.5 rice-cooker cups jasmine rice",
+        liquid: "Fill well above the rice with chicken or beef bone broth for a brothy, soup-like result within your cooker limits",
+        protein: "Bone-in, skin-on chicken thighs nestled into the broth and rice",
+        veggies: "Carrot, celery, onion and spinach or kale",
+        sauces: "Garlic, lemon zest and juice, bay leaf and black pepper",
+        setting: "Porridge",
+        tags: ["chicken", "thigh", "brothy", "lemon", "bone-broth"]
+      },
+      {
+        id: 112,
+        name: "Garlic Chili Crisp Chicken Thigh Rice",
+        cuisine: "Fusion",
+        proteinType: "Chicken",
+        riceType: "Jasmine",
+        riceAmount: "2 rice-cooker cups jasmine rice",
+        liquid: "Fill to the 2-cup white-rice line with chicken broth, leaving room for a tablespoon or two of soy sauce and chili oil",
+        protein: "Bone-in, skin-on chicken thighs arranged skin side up over the rice",
+        veggies: "Bok choy, kale or other sturdy greens and sliced onion",
+        sauces: "Soy sauce, garlic, chili crisp or chili oil and a little sugar to balance",
+        setting: "White",
+        tags: ["chicken", "thigh", "spicy", "chili-crisp"]
+      }
+    ];
+
+    // Merge extra thigh recipes into main list
+    recipes.push(...extraChickenThighRecipes);
+
+    /* === UI helpers === */
+    function getProteinEmoji(type) {
+      switch (type) {
+        case "Tofu": return "🧊";
+        case "Chicken": return "🍗";
+        case "Beef": return "🥩";
+        case "Pork": return "🥓";
+        case "Seafood": return "🐟";
+        case "Egg": return "🥚";
+        case "Vegan": return "🥦";
+        case "Mixed": return "🍲";
+        default: return "🍱";
+      }
+    }
+
+    function getCuisineEmoji(cuisine) {
+      switch (cuisine) {
+        case "Chinese": return "🥡";
+        case "Japanese": return "🍱";
+        case "Korean": return "🔥";
+        case "Thai": return "🌶️";
+        case "Vietnamese": return "🍜";
+        case "Indian": return "🪔";
+        case "Mediterranean": return "🌿";
+        case "Mexican": return "🌮";
+        case "Fusion": return "✨";
+        default: return "🍽️";
+      }
+    }
+
+    function generateInstructions(recipe) {
+      const lines = [];
+      lines.push(`Rinse ${recipe.riceAmount} and add it to the inner pot.`);
+      lines.push(`Add liquid: ${recipe.liquid}.`);
+      lines.push(`Add protein: ${recipe.protein}.`);
+      lines.push(`Arrange vegetables on top: ${recipe.veggies}.`);
+      lines.push(`Add sauces and seasonings: ${recipe.sauces}.`);
+      lines.push(`Close the lid, choose the "${recipe.setting}" setting on your cooker, and start.`);
+      lines.push("When it finishes, let it rest on Keep Warm for 5–10 minutes, then fluff the rice and adjust seasoning to taste.");
+      return "<ol><li>" + lines.join("</li><li>") + "</li></ol>";
+    }
+
+    function renderRecipeDetail(recipe) {
+      const detail = document.getElementById("recipeDetail");
+      if (!recipe) {
+        detail.innerHTML = "<p>No recipes found for the current filters.</p>";
+        return;
+      }
+
+      const tagsHtml = (recipe.tags || [])
+        .map(tag => `<span class="tag-badge">${tag}</span>`)
+        .join("");
+
+      const proteinEmoji = getProteinEmoji(recipe.proteinType);
+      const cuisineEmoji = getCuisineEmoji(recipe.cuisine);
+
+      detail.innerHTML = `
+        <h2><span>${proteinEmoji}</span> ${recipe.name}</h2>
+        <div class="detail-subtitle">${cuisineEmoji} ${recipe.cuisine} • ${recipe.proteinType} • ${recipe.riceType} rice</div>
+
+        <div class="meta-row">
+          <span class="emoji-meta">
+            <span class="emoji">🍚</span>
+            <span>${recipe.riceAmount}</span>
+          </span>
+          <span class="emoji-meta">
+            <span class="emoji">⚙️</span>
+            <span>${recipe.setting} setting</span>
+          </span>
+        </div>
+
+        <div class="tag-badges">${tagsHtml}</div>
+
+        <div class="section-label">Ingredients</div>
+        <div class="info-row">
+          <strong>Rice</strong>
+          <span>🍚 ${recipe.riceAmount}</span>
+        </div>
+        <div class="info-row">
+          <strong>Liquid</strong>
+          <span>💧 ${recipe.liquid}</span>
+        </div>
+        <div class="info-row">
+          <strong>Protein</strong>
+          <span>${proteinEmoji} ${recipe.protein}</span>
+        </div>
+        <div class="info-row">
+          <strong>Veggies</strong>
+          <span>🥕 ${recipe.veggies}</span>
+        </div>
+        <div class="info-row">
+          <strong>Sauces</strong>
+          <span>🧂 ${recipe.sauces}</span>
+        </div>
+
+        <div class="section-label">Method</div>
+        ${generateInstructions(recipe)}
+      `;
+    }
+
+    function applyFilters() {
+      const searchInput = document.getElementById("searchInput");
+      const searchQuery = searchInput.value.trim().toLowerCase();
+
+      const proteinActive = document
+        .querySelector("#proteinChips .chip.active")
+        .getAttribute("data-value");
+      const cuisineActive = document
+        .querySelector("#cuisineChips .chip.active")
+        .getAttribute("data-value");
+
+      const filtered = recipes.filter(r => {
+        const haystack = (
+          r.name +
+          " " +
+          r.protein +
+          " " +
+          r.veggies +
+          " " +
+          r.sauces +
+          " " +
+          (r.tags || []).join(" ")
+        ).toLowerCase();
+
+        const matchesQuery = !searchQuery || haystack.includes(searchQuery);
+        const matchesProtein = proteinActive === "all" || r.proteinType === proteinActive;
+        const matchesCuisine = cuisineActive === "all" || r.cuisine === cuisineActive;
+
+        return matchesQuery && matchesProtein && matchesCuisine;
+      });
+
+      return filtered;
+    }
+
+    function renderRecipeList() {
+      const listEl = document.getElementById("recipeList");
+      const filtered = applyFilters();
+      const resultCount = document.getElementById("resultCount");
+
+      resultCount.textContent =
+        filtered.length === recipes.length
+          ? `${filtered.length} recipes`
+          : `${filtered.length} of ${recipes.length}`;
+
+      const existingHeader = listEl.querySelector(".list-header");
+      listEl.innerHTML = "";
+      if (existingHeader) listEl.appendChild(existingHeader);
+
+      if (!filtered.length) {
+        const msg = document.createElement("p");
+        msg.style.fontSize = "0.9rem";
+        msg.style.color = "#6b7280";
+        msg.style.padding = "8px";
+        msg.textContent = "No recipes match your search and filters.";
+        listEl.appendChild(msg);
+        renderRecipeDetail(null);
+        return;
+      }
+
+      filtered.forEach(recipe => {
+        const item = document.createElement("div");
+        item.className = "recipe-list-item";
+        item.dataset.id = recipe.id;
+
+        const titleRow = document.createElement("div");
+        titleRow.className = "recipe-title-row";
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "recipe-name";
+        nameEl.textContent = recipe.name;
+
+        const proteinPill = document.createElement("div");
+        proteinPill.className = "protein-pill";
+        proteinPill.innerHTML = `<span>${getProteinEmoji(
+          recipe.proteinType
+        )}</span><span>${recipe.proteinType}</span>`;
+
+        titleRow.appendChild(nameEl);
+        titleRow.appendChild(proteinPill);
+
+        const meta = document.createElement("div");
+        meta.className = "small-meta";
+        meta.textContent = `${recipe.cuisine} • ${recipe.riceType} • ${recipe.setting}`;
+
+        item.appendChild(titleRow);
+        item.appendChild(meta);
+
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".recipe-list-item")
+            .forEach(el => el.classList.remove("active"));
+          item.classList.add("active");
+          renderRecipeDetail(recipe);
+        });
+
+        listEl.appendChild(item);
+      });
+
+      const firstItem = listEl.querySelector(".recipe-list-item");
+      if (firstItem) {
+        firstItem.classList.add("active");
+        const firstId = parseInt(firstItem.dataset.id, 10);
+        const firstRecipe = filtered.find(r => r.id === firstId);
+        renderRecipeDetail(firstRecipe);
+      }
+    }
+
+    function setupChips(groupId) {
+      const group = document.getElementById(groupId);
+      group.addEventListener("click", e => {
+        const btn = e.target.closest(".chip");
+        if (!btn) return;
+        group.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        renderRecipeList();
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("input", renderRecipeList);
+
+      setupChips("proteinChips");
+      setupChips("cuisineChips");
+      renderRecipeList();
+    });
+  </script>
+</body>
+</html>
