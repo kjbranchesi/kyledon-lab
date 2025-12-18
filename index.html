@@ -19,6 +19,15 @@
       --radius-pill: 999px;
       --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
       --shadow-light: 0 8px 20px rgba(15, 23, 42, 0.06);
+
+      /* Typography Scale - 1.2 ratio for readability */
+      --text-xs: 0.75rem;    /* 12px - badges, captions */
+      --text-sm: 0.875rem;   /* 14px - metadata */
+      --text-base: 1rem;     /* 16px - body */
+      --text-lg: 1.125rem;   /* 18px - section headers */
+      --text-xl: 1.25rem;    /* 20px - subsection */
+      --text-2xl: 1.5rem;    /* 24px - page title */
+      --text-3xl: 1.875rem;  /* 30px - hero */
     }
 
     * {
@@ -211,11 +220,13 @@
 
     .controls input {
       width: 100%;
-      padding: 8px 10px 8px 30px;
+      padding: 12px 10px 12px 30px;
+      min-height: 48px;
       border-radius: var(--radius-pill);
       border: 1px solid rgba(148, 163, 184, 0.35);
       background: rgba(248, 250, 252, 0.9);
-      font-size: 0.88rem;
+      font-size: 16px; /* Prevents iOS zoom on focus */
+      -webkit-appearance: none;
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease,
         background 0.2s ease;
@@ -243,7 +254,9 @@
 
     .chip {
       border-radius: var(--radius-pill);
-      padding: 4px 10px;
+      padding: 10px 16px;
+      min-height: 44px;
+      min-width: 44px;
       border: 1px solid rgba(148, 163, 184, 0.35);
       background: rgba(246, 248, 252, 0.9);
       cursor: pointer;
@@ -253,6 +266,14 @@
       align-items: center;
       gap: 5px;
       white-space: nowrap;
+    }
+
+    /* Desktop can be tighter */
+    @media (min-width: 768px) {
+      .chip {
+        padding: 6px 12px;
+        min-height: 36px;
+      }
     }
 
     .chip span.emoji {
@@ -290,6 +311,138 @@
     @media (max-width: 860px) {
       .layout {
         grid-template-columns: 1fr;
+        position: relative;
+        min-height: 100vh;
+      }
+
+      #recipeList {
+        /* List stays in view at top */
+        position: relative;
+        max-height: 60vh;
+        z-index: 1;
+      }
+
+      #recipeDetail {
+        /* Bottom sheet that slides up */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 85vh;
+        z-index: 100;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        overflow-y: auto;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        /* iOS-style momentum scrolling */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
+      }
+
+      /* Smooth scroll snap for better UX */
+      #recipeDetail::-webkit-scrollbar {
+        width: 0;
+        display: none; /* Hide scrollbar on mobile */
+      }
+
+      #recipeDetail.show {
+        transform: translateY(0);
+      }
+
+      /* Drag handle area - clickable to expand */
+      .sheet-handle {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        background: var(--card-bg);
+      }
+
+      .sheet-handle::after {
+        content: '';
+        width: 40px;
+        height: 4px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 2px;
+        transition: background 0.2s;
+      }
+
+      .sheet-handle:hover::after {
+        background: rgba(0,0,0,0.3);
+      }
+
+      /* Remove old ::before handle */
+      #recipeDetail::before {
+        display: none;
+      }
+
+      /* Dragging state */
+      #recipeDetail.dragging {
+        transition: none; /* Disable transition during drag */
+      }
+
+      /* Height states */
+      #recipeDetail.half-height {
+        max-height: 50vh;
+      }
+
+      #recipeDetail.full-height {
+        max-height: 95vh;
+      }
+
+      /* Add overlay behind bottom sheet */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.3);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        z-index: 99;
+      }
+
+      body.sheet-open::after {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* Close button for bottom sheet */
+      .sheet-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.1);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #666;
+        z-index: 10;
+        transition: background 0.2s;
+      }
+
+      .sheet-close:hover {
+        background: rgba(0,0,0,0.15);
       }
     }
 
@@ -490,8 +643,8 @@
 
     #recipeDetail h2 {
       margin-top: 0;
-      margin-bottom: 2px;
-      font-size: 1.3rem;
+      margin-bottom: 8px;
+      font-size: var(--text-2xl);
       letter-spacing: -0.01em;
       display: flex;
       align-items: center;
@@ -567,14 +720,47 @@
     }
 
     ol {
-      padding-left: 20px;
-      margin-top: 4px;
-      margin-bottom: 0;
+      padding-left: 24px;
+      margin-top: 12px;
+      margin-bottom: 16px;
     }
 
     ol li {
-      margin: 3px 0;
-      line-height: 1.4;
+      margin: 12px 0;
+      line-height: 1.6;
+      padding-left: 8px;
+      position: relative;
+    }
+
+    ol li::marker {
+      font-weight: 700;
+      color: #ff6b6b;
+    }
+
+    /* Add visual separation between steps */
+    ol li:not(:last-child) {
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    /* Make critical cooking step stand out */
+    ol li:nth-child(6) { /* "Close the lid" step */
+      background: rgba(255, 235, 225, 0.5);
+      padding: 12px;
+      margin: 16px -12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 140, 100, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      ol {
+        padding-left: 20px;
+      }
+
+      ol li {
+        font-size: 0.95rem;
+        margin: 16px 0;
+      }
     }
 
     footer {
@@ -2496,11 +2682,20 @@
           </div>
         `;
         floatingMascot.classList.remove("show");
+        // Close bottom sheet on mobile
+        detail.classList.remove("show");
+        document.body.classList.remove("sheet-open");
         return;
       }
 
       // Show floating mascot when browsing recipes
       floatingMascot.classList.add("show");
+
+      // Open bottom sheet on mobile
+      setTimeout(() => {
+        detail.classList.add("show");
+        document.body.classList.add("sheet-open");
+      }, 50);
 
       // Add sparkle animation to detail panel
       detail.classList.add("sparkle");
@@ -2521,6 +2716,8 @@
           : "Half batch (1 rice-cooker cup)";
 
       detail.innerHTML = `
+        <div class="sheet-handle" onclick="toggleSheetHeight()" title="Tap to expand/collapse"></div>
+        <button class="sheet-close" onclick="closeBottomSheet()" aria-label="Close recipe">✕</button>
         <h2><span>${proteinEmoji}</span> ${recipe.name}</h2>
         <div class="detail-subtitle">${cuisineEmoji} ${recipe.cuisine} • ${recipe.proteinType} • ${recipe.riceType} rice</div>
 
@@ -2566,6 +2763,11 @@
         <div class="section-label">Method</div>
         ${generateInstructions(recipe, currentBatchSize)}
       `;
+
+      // Update URL hash for sharing
+      if (recipe && !isWelcomeMode) {
+        window.location.hash = `recipe-${recipe.id}`;
+      }
     }
 
     function applyFilters() {
@@ -2600,6 +2802,107 @@
       });
 
       return filtered;
+    }
+
+    function closeBottomSheet() {
+      const detail = document.getElementById("recipeDetail");
+      detail.classList.remove("show");
+      document.body.classList.remove("sheet-open");
+
+      // Deselect recipe in list
+      document.querySelectorAll('.recipe-list-item').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Clear hash
+      if (window.location.hash) {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+      }
+
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+
+    // Toggle sheet height between half and full
+    function toggleSheetHeight() {
+      const detail = document.getElementById("recipeDetail");
+      const isFullHeight = detail.classList.contains('full-height');
+
+      if (isFullHeight) {
+        detail.classList.remove('full-height');
+        detail.classList.add('half-height');
+      } else {
+        detail.classList.remove('half-height');
+        detail.classList.add('full-height');
+      }
+
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+
+    // Swipe-to-close gesture handler
+    function initializeSwipeGesture() {
+      const detail = document.getElementById("recipeDetail");
+      let startY = 0;
+      let currentY = 0;
+      let isDragging = false;
+      let isAtTop = false;
+
+      detail.addEventListener('touchstart', (e) => {
+        // Only allow drag when scrolled to top
+        isAtTop = detail.scrollTop === 0;
+        if (isAtTop) {
+          startY = e.touches[0].clientY;
+          isDragging = true;
+          detail.classList.add('dragging');
+        }
+      });
+
+      detail.addEventListener('touchmove', (e) => {
+        if (!isDragging || !isAtTop) return;
+
+        currentY = e.touches[0].clientY;
+        const deltaY = currentY - startY;
+
+        // Only allow dragging down (positive deltaY)
+        if (deltaY > 0) {
+          e.preventDefault(); // Prevent scroll
+          const newTransform = `translateY(${deltaY}px)`;
+          detail.style.transform = newTransform;
+
+          // Update overlay opacity based on drag distance
+          const opacity = Math.max(0, 0.3 - (deltaY / 1000));
+          document.body.style.setProperty('--overlay-opacity', opacity);
+        }
+      });
+
+      detail.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+
+        const deltaY = currentY - startY;
+        detail.classList.remove('dragging');
+
+        // If dragged down more than 150px, close
+        if (deltaY > 150) {
+          // Haptic feedback
+          if (navigator.vibrate) {
+            navigator.vibrate(10);
+          }
+          closeBottomSheet();
+          detail.style.transform = '';
+        } else {
+          // Snap back
+          detail.style.transform = '';
+        }
+
+        isDragging = false;
+        startY = 0;
+        currentY = 0;
+      });
     }
 
     function renderRecipeList() {
@@ -2741,6 +3044,68 @@
       setupChips("cuisineChips");
       setupBatchChips();
       renderRecipeList();
+
+      // Handle URL hash routing for recipe sharing
+      function handleHashChange() {
+        const hash = window.location.hash;
+        if (hash.startsWith('#recipe-')) {
+          const id = parseInt(hash.replace('#recipe-', ''), 10);
+          const recipe = recipes.find(r => r.id === id);
+          if (recipe) {
+            isWelcomeMode = false;
+            renderRecipeList();
+            // Highlight the recipe in list
+            const item = document.querySelector(`.recipe-list-item[data-id="${id}"]`);
+            if (item) {
+              document.querySelectorAll('.recipe-list-item').forEach(el => {
+                el.classList.remove('active');
+              });
+              item.classList.add('active');
+              item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            renderRecipeDetail(recipe);
+          }
+        }
+      }
+
+      // Listen for hash changes
+      window.addEventListener('hashchange', handleHashChange);
+
+      // Check hash on initial load
+      if (window.location.hash) {
+        handleHashChange();
+      }
+
+      // Close bottom sheet when clicking overlay
+      document.body.addEventListener('click', (e) => {
+        if (e.target === document.body && document.body.classList.contains('sheet-open')) {
+          closeBottomSheet();
+        }
+      });
+
+      // Also close on overlay ::after pseudo-element click
+      document.addEventListener('click', (e) => {
+        if (document.body.classList.contains('sheet-open')) {
+          const detail = document.getElementById('recipeDetail');
+          const rect = detail.getBoundingClientRect();
+          const clickY = e.clientY;
+
+          // If click is above the bottom sheet, close it
+          if (clickY < rect.top && !detail.contains(e.target)) {
+            closeBottomSheet();
+          }
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.body.classList.contains('sheet-open')) {
+          closeBottomSheet();
+        }
+      });
+
+      // Initialize swipe gesture
+      initializeSwipeGesture();
     });
   </script>
 </body>
