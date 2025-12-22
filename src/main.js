@@ -1,4 +1,3 @@
-import "./styles.css";
 import { recipes } from "./data/recipes.js";
 
 const state = {
