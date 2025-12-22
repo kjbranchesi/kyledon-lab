@@ -24,6 +24,7 @@
 ## Deploy
 Choose one:
 - GitHub Pages (recommended): deploy the `dist/` output from `npm run build`.
+- GitHub Pages sanity check: the deployed site should load `assets/index-*.js` (not `/src/main.js`), and `manifest.webmanifest` should return 200.
 - Netlify / Vercel: build command `npm run build`, publish directory `dist`.
 
 ## Device QA (must-do)
