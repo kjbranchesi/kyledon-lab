@@ -945,6 +945,58 @@ function buildChips(options, active, type) {
     .join("");
 }
 
+function buildFilterDropdown(label, options, active, type) {
+  const activeOption = options.find(([value]) => value === active);
+  const displayValue = activeOption ? activeOption[2] : "All";
+  const hasSelection = active !== "all" && active !== "2"; // Not default values
+
+  return `
+    <div class="filter-dropdown" data-dropdown="${type}">
+      <button class="filter-dropdown-button ${hasSelection ? "has-selection" : ""}" data-dropdown-toggle="${type}">
+        <span class="filter-dropdown-label">${label}:</span>
+        <span class="filter-dropdown-value">${displayValue}</span>
+        <span class="filter-dropdown-icon">▼</span>
+      </button>
+      <div class="filter-dropdown-menu" data-dropdown-menu="${type}">
+        ${buildChips(options, active, type)}
+      </div>
+    </div>
+  `;
+}
+
+function buildActiveFilters() {
+  const activeFilters = [];
+
+  if (state.protein !== "all") {
+    const option = proteinOptions.find(([v]) => v === state.protein);
+    if (option) activeFilters.push({ type: "protein", label: option[2], emoji: option[1] });
+  }
+
+  if (state.cuisine !== "all") {
+    const option = cuisineOptions.find(([v]) => v === state.cuisine);
+    if (option) activeFilters.push({ type: "cuisine", label: option[2], emoji: option[1] });
+  }
+
+  if (state.spice !== "all") {
+    const option = spiceOptions.find(([v]) => v === state.spice);
+    if (option) activeFilters.push({ type: "spice", label: option[2], emoji: option[1] });
+  }
+
+  if (activeFilters.length === 0) return "";
+
+  return `
+    <div class="active-filters">
+      <span class="active-filters-label">Active:</span>
+      ${activeFilters.map(f => `
+        <span class="active-filter-chip">
+          ${f.emoji} ${f.label}
+          <button data-clear-filter="${f.type}" aria-label="Clear ${f.label} filter">✕</button>
+        </span>
+      `).join("")}
+    </div>
+  `;
+}
+
 function buildConstraintBadges(constraints) {
   const c = normalizeConstraints(constraints);
   const parts = [];
@@ -1081,11 +1133,21 @@ function buildWeekPlanSection() {
           <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
         </div>
         <div class="week-plan-actions">
-          <button class="ghost" data-plan-use-current title="Apply existing constraints. Your preferences are not ignored.">Use current filters</button>
-          <button class="chip active" data-plan-reshuffle title="Regenerate selections. Satisfaction is not guaranteed but probable.">Reshuffle</button>
-          <button class="ghost" data-plan-shopping title="A not unsubstantial list of required provisions.">Shopping list</button>
-          <button class="ghost" data-plan-share title="Distribute your weekly plan. Judgment from recipients is not our concern.">Share</button>
-          <button class="ghost" data-plan-clear title="Restart the process. Past decisions need not constrain future ones.">Clear</button>
+          <button class="week-plan-primary" data-plan-reshuffle title="Regenerate selections. Satisfaction is not guaranteed but probable.">
+            🎲 Reshuffle
+          </button>
+          <button class="week-plan-icon-btn" data-plan-use-current title="Apply existing constraints. Your preferences are not ignored." aria-label="Use current filters">
+            ⚙️
+          </button>
+          <button class="week-plan-icon-btn" data-plan-shopping title="A not unsubstantial list of required provisions." aria-label="Shopping list">
+            🛒
+          </button>
+          <button class="week-plan-icon-btn" data-plan-share title="Distribute your weekly plan. Judgment from recipients is not our concern." aria-label="Share">
+            📤
+          </button>
+          <button class="week-plan-icon-btn week-plan-icon-btn-danger" data-plan-clear title="Restart the process. Past decisions need not constrain future ones." aria-label="Clear">
+            🗑️
+          </button>
         </div>
       </div>
 
@@ -1762,13 +1824,26 @@ function render() {
           <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked" title="Evidence of past ambitions. The outcomes were not uniform.">✅ Cooked (${cookedCount})</button>
           <button class="chip" data-surprise title="For the algorithmically adventurous. The risk is not zero.">🎲 Surprise Me!</button>
         </div>
-        <div class="chip-row" aria-hidden="true" style="${mobile ? "display:none" : "display:flex; gap:6px; flex-wrap:wrap; padding:4px 0;"}">
-          ${buildChips(proteinOptions, state.protein, "protein")}
-          ${buildChips(cuisineOptions, state.cuisine, "cuisine")}
-          ${buildChips(spiceOptions, state.spice, "spice")}
-          <button class="chip ${state.batch === "2" ? "active" : ""}" data-batch="2">🍚 2 cups</button>
-          <button class="chip ${state.batch === "1" ? "active" : ""}" data-batch="1">🍙 1 cup</button>
+      </section>
+
+      <section class="surface filter-tabs-section" style="${mobile ? "display:none" : "display:block"}">
+        <div class="filter-tabs">
+          ${buildFilterDropdown("Protein", proteinOptions, state.protein, "protein")}
+          ${buildFilterDropdown("Cuisine", cuisineOptions, state.cuisine, "cuisine")}
+          ${buildFilterDropdown("Spice", spiceOptions, state.spice, "spice")}
+          <div class="filter-dropdown" data-dropdown="batch">
+            <button class="filter-dropdown-button ${state.batch !== "2" ? "has-selection" : ""}" data-dropdown-toggle="batch">
+              <span class="filter-dropdown-label">Batch:</span>
+              <span class="filter-dropdown-value">${state.batch === "2" ? "2 cups" : "1 cup"}</span>
+              <span class="filter-dropdown-icon">▼</span>
+            </button>
+            <div class="filter-dropdown-menu" data-dropdown-menu="batch">
+              <button class="chip ${state.batch === "2" ? "active" : ""}" data-batch="2">🍚 2 cups</button>
+              <button class="chip ${state.batch === "1" ? "active" : ""}" data-batch="1">🍙 1 cup</button>
+            </div>
+          </div>
         </div>
+        ${buildActiveFilters()}
       </section>
 
       ${buildWeekPlanSection()}
@@ -2388,6 +2463,57 @@ function render() {
       state.selectionSource = "plan";
       setRecipeHash(id);
       if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
+      render();
+    });
+  });
+
+  // Filter dropdown toggles
+  app.querySelectorAll("[data-dropdown-toggle]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const dropdown = btn.closest(".filter-dropdown");
+      const menu = dropdown.querySelector(".filter-dropdown-menu");
+      const isOpen = menu.classList.contains("open");
+
+      // Close all other dropdowns
+      app.querySelectorAll(".filter-dropdown-menu.open").forEach(m => {
+        if (m !== menu) m.classList.remove("open");
+      });
+      app.querySelectorAll(".filter-dropdown.open").forEach(d => {
+        if (d !== dropdown) d.classList.remove("open");
+      });
+
+      // Toggle current dropdown
+      if (isOpen) {
+        menu.classList.remove("open");
+        dropdown.classList.remove("open");
+      } else {
+        menu.classList.add("open");
+        dropdown.classList.add("open");
+      }
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".filter-dropdown")) {
+      app.querySelectorAll(".filter-dropdown-menu.open").forEach(m => m.classList.remove("open"));
+      app.querySelectorAll(".filter-dropdown.open").forEach(d => d.classList.remove("open"));
+    }
+  });
+
+  // Clear individual filters
+  app.querySelectorAll("[data-clear-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const type = btn.getAttribute("data-clear-filter");
+      if (type === "protein") state.protein = "all";
+      if (type === "cuisine") state.cuisine = "all";
+      if (type === "spice") state.spice = "all";
+      if (isMobile() && state.selectedId) {
+        state.selectedId = null;
+        state.selectionSource = "none";
+        clearRecipeHash();
+      }
       render();
     });
   });
