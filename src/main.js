@@ -8,7 +8,11 @@ const state = {
   spice: "all",
   batch: "2",
   selectedId: null,
+  selectionSource: "none", // "none" | "list" | "hash" | "plan"
+  ignoreNextHashChange: false,
   showFilters: false,
+  weeklyPlan: null,
+  planAnimation: null, // { type: "generate"|"shuffle"|"swap", slotIndex?: number }
 };
 
 const proteinOptions = [
@@ -50,17 +54,124 @@ mediaQuery.addEventListener("change", () => render());
 
 const app = document.getElementById("app");
 
+const WEEK_PLAN_STORAGE_PREFIX = "riceLab.weekPlan.";
+const WEEK_PLAN_SLOTS = ["Pick 1", "Pick 2", "Pick 3"];
+
+function formatLocalDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getWeekStart(date = new Date()) {
+  const d = new Date(date);
+  const day = (d.getDay() + 6) % 7; // Monday=0
+  d.setDate(d.getDate() - day);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getCurrentWeekKey() {
+  return formatLocalDateKey(getWeekStart());
+}
+
+function getWeekLabel(weekStart) {
+  return `Week of ${weekStart.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}`;
+}
+
+function storageGet(key) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function storageSet(key, value) {
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function storageRemove(key) {
+  try {
+    window.localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function loadWeekPlan(weekKey) {
+  const raw = storageGet(`${WEEK_PLAN_STORAGE_PREFIX}${weekKey}`);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || parsed.weekKey !== weekKey) return null;
+    if (!Array.isArray(parsed.slots) || parsed.slots.length !== 3) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function saveWeekPlan(plan) {
+  if (!plan?.weekKey) return false;
+  return storageSet(`${WEEK_PLAN_STORAGE_PREFIX}${plan.weekKey}`, JSON.stringify(plan));
+}
+
+function removeWeekPlan(weekKey) {
+  return storageRemove(`${WEEK_PLAN_STORAGE_PREFIX}${weekKey}`);
+}
+
+function ensureCurrentWeekPlanLoaded() {
+  const weekKey = getCurrentWeekKey();
+  if (state.weeklyPlan?.weekKey === weekKey) return;
+  state.weeklyPlan = loadWeekPlan(weekKey);
+}
+
+function deepClone(value) {
+  if (typeof window.structuredClone === "function") {
+    return window.structuredClone(value);
+  }
+  return JSON.parse(JSON.stringify(value));
+}
+
 function syncFromHash() {
   const hash = window.location.hash;
   if (hash.startsWith("#recipe-")) {
     const id = parseInt(hash.replace("#recipe-", ""), 10);
     if (!Number.isNaN(id)) {
       state.selectedId = id;
+      state.selectionSource = "hash";
     }
+    return;
+  }
+
+  if (state.selectionSource === "hash") {
+    state.selectedId = null;
+    state.selectionSource = "none";
   }
 }
 
+function setRecipeHash(id) {
+  state.ignoreNextHashChange = true;
+  window.location.hash = `recipe-${id}`;
+}
+
+function clearRecipeHash() {
+  history.pushState("", document.title, window.location.pathname + window.location.search);
+}
+
 window.addEventListener("hashchange", () => {
+  if (state.ignoreNextHashChange) {
+    state.ignoreNextHashChange = false;
+    return;
+  }
   syncFromHash();
   render();
 });
@@ -152,6 +263,230 @@ function getSpiceLevel(recipe) {
     return { label: "Medium", score: 1 };
   }
   return { label: "Mild", score: 0 };
+}
+
+function normalizeConstraints(constraints) {
+  return {
+    protein: constraints?.protein || "all",
+    cuisine: constraints?.cuisine || "all",
+    spice: constraints?.spice || "all",
+  };
+}
+
+function getConstraintsFromState() {
+  return { protein: state.protein, cuisine: state.cuisine, spice: state.spice };
+}
+
+function getCandidateRecipesForConstraints(constraints) {
+  const c = normalizeConstraints(constraints);
+  return recipes.filter((r) => {
+    if (c.protein !== "all" && r.proteinType !== c.protein) return false;
+    if (c.cuisine !== "all" && r.cuisine !== c.cuisine) return false;
+    if (c.spice !== "all" && getSpiceLevel(r).label.toLowerCase() !== c.spice) return false;
+    return true;
+  });
+}
+
+function getLastWeekKey(weekKey) {
+  const [year, month, day] = weekKey.split("-").map((n) => parseInt(n, 10));
+  if (!year || !month || !day) return null;
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() - 7);
+  return formatLocalDateKey(date);
+}
+
+function getLastWeekRecipeIds(currentWeekKey) {
+  const lastWeekKey = getLastWeekKey(currentWeekKey);
+  if (!lastWeekKey) return new Set();
+  const lastPlan = loadWeekPlan(lastWeekKey);
+  const ids = (lastPlan?.slots || [])
+    .map((s) => s?.id)
+    .filter((id) => typeof id === "number");
+  return new Set(ids);
+}
+
+function pickBestCandidate(candidates, selected) {
+  if (!candidates.length) return null;
+
+  const cuisines = new Set(selected.map((r) => r.cuisine));
+  const proteins = new Set(selected.map((r) => r.proteinType));
+  const spices = new Set(selected.map((r) => getSpiceLevel(r).label));
+
+  let bestScore = -Infinity;
+  let best = [];
+
+  for (const recipe of candidates) {
+    let score = 0;
+    if (!cuisines.has(recipe.cuisine)) score += 3;
+    if (!proteins.has(recipe.proteinType)) score += 2;
+    if (!spices.has(getSpiceLevel(recipe).label)) score += 1;
+
+    score += Math.random() * 0.01; // tie-break
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = [recipe];
+    } else if (Math.abs(score - bestScore) < 0.001) {
+      best.push(recipe);
+    }
+  }
+
+  if (!best.length) return null;
+  return best[Math.floor(Math.random() * best.length)];
+}
+
+function buildWeekPlan(weekKey, constraints, existingPlan = null) {
+  const normalizedConstraints = normalizeConstraints(constraints);
+  const lastWeekIds = getLastWeekRecipeIds(weekKey);
+
+  let candidates = getCandidateRecipesForConstraints(normalizedConstraints);
+  let usedFallback = false;
+  if (candidates.length < 3) {
+    candidates = recipes.slice();
+    usedFallback = true;
+  }
+
+  const candidatesWithoutLastWeek = candidates.filter((r) => !lastWeekIds.has(r.id));
+  if (candidatesWithoutLastWeek.length >= 3) {
+    candidates = candidatesWithoutLastWeek;
+  }
+
+  const baseSlots = existingPlan?.slots?.length === 3 ? existingPlan.slots : [{}, {}, {}];
+  const nextSlots = baseSlots.map((slot) => ({
+    id: typeof slot.id === "number" ? slot.id : null,
+    locked: Boolean(slot.locked),
+    swaps: typeof slot.swaps === "number" ? slot.swaps : 0,
+  }));
+
+  const selectedRecipes = [];
+  const usedIds = new Set();
+  for (const slot of nextSlots) {
+    if (!slot.locked || typeof slot.id !== "number") continue;
+    const recipe = recipes.find((r) => r.id === slot.id);
+    if (!recipe) continue;
+    selectedRecipes.push(recipe);
+    usedIds.add(recipe.id);
+  }
+
+  let available = candidates.filter((r) => !usedIds.has(r.id));
+  for (let i = 0; i < nextSlots.length; i += 1) {
+    const slot = nextSlots[i];
+    if (slot.locked && typeof slot.id === "number") continue;
+
+    const chosen = pickBestCandidate(available, selectedRecipes);
+    if (!chosen) {
+      slot.id = null;
+      continue;
+    }
+
+    slot.id = chosen.id;
+    usedIds.add(chosen.id);
+    selectedRecipes.push(chosen);
+    available = available.filter((r) => r.id !== chosen.id);
+  }
+
+  const [year, month, day] = weekKey.split("-").map((n) => parseInt(n, 10));
+  const weekStart = new Date(year, month - 1, day);
+  weekStart.setHours(0, 0, 0, 0);
+  const plan = {
+    weekKey,
+    weekLabel: getWeekLabel(weekStart),
+    createdAt: existingPlan?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    constraints: normalizedConstraints,
+    usedFallback,
+    shuffleCount: typeof existingPlan?.shuffleCount === "number" ? existingPlan.shuffleCount : 0,
+    slots: nextSlots,
+  };
+
+  return plan;
+}
+
+function setWeekPlan(plan, animation) {
+  state.weeklyPlan = plan;
+  state.planAnimation = animation || null;
+  saveWeekPlan(plan);
+  render();
+
+  if (state.planAnimation) {
+    window.setTimeout(() => {
+      state.planAnimation = null;
+      render();
+    }, 360);
+  }
+}
+
+function generateCurrentWeekPlanFromState() {
+  const weekKey = getCurrentWeekKey();
+  const constraints = getConstraintsFromState();
+  const plan = buildWeekPlan(weekKey, constraints, null);
+  setWeekPlan(plan, { type: "generate" });
+}
+
+function reshuffleCurrentWeekPlan(plan, constraintsOverride = null) {
+  const weekKey = getCurrentWeekKey();
+  const constraints = constraintsOverride ? normalizeConstraints(constraintsOverride) : plan?.constraints || getConstraintsFromState();
+  const basePlan = plan && plan.weekKey === weekKey ? plan : null;
+  const next = buildWeekPlan(weekKey, constraints, basePlan);
+  next.shuffleCount = (basePlan?.shuffleCount || 0) + 1;
+  setWeekPlan(next, { type: "shuffle" });
+}
+
+function swapCurrentWeekPlanSlot(plan, slotIndex) {
+  const weekKey = getCurrentWeekKey();
+  if (!plan || plan.weekKey !== weekKey) return;
+  if (slotIndex < 0 || slotIndex > 2) return;
+  if (plan.slots?.[slotIndex]?.locked) return;
+
+  const constraints = plan.constraints || getConstraintsFromState();
+  const lastWeekIds = getLastWeekRecipeIds(weekKey);
+
+  let candidates = getCandidateRecipesForConstraints(constraints);
+  if (candidates.length < 3) candidates = recipes.slice();
+
+  const candidatesWithoutLastWeek = candidates.filter((r) => !lastWeekIds.has(r.id));
+  if (candidatesWithoutLastWeek.length >= 3) {
+    candidates = candidatesWithoutLastWeek;
+  }
+
+  const otherIds = new Set(
+    plan.slots
+      .map((s, idx) => (idx === slotIndex ? null : s?.id))
+      .filter((id) => typeof id === "number")
+  );
+
+  const selectedOther = recipes.filter((r) => otherIds.has(r.id));
+  const available = candidates.filter((r) => !otherIds.has(r.id));
+  const chosen = pickBestCandidate(available, selectedOther);
+  if (!chosen) return;
+
+  const next = deepClone(plan);
+  next.updatedAt = new Date().toISOString();
+  next.slots[slotIndex].id = chosen.id;
+  next.slots[slotIndex].swaps = (next.slots[slotIndex].swaps || 0) + 1;
+  setWeekPlan(next, { type: "swap", slotIndex });
+}
+
+function toggleCurrentWeekPlanLock(plan, slotIndex) {
+  const weekKey = getCurrentWeekKey();
+  if (!plan || plan.weekKey !== weekKey) return;
+  if (slotIndex < 0 || slotIndex > 2) return;
+  const next = deepClone(plan);
+  next.updatedAt = new Date().toISOString();
+  next.slots[slotIndex].locked = !next.slots[slotIndex].locked;
+  setWeekPlan(next, { type: "swap", slotIndex });
+}
+
+function clearCurrentWeekPlan() {
+  const weekKey = getCurrentWeekKey();
+  removeWeekPlan(weekKey);
+  state.weeklyPlan = null;
+  state.planAnimation = { type: "shuffle" };
+  render();
+  window.setTimeout(() => {
+    state.planAnimation = null;
+    render();
+  }, 240);
 }
 
 function getChefNotes(recipe) {
@@ -397,6 +732,134 @@ function buildChips(options, active, type) {
     .join("");
 }
 
+function buildConstraintBadges(constraints) {
+  const c = normalizeConstraints(constraints);
+  const parts = [];
+  if (c.protein !== "all") parts.push(`Protein: ${c.protein}`);
+  if (c.cuisine !== "all") parts.push(`Cuisine: ${c.cuisine}`);
+  if (c.spice !== "all") parts.push(`Spice: ${c.spice}`);
+
+  if (!parts.length) {
+    return `<span class="badge">No constraints</span>`;
+  }
+
+  return parts.map((p) => `<span class="badge">${p}</span>`).join("");
+}
+
+function buildWeekPlanSection() {
+  const weekKey = getCurrentWeekKey();
+  const plan = state.weeklyPlan?.weekKey === weekKey ? state.weeklyPlan : null;
+  const weekStart = getWeekStart();
+  const weekLabel = getWeekLabel(weekStart);
+
+  const animationClass = state.planAnimation ? `animate-${state.planAnimation.type}` : "";
+
+  if (!plan) {
+    return `
+      <section class="week-plan ${animationClass}">
+        <div class="week-plan-header">
+          <div>
+            <div class="week-plan-title">🍱 Weekly Plan</div>
+            <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
+          </div>
+          <button class="chip active" data-plan-generate>Make my week</button>
+        </div>
+        <p class="week-plan-note">Get 3 recipe picks with built-in variety. Swap or lock any slot.</p>
+      </section>
+    `;
+  }
+
+  const badges = buildConstraintBadges(plan.constraints);
+  const fallbackNote = plan.usedFallback
+    ? `<div class="week-plan-warn">Not enough recipes matched your constraints — plan widened to all recipes.</div>`
+    : "";
+
+  const slotsHtml = plan.slots
+    .map((slot, idx) => {
+      const recipe = typeof slot.id === "number" ? recipes.find((r) => r.id === slot.id) : null;
+      const lockedIcon = slot.locked ? "🔒" : "🔓";
+      const swapClass =
+        state.planAnimation?.type === "swap" && state.planAnimation?.slotIndex === idx ? "slot-animate" : "";
+
+      if (!recipe) {
+        return `
+          <div class="plan-slot ${swapClass}">
+            <div class="plan-slot-header">
+              <div class="plan-slot-label">${WEEK_PLAN_SLOTS[idx]}</div>
+              <div class="plan-slot-actions">
+                <button class="icon-button" data-plan-lock="${idx}" aria-label="${slot.locked ? "Unlock" : "Lock"} ${WEEK_PLAN_SLOTS[idx]}">${lockedIcon}</button>
+                <button class="ghost" data-plan-swap="${idx}">Swap</button>
+              </div>
+            </div>
+            <div class="plan-card plan-card-missing">Pick missing — try reshuffle.</div>
+          </div>
+        `;
+      }
+
+      const spice = getSpiceLevel(recipe).label;
+      return `
+        <div class="plan-slot ${swapClass}">
+          <div class="plan-slot-header">
+            <div class="plan-slot-label">${WEEK_PLAN_SLOTS[idx]}</div>
+            <div class="plan-slot-actions">
+              <button class="icon-button" data-plan-lock="${idx}" aria-label="${slot.locked ? "Unlock" : "Lock"} ${WEEK_PLAN_SLOTS[idx]}">${lockedIcon}</button>
+              <button class="ghost" data-plan-swap="${idx}" ${slot.locked ? "disabled" : ""}>Swap</button>
+            </div>
+          </div>
+          <button class="plan-card" data-plan-open="${recipe.id}">
+            <div class="plan-card-title">${getProteinEmoji(recipe.proteinType)} ${recipe.name}</div>
+            <div class="plan-card-meta">${recipe.cuisine} • ${recipe.proteinType} • ${spice}</div>
+          </button>
+        </div>
+      `;
+    })
+    .join("");
+
+  return `
+    <section class="week-plan ${animationClass}">
+      <div class="week-plan-header">
+        <div>
+          <div class="week-plan-title">🍱 Weekly Plan</div>
+          <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
+        </div>
+        <div class="week-plan-actions">
+          <button class="ghost" data-plan-use-current>Use current filters</button>
+          <button class="chip active" data-plan-reshuffle>Reshuffle</button>
+          <button class="ghost" data-plan-share>Share</button>
+          <button class="ghost" data-plan-clear>Clear</button>
+        </div>
+      </div>
+
+      <div class="badge-row">${badges}</div>
+      ${fallbackNote}
+
+      <div class="plan-grid">
+        ${slotsHtml}
+      </div>
+    </section>
+  `;
+}
+
+function buildWeekPlanShareText(plan) {
+  const baseUrl = `${window.location.origin}${window.location.pathname}`;
+  const lines = [];
+  lines.push(`Rice Lab — Weekly Plan`);
+  lines.push(plan.weekLabel || "");
+
+  for (let i = 0; i < (plan.slots?.length || 0); i += 1) {
+    const slot = plan.slots[i];
+    const recipe = typeof slot?.id === "number" ? recipes.find((r) => r.id === slot.id) : null;
+    if (!recipe) continue;
+    const spice = getSpiceLevel(recipe).label;
+    lines.push("");
+    lines.push(`${i + 1}) ${recipe.name}`);
+    lines.push(`   ${recipe.cuisine} • ${recipe.proteinType} • ${spice}`);
+    lines.push(`   ${baseUrl}#recipe-${recipe.id}`);
+  }
+
+  return lines.join("\n").trim();
+}
+
 function buildList(filtered) {
   if (!filtered.length) {
     return `<div class="empty-state">No recipes match your search and filters.</div>`;
@@ -477,7 +940,7 @@ function buildInstructions(recipe, batchLabel) {
   return `<ol>${steps.map((s) => `<li>${s}</li>`).join("")}</ol>`;
 }
 
-function buildDetail(recipe) {
+function buildDetail(recipe, inCurrentFilters) {
   if (!recipe) {
     return `
       <div class="empty-state">
@@ -492,6 +955,17 @@ function buildDetail(recipe) {
   const liquid = adjustForBatch(recipe.liquid, state.batch);
   const batchLabel = state.batch === "2" ? "Standard batch (2 cups)" : "Half batch (1 cup)";
   const spice = getSpiceLevel(recipe);
+  const hasActiveFilters =
+    state.search.trim().length > 0 || state.protein !== "all" || state.cuisine !== "all" || state.spice !== "all";
+  const filterNote =
+    hasActiveFilters && !inCurrentFilters
+      ? `
+        <div class="callout">
+          This recipe isn’t in your current filters.
+          <button class="ghost" data-clear-all>Clear filters</button>
+        </div>
+      `
+      : "";
   const tagsHtml = (recipe.tags || [])
     .map((tag) => `<span class="badge">${tag}</span>`)
     .join("");
@@ -513,6 +987,7 @@ function buildDetail(recipe) {
       <span>🌶️ ${spice.label}</span>
     </div>
     ${tagsHtml ? `<div class="badge-row">${tagsHtml}</div>` : ""}
+    ${filterNote}
 
     <div class="section-label">Ingredients</div>
     <div class="info-row"><strong>Rice</strong><span>${riceAmount}</span></div>
@@ -539,25 +1014,51 @@ function filterCount() {
 }
 
 function render() {
+  ensureCurrentWeekPlanLoaded();
   const mobile = isMobile();
   const filtered = filterRecipes();
 
-  const selectionBefore = state.selectedId;
-  const hasSelected = filtered.some((r) => r.id === state.selectedId);
+  let selectedRecipe =
+    typeof state.selectedId === "number" ? recipes.find((r) => r.id === state.selectedId) : null;
 
-  if (!hasSelected) {
-    if (!mobile && filtered.length) {
+  if (typeof state.selectedId === "number" && !selectedRecipe) {
+    state.selectedId = null;
+    state.selectionSource = "none";
+    clearRecipeHash();
+  }
+
+  if (!mobile) {
+    if (!state.selectedId && filtered.length) {
       state.selectedId = filtered[0].id;
-      window.location.hash = `recipe-${state.selectedId}`;
-    } else {
-      state.selectedId = null;
-      if (selectionBefore) {
-        history.pushState("", document.title, window.location.pathname + window.location.search);
+      state.selectionSource = "list";
+      setRecipeHash(state.selectedId);
+      selectedRecipe = recipes.find((r) => r.id === state.selectedId) || null;
+    } else if (state.selectionSource === "list") {
+      const inList = filtered.some((r) => r.id === state.selectedId);
+      if (!inList) {
+        if (filtered.length) {
+          state.selectedId = filtered[0].id;
+          setRecipeHash(state.selectedId);
+          selectedRecipe = recipes.find((r) => r.id === state.selectedId) || null;
+        } else {
+          state.selectedId = null;
+          state.selectionSource = "none";
+          clearRecipeHash();
+          selectedRecipe = null;
+        }
       }
+    }
+  } else if (state.selectionSource === "list") {
+    const inList = filtered.some((r) => r.id === state.selectedId);
+    if (!inList) {
+      state.selectedId = null;
+      state.selectionSource = "none";
+      clearRecipeHash();
+      selectedRecipe = null;
     }
   }
 
-  const selected = filtered.find((r) => r.id === state.selectedId) || null;
+  const selectedInFiltered = filtered.some((r) => r.id === state.selectedId);
   const layoutClass = mobile
     ? state.selectedId
       ? "mobile-detail"
@@ -599,12 +1100,13 @@ function render() {
             <div>${filtered.length} recipes</div>
             <button class="filter-button" data-toggle-filter>Filters</button>
           </div>
+          ${buildWeekPlanSection()}
           ${buildList(filtered)}
         </aside>
 
         <section class="surface detail-panel">
           ${mobile ? `<button class="back-button" data-back>&larr; Back to list</button>` : ""}
-          ${buildDetail(selected)}
+          ${buildDetail(selectedRecipe, selectedInFiltered)}
         </section>
       </main>
 
@@ -653,12 +1155,22 @@ function render() {
   searchInput.value = state.search;
   searchInput.addEventListener("input", (e) => {
     state.search = e.target.value;
+    if (isMobile() && state.selectedId) {
+      state.selectedId = null;
+      state.selectionSource = "none";
+      clearRecipeHash();
+    }
     render();
   });
 
   app.querySelectorAll("[data-protein]").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.protein = btn.getAttribute("data-protein");
+      if (isMobile() && state.selectedId) {
+        state.selectedId = null;
+        state.selectionSource = "none";
+        clearRecipeHash();
+      }
       render();
     });
   });
@@ -666,6 +1178,11 @@ function render() {
   app.querySelectorAll("[data-cuisine]").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.cuisine = btn.getAttribute("data-cuisine");
+      if (isMobile() && state.selectedId) {
+        state.selectedId = null;
+        state.selectionSource = "none";
+        clearRecipeHash();
+      }
       render();
     });
   });
@@ -673,6 +1190,11 @@ function render() {
   app.querySelectorAll("[data-spice]").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.spice = btn.getAttribute("data-spice");
+      if (isMobile() && state.selectedId) {
+        state.selectedId = null;
+        state.selectionSource = "none";
+        clearRecipeHash();
+      }
       render();
     });
   });
@@ -688,7 +1210,8 @@ function render() {
     btn.addEventListener("click", () => {
       const id = parseInt(btn.getAttribute("data-id"), 10);
       state.selectedId = id;
-      window.location.hash = `recipe-${id}`;
+      state.selectionSource = "list";
+      setRecipeHash(id);
       if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
       render();
     });
@@ -698,7 +1221,8 @@ function render() {
   if (backBtn) {
     backBtn.addEventListener("click", () => {
       state.selectedId = null;
-      history.pushState("", document.title, window.location.pathname + window.location.search);
+      state.selectionSource = "none";
+      clearRecipeHash();
       render();
     });
   }
@@ -742,6 +1266,18 @@ function render() {
       state.cuisine = "all";
       state.spice = "all";
       state.batch = "2";
+      state.showFilters = false;
+      render();
+    });
+  }
+
+  const clearAllBtn = app.querySelector("[data-clear-all]");
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener("click", () => {
+      state.search = "";
+      state.protein = "all";
+      state.cuisine = "all";
+      state.spice = "all";
       state.showFilters = false;
       render();
     });
@@ -802,6 +1338,86 @@ function render() {
 
       btn.textContent = "Copied!";
       setTimeout(() => (btn.textContent = "Copy ingredients"), 1200);
+    });
+  });
+
+  const planGenerate = app.querySelector("[data-plan-generate]");
+  if (planGenerate) {
+    planGenerate.addEventListener("click", () => {
+      generateCurrentWeekPlanFromState();
+    });
+  }
+
+  const planReshuffle = app.querySelector("[data-plan-reshuffle]");
+  if (planReshuffle) {
+    planReshuffle.addEventListener("click", () => {
+      reshuffleCurrentWeekPlan(state.weeklyPlan);
+    });
+  }
+
+  const planUseCurrent = app.querySelector("[data-plan-use-current]");
+  if (planUseCurrent) {
+    planUseCurrent.addEventListener("click", () => {
+      if (!state.weeklyPlan) return;
+      reshuffleCurrentWeekPlan(state.weeklyPlan, getConstraintsFromState());
+    });
+  }
+
+  const planClear = app.querySelector("[data-plan-clear]");
+  if (planClear) {
+    planClear.addEventListener("click", () => {
+      clearCurrentWeekPlan();
+    });
+  }
+
+  const planShare = app.querySelector("[data-plan-share]");
+  if (planShare) {
+    planShare.addEventListener("click", async () => {
+      if (!state.weeklyPlan) return;
+      const text = buildWeekPlanShareText(state.weeklyPlan);
+      const url = `${window.location.origin}${window.location.pathname}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "Rice Lab weekly plan", text, url });
+        } catch {
+          // user canceled
+        }
+        return;
+      }
+
+      const ok = await copyToClipboard(text);
+      if (!ok) return;
+      planShare.textContent = "Copied!";
+      setTimeout(() => (planShare.textContent = "Share"), 1200);
+    });
+  }
+
+  app.querySelectorAll("[data-plan-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-plan-open"), 10);
+      if (Number.isNaN(id)) return;
+      state.selectedId = id;
+      state.selectionSource = "plan";
+      setRecipeHash(id);
+      if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
+      render();
+    });
+  });
+
+  app.querySelectorAll("[data-plan-swap]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.getAttribute("data-plan-swap"), 10);
+      if (Number.isNaN(idx)) return;
+      swapCurrentWeekPlanSlot(state.weeklyPlan, idx);
+    });
+  });
+
+  app.querySelectorAll("[data-plan-lock]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.getAttribute("data-plan-lock"), 10);
+      if (Number.isNaN(idx)) return;
+      toggleCurrentWeekPlanLock(state.weeklyPlan, idx);
     });
   });
 }

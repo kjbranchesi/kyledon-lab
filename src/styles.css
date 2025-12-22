@@ -414,6 +414,160 @@ ol li {
   flex-wrap: wrap;
 }
 
+.week-plan {
+  margin: 10px 0 12px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 250, 245, 0.95);
+  border: 1px solid rgba(255, 220, 200, 0.55);
+  box-shadow: var(--shadow-soft);
+}
+
+.week-plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.week-plan-title {
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.week-plan-sub {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.week-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.week-plan-note {
+  margin: 8px 0 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.week-plan-warn {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 235, 225, 0.7);
+  border: 1px solid rgba(255, 140, 100, 0.25);
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.plan-slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.plan-slot-label {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.plan-slot-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.plan-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: var(--radius-md);
+  padding: 10px 10px 9px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-1px);
+}
+
+.plan-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.plan-card-title {
+  font-weight: 850;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.plan-card-meta {
+  color: var(--text-dim);
+  font-size: 0.84rem;
+}
+
+.plan-card-missing {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+
+.callout {
+  margin: 10px 0 6px;
+  padding: 10px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid rgba(191, 219, 254, 0.95);
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+@keyframes planPop {
+  0% { transform: scale(0.98); }
+  55% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@keyframes planSwap {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(4px); }
+  65% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.week-plan.animate-generate,
+.week-plan.animate-shuffle {
+  animation: planPop 360ms ease-out;
+}
+
+.slot-animate {
+  animation: planSwap 320ms ease-out;
+}
+
 .details {
   margin-top: 12px;
   border-radius: var(--radius-md);
@@ -483,6 +637,12 @@ ol li {
   padding: 10px 12px;
   border-radius: var(--radius-pill);
   cursor: pointer;
+}
+
+.ghost:disabled,
+.icon-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .back-button {
@@ -621,6 +781,10 @@ ol li {
   }
 
   .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-grid {
     grid-template-columns: 1fr;
   }
 }
