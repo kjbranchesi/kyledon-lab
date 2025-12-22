@@ -1015,16 +1015,16 @@ function buildWeekPlanSection() {
             <div class="week-plan-title">🍱 Weekly Plan</div>
             <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
           </div>
-          <button class="chip active" data-plan-generate title="Three random picks. Zero decision fatigue. Maximum dinner vibes.">Make my week</button>
+          <button class="chip active" data-plan-generate title="Three curated selections. Decision paralysis is not encouraged.">Make my week</button>
         </div>
-        <p class="week-plan-note">Get 3 recipe picks with built-in variety. Swap or lock any slot.</p>
+        <p class="week-plan-note">Receive three algorithmically diverse selections. The variety is not accidental. Modifications are not discouraged.</p>
       </section>
     `;
   }
 
   const badges = buildConstraintBadges(plan.constraints);
   const fallbackNote = plan.usedFallback
-    ? `<div class="week-plan-warn">Not enough recipes matched your constraints — plan widened to all recipes.</div>`
+    ? `<div class="week-plan-warn">Your constraints proved not entirely compatible with available inventory. The algorithm exercised discretion. The results are not without merit.</div>`
     : "";
 
   const slotsHtml = plan.slots
@@ -1081,17 +1081,17 @@ function buildWeekPlanSection() {
           <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
         </div>
         <div class="week-plan-actions">
-          <button class="ghost" data-plan-use-current title="Apply your picky preferences. We don't judge. Much.">Use current filters</button>
-          <button class="chip active" data-plan-reshuffle title="Not feeling it? Roll the dice again. Third time's the charm, right?">Reshuffle</button>
-          <button class="ghost" data-plan-shopping title="Ingredient list for the week. Adulting made slightly easier.">Shopping list</button>
-          <button class="ghost" data-plan-share title="Send your plan to a friend. Or an enemy. We're not here to judge.">Share</button>
-          <button class="ghost" data-plan-clear title="Start over. Clean slate. New you. Same rice cooker.">Clear</button>
+          <button class="ghost" data-plan-use-current title="Apply existing constraints. Your preferences are not ignored.">Use current filters</button>
+          <button class="chip active" data-plan-reshuffle title="Regenerate selections. Satisfaction is not guaranteed but probable.">Reshuffle</button>
+          <button class="ghost" data-plan-shopping title="A not unsubstantial list of required provisions.">Shopping list</button>
+          <button class="ghost" data-plan-share title="Distribute your weekly plan. Judgment from recipients is not our concern.">Share</button>
+          <button class="ghost" data-plan-clear title="Restart the process. Past decisions need not constrain future ones.">Clear</button>
         </div>
       </div>
 
       <div class="badge-row">${badges}</div>
       ${fallbackNote}
-      <p class="week-plan-note">🎯 Lab Quests are optional: tiny finishing moves to make each cook feel like an experiment.</p>
+      <p class="week-plan-note">🎯 Lab Quests: Optional finishing techniques. The improvements to flavor are not theoretical. Implementation is not mandatory but not unwise.</p>
 
       <div class="plan-grid">
         ${slotsHtml}
@@ -1471,7 +1471,7 @@ function buildCookStepsText(recipe, batchLabel, steps) {
 
 function buildList(filtered) {
   if (!filtered.length) {
-    return `<div class="empty-state">No recipes match your search and filters.</div>`;
+    return `<div class="empty-state">Your current criteria have yielded no results. The precision, while admirable, is not productive.</div>`;
   }
 
   return `
@@ -1560,8 +1560,8 @@ function buildDetail(recipe, inCurrentFilters) {
     return `
       <div class="empty-state">
         <div style="font-size:2.6rem;margin-bottom:10px;">🍚</div>
-        <h3 style="margin:0 0 6px;">Welcome to the Rice Lab</h3>
-        <p>Search or open filters to find a recipe. On mobile, tap a recipe to dive into detail.</p>
+        <h3 style="margin:0 0 6px;">The Rice Lab: An Introduction</h3>
+        <p>Employ the search mechanism or filtering apparatus. The catalog is not small. On mobile devices, tactile selection yields further detail. The process is not complicated.</p>
       </div>
     `;
   }
@@ -1594,16 +1594,16 @@ function buildDetail(recipe, inCurrentFilters) {
   const cookedPanel = cooked
     ? `
       <div class="cooked-panel">
-        <div class="cooked-meta">✅ Cooked ${cooked.times}× • last ${formatShortDate(cooked.lastCookedAt)}</div>
+        <div class="cooked-meta">✅ Prepared ${cooked.times}× • most recently ${formatShortDate(cooked.lastCookedAt)}</div>
         <div class="rating" role="group" aria-label="Rating">
           ${[1, 2, 3, 4, 5]
             .map(
               (n) => `
-              <button class="rating-star ${cooked.rating && cooked.rating >= n ? "on" : ""}" data-rate-id="${recipe.id}" data-rate="${n}" aria-label="Rate ${n} star${n === 1 ? "" : "s"}">★</button>
+              <button class="rating-star ${cooked.rating && cooked.rating >= n ? "on" : ""}" data-rate-id="${recipe.id}" data-rate="${n}" aria-label="Rate ${n} star${n === 1 ? "" : "s"}" title="${n === 1 ? "Not entirely successful" : n === 2 ? "Not without flaws" : n === 3 ? "Not unacceptable" : n === 4 ? "Not disappointing" : "Not improvable"}">★</button>
             `
             )
             .join("")}
-          <button class="ghost" data-cooked-clear="${recipe.id}">Clear cooked</button>
+          <button class="ghost" data-cooked-clear="${recipe.id}" title="Expunge the record. Revisionist history is not discouraged.">Clear history</button>
         </div>
       </div>
     `
@@ -1613,9 +1613,9 @@ function buildDetail(recipe, inCurrentFilters) {
     <div class="detail-header">
       <h2><span>${getProteinEmoji(recipe.proteinType)}</span> ${recipe.name}</h2>
       <div class="actions">
-        <button class="chip active" data-cook-open="${recipe.id}" title="Step-by-step guidance. Like GPS, but for rice. Less recalculating.">👩‍🍳 Cook mode</button>
-        <button class="ghost" data-favorite="${recipe.id}" title="${favorite ? "Unfavorite? Bold move. We'll remember this betrayal." : "Save for later. Future you will thank present you. Probably."}">${favorite ? "★ Saved" : "☆ Save"}</button>
-        <button class="ghost" data-cooked-mark="${recipe.id}" title="Mark as cooked. Claim victory. Earn bragging rights.">✅ Cooked</button>
+        <button class="chip active" data-cook-open="${recipe.id}" title="Sequential instructions. The complexity is not overwhelming.">👩‍🍳 Cook mode</button>
+        <button class="ghost" data-favorite="${recipe.id}" title="${favorite ? "Remove from favorites. Your consistency is not our strong suit either." : "Preserve for posterity. Future you is not without gratitude."}">${favorite ? "★ Saved" : "☆ Save"}</button>
+        <button class="ghost" data-cooked-mark="${recipe.id}" title="Document completion. The achievement is not insignificant.">✅ Cooked</button>
         <button class="ghost" data-share="${recipe.id}">Share</button>
         <button class="ghost" data-copy-recipe="${recipe.id}">Copy recipe</button>
         <button class="ghost" data-copy="${recipe.id}">Copy ingredients</button>
@@ -1721,18 +1721,20 @@ function render() {
       : "mobile-list"
     : "";
 
-  // Silly rotating puns and sayings
-  const sillyTaglines = [
-    "One Zojirushi, many experiments. Not rocket science, just rice science.",
-    "Where rice meets advice. Minimal effort, maximal flavor.",
-    "Cook smarter, not harder. Then harder, because it's fun.",
-    "Not your grandma's rice cooker. Actually, maybe it is.",
-    "Turning water into flavor since... today, probably.",
-    "Rice so nice, we'll cook it thrice. Or just once. Whatever.",
-    "From chaos to crispy rice. It's a journey, not a destination.",
-    "Barely trying, definitely succeeding. The rice cooker does the work."
+  // Publication-style taglines with deep, clever litotes
+  const sophisticatedTaglines = [
+    "One Zojirushi, many experiments. Not entirely without merit.",
+    "Where rice meets advice. The results are not disappointing.",
+    "A not insignificant improvement over takeout. Your wallet concurs.",
+    "Not your grandmother's rice cooker. Though her judgment was not without wisdom.",
+    "Transforming water into dinner. The alchemy is not theoretical.",
+    "The path from rice to meal is not without its shortcuts.",
+    "Barely cooking, definitely eating. The distinction is not trivial.",
+    "Effort inversely proportional to satisfaction. The math is not complicated.",
+    "One pot, minimal regret. The correlation is not coincidental.",
+    "For those who find boiling water not entirely beneath them."
   ];
-  const randomTagline = sillyTaglines[Math.floor(Math.random() * sillyTaglines.length)];
+  const randomTagline = sophisticatedTaglines[Math.floor(Math.random() * sophisticatedTaglines.length)];
 
   app.innerHTML = `
     <div class="app-shell">
@@ -1740,7 +1742,7 @@ function render() {
         <div class="hero-emoji" title="Click me! I'm not just here for decoration. Well, mostly decoration.">🇯🇵 🍚 🇯🇵</div>
         <h1>Kylē Don (丼) Rice Lab</h1>
         <p class="subtitle">${randomTagline}</p>
-        <p class="description">Find Zojirushi-friendly one-pot rice cooker recipes. Built mobile-first for quick browsing and cooking. Not complicated, just delicious.</p>
+        <p class="description">A compendium of Zojirushi-compatible one-pot rice cooker preparations. The barrier to entry is not prohibitive. The learning curve is not steep. The cleanup is not extensive.</p>
         <p class="credit">a project by <a href="https://www.kylebranchesi.com" target="_blank" rel="noopener noreferrer">Kyle Branchesi</a></p>
       </header>
 
@@ -1755,10 +1757,10 @@ function render() {
           <span class="count">${filterCount()}</span>
         </button>
         <div class="mode-row" role="group" aria-label="List mode">
-          <button class="chip ${state.listMode === "all" ? "active" : ""}" data-mode="all" title="Everything. The whole shebang. Not selective at all.">🍚 All</button>
-          <button class="chip ${state.listMode === "favorites" ? "active" : ""}" data-mode="favorites" title="Your greatest hits. Not your worst misses.">★ Favorites (${favoritesCount})</button>
-          <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked" title="Recipes you've conquered. Or at least attempted.">✅ Cooked (${cookedCount})</button>
-          <button class="chip" data-surprise title="Feeling lucky? Let chaos decide your dinner. What could go wrong?">🎲 Surprise Me!</button>
+          <button class="chip ${state.listMode === "all" ? "active" : ""}" data-mode="all" title="The complete archive. Curation is not our strength.">🍚 All</button>
+          <button class="chip ${state.listMode === "favorites" ? "active" : ""}" data-mode="favorites" title="Your personal canon. The selections are not random.">★ Favorites (${favoritesCount})</button>
+          <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked" title="Evidence of past ambitions. The outcomes were not uniform.">✅ Cooked (${cookedCount})</button>
+          <button class="chip" data-surprise title="For the algorithmically adventurous. The risk is not zero.">🎲 Surprise Me!</button>
         </div>
         <div class="chip-row" aria-hidden="true" style="${mobile ? "display:none" : "display:flex; gap:6px; flex-wrap:wrap; padding:4px 0;"}">
           ${buildChips(proteinOptions, state.protein, "protein")}
@@ -1884,7 +1886,7 @@ function render() {
                 `;
                 })
                 .join("")
-            : `<div class="empty-state">Pick a recipe to start Cook mode.</div>`
+            : `<div class="empty-state">A recipe selection is required to proceed. The interface, while elegant, is not telepathic.</div>`
         }
       </div>
     </div>
