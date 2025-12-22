@@ -261,23 +261,53 @@ function formatShortDate(isoString) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-function toggleFavorite(id) {
+function celebrateAction(emojis, triggerElement) {
+  const burstCount = 8 + Math.floor(Math.random() * 5);
+  const rect = triggerElement?.getBoundingClientRect();
+
+  for (let i = 0; i < burstCount; i++) {
+    setTimeout(() => {
+      const emoji = document.createElement('div');
+      emoji.className = 'emoji-burst';
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+      if (rect) {
+        // Burst from the button location
+        emoji.style.left = `${rect.left + rect.width / 2}px`;
+        emoji.style.top = `${rect.top + rect.height / 2}px`;
+      } else {
+        // Random position fallback
+        emoji.style.left = `${Math.random() * 100}%`;
+        emoji.style.top = `${Math.random() * 100}%`;
+      }
+
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 2000);
+    }, i * 50);
+  }
+}
+
+function toggleFavorite(id, element) {
   ensureUserDataLoaded();
   if (state.favorites.has(id)) {
     state.favorites.delete(id);
   } else {
     state.favorites.add(id);
+    // Celebration for adding favorite!
+    celebrateAction(['❤️', '💖', '💝', '💗', '✨', '⭐', '🌟'], element);
   }
   saveUserData();
   render();
 }
 
-function markCooked(id) {
+function markCooked(id, element) {
   ensureUserDataLoaded();
   const existing = state.cooked[id];
   const times = (existing?.times || 0) + 1;
   const rating = existing?.rating;
   state.cooked[id] = { times, lastCookedAt: new Date().toISOString(), ...(rating ? { rating } : {}) };
+  // Celebration for cooking!
+  celebrateAction(['🎉', '👨‍🍳', '👩‍🍳', '🍚', '✨', '⭐', '🔥', '💯'], element);
   saveUserData();
   render();
 }
@@ -2242,7 +2272,7 @@ function render() {
     btn.addEventListener("click", () => {
       const id = parseInt(btn.getAttribute("data-favorite"), 10);
       if (Number.isNaN(id)) return;
-      toggleFavorite(id);
+      toggleFavorite(id, btn);
     });
   });
 
@@ -2250,7 +2280,7 @@ function render() {
     btn.addEventListener("click", () => {
       const id = parseInt(btn.getAttribute("data-cooked-mark"), 10);
       if (Number.isNaN(id)) return;
-      markCooked(id);
+      markCooked(id, btn);
     });
   });
 
@@ -2426,22 +2456,49 @@ function render() {
 
   const planReshuffle = app.querySelector("[data-plan-reshuffle]");
   if (planReshuffle) {
-    planReshuffle.addEventListener("click", () => {
+    planReshuffle.addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+      const appShell = document.querySelector('.app-shell');
+
+      // CHAOTIC RESHUFFLE ANIMATIONS! 🎲💥🌪️
+      btn.style.animation = 'jelloWobble 0.8s ease, celebrationPulse 1s ease';
+
+      // Mini screen shake
+      if (appShell) {
+        appShell.style.animation = 'screenShake 0.5s ease';
+        setTimeout(() => { appShell.style.animation = ''; }, 500);
+      }
+
+      // Emoji burst!
+      celebrateAction(['🎲', '🔄', '🌪️', '💫', '✨', '🎰', '🔀'], btn);
+
       reshuffleCurrentWeekPlan(state.weeklyPlan);
     });
   }
 
   const planUseCurrent = app.querySelector("[data-plan-use-current]");
   if (planUseCurrent) {
-    planUseCurrent.addEventListener("click", () => {
+    planUseCurrent.addEventListener("click", (e) => {
       if (!state.weeklyPlan) return;
+      const btn = e.currentTarget;
+
+      // Settings gear animation
+      btn.style.animation = 'tada 0.6s ease';
+      celebrateAction(['⚙️', '🔧', '🛠️', '✨'], btn);
+
       reshuffleCurrentWeekPlan(state.weeklyPlan, getConstraintsFromState());
     });
   }
 
   const planShopping = app.querySelector("[data-plan-shopping]");
   if (planShopping) {
-    planShopping.addEventListener("click", () => {
+    planShopping.addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+
+      // Shopping cart animation
+      btn.style.animation = 'cardBounce 0.5s ease';
+      celebrateAction(['🛒', '🛍️', '📝', '✨'], btn);
+
       state.showShoppingList = true;
       render();
     });
@@ -2449,15 +2506,29 @@ function render() {
 
   const planClear = app.querySelector("[data-plan-clear]");
   if (planClear) {
-    planClear.addEventListener("click", () => {
-      clearCurrentWeekPlan();
+    planClear.addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+
+      // Dramatic clear animation
+      btn.style.animation = 'tada 0.6s ease';
+      celebrateAction(['🗑️', '💨', '🧹', '✨', '💥'], btn);
+
+      setTimeout(() => {
+        clearCurrentWeekPlan();
+      }, 300);
     });
   }
 
   const planShare = app.querySelector("[data-plan-share]");
   if (planShare) {
-    planShare.addEventListener("click", async () => {
+    planShare.addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
       if (!state.weeklyPlan) return;
+
+      // Share animation
+      btn.style.animation = 'tada 0.6s ease';
+      celebrateAction(['📤', '📨', '✉️', '✨', '💫'], btn);
+
       const text = buildWeekPlanShareText(state.weeklyPlan);
       const url = `${window.location.origin}${window.location.pathname}`;
 
@@ -2553,17 +2624,28 @@ function render() {
 
   // Clear individual filters
   app.querySelectorAll("[data-clear-filter]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       const type = btn.getAttribute("data-clear-filter");
-      if (type === "protein") state.protein = "all";
-      if (type === "cuisine") state.cuisine = "all";
-      if (type === "spice") state.spice = "all";
-      if (isMobile() && state.selectedId) {
-        state.selectedId = null;
-        state.selectionSource = "none";
-        clearRecipeHash();
+      const chip = btn.closest('.active-filter-chip');
+
+      // DRAMATIC POOF ANIMATION! 💨💥
+      if (chip) {
+        chip.style.animation = 'poofOut 0.4s ease-out forwards';
+        celebrateAction(['💨', '💥', '☁️', '💫', '✨'], chip);
       }
-      render();
+
+      setTimeout(() => {
+        if (type === "protein") state.protein = "all";
+        if (type === "cuisine") state.cuisine = "all";
+        if (type === "spice") state.spice = "all";
+        if (isMobile() && state.selectedId) {
+          state.selectedId = null;
+          state.selectionSource = "none";
+          clearRecipeHash();
+        }
+        render();
+      }, 200);
     });
   });
 
