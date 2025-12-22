@@ -1771,13 +1771,14 @@ function render() {
         </div>
       </section>
 
+      ${buildWeekPlanSection()}
+
       <main class="layout ${layoutClass}">
         <aside class="surface list-panel">
           <div class="sticky-bar">
             <div>${filtered.length} recipes</div>
-            <button class="filter-button" data-toggle-filter>Filters</button>
+            <button class="filter-button" data-toggle-filter">Filters</button>
           </div>
-          ${buildWeekPlanSection()}
           ${buildList(filtered)}
         </aside>
 
