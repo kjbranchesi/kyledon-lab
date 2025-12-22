@@ -73,6 +73,28 @@ header {
   line-height: 1;
   letter-spacing: 0.1em;
   margin: 4px 0 10px;
+  animation: heroBounce 2s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.hero-emoji:hover {
+  animation: heroSpin 0.6s ease-in-out;
+}
+
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(-3deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(-4px) rotate(3deg); }
+}
+
+@keyframes heroSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(180deg) scale(1.15); }
+  50% { transform: rotate(360deg) scale(1); }
+  75% { transform: rotate(540deg) scale(1.15); }
+  100% { transform: rotate(720deg) scale(1); }
 }
 
 header h1 {
@@ -452,9 +474,10 @@ ol li {
 
 .week-plan-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .week-plan-title {
@@ -475,6 +498,7 @@ ol li {
   gap: 8px;
   align-items: center;
   justify-content: flex-end;
+  margin-bottom: 12px;
 }
 
 .week-plan-note {
@@ -497,7 +521,7 @@ ol li {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .plan-slot-header {
@@ -561,7 +585,10 @@ ol li {
   background: rgba(255, 247, 237, 0.9);
   color: #374151;
   font-size: 0.82rem;
-  line-height: 1.25;
+  line-height: 1.35;
+  max-height: 4em;
+  overflow: hidden;
+  position: relative;
 }
 
 .plan-card-missing {
@@ -639,6 +666,77 @@ ol li {
   30% { transform: translateX(4px); }
   65% { transform: translateX(-3px); }
   100% { transform: translateX(0); }
+}
+
+/* RIDICULOUS TEMU-STYLE SURPRISE ANIMATIONS */
+@keyframes surpriseShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-2px, -1px) rotate(-2deg); }
+  20% { transform: translate(2px, 1px) rotate(2deg); }
+  30% { transform: translate(-2px, 1px) rotate(-1deg); }
+  40% { transform: translate(2px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, -2px) rotate(-2deg); }
+  60% { transform: translate(1px, 2px) rotate(2deg); }
+  70% { transform: translate(-2px, 1px) rotate(-1deg); }
+  80% { transform: translate(2px, -1px) rotate(1deg); }
+  90% { transform: translate(-1px, 2px) rotate(-2deg); }
+}
+
+@keyframes surprisePulse {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.15); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.08); }
+}
+
+@keyframes surpriseRainbow {
+  0% { filter: hue-rotate(0deg) brightness(1.2); }
+  25% { filter: hue-rotate(90deg) brightness(1.3); }
+  50% { filter: hue-rotate(180deg) brightness(1.4); }
+  75% { filter: hue-rotate(270deg) brightness(1.3); }
+  100% { filter: hue-rotate(360deg) brightness(1.2); }
+}
+
+@keyframes surpriseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.5), 0 0 20px rgba(255, 107, 107, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.8), 0 0 40px rgba(255, 107, 107, 0.5), 0 0 60px rgba(255, 215, 0, 0.4); }
+}
+
+@keyframes surpriseSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(180deg) scale(1.2); }
+  50% { transform: rotate(360deg) scale(1); }
+  75% { transform: rotate(540deg) scale(1.2); }
+  100% { transform: rotate(720deg) scale(1); }
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-4px, -4px); }
+  20%, 40%, 60%, 80% { transform: translate(4px, 4px); }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+}
+
+.surprise-button-active {
+  animation: surprisePulse 0.6s ease-in-out, surpriseRainbow 1.2s linear, surpriseGlow 0.6s ease-in-out !important;
+  position: relative;
+  z-index: 9999;
+}
+
+.screen-shake-active {
+  animation: screenShake 0.5s ease-in-out;
+}
+
+.emoji-burst {
+  position: fixed;
+  font-size: 2.5rem;
+  pointer-events: none;
+  z-index: 10000;
+  animation: floatUp 1.5s ease-out forwards;
 }
 
 .week-plan.animate-generate,
@@ -1050,6 +1148,27 @@ ol li {
 
   .plan-grid {
     grid-template-columns: 1fr;
+  }
+
+  .plan-slot-actions .ghost {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .week-plan-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .week-plan-actions {
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .week-plan-actions .ghost,
+  .week-plan-actions .chip {
+    flex: 1 1 auto;
+    min-width: fit-content;
   }
 }
 

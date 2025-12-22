@@ -1015,7 +1015,7 @@ function buildWeekPlanSection() {
             <div class="week-plan-title">🍱 Weekly Plan</div>
             <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
           </div>
-          <button class="chip active" data-plan-generate>Make my week</button>
+          <button class="chip active" data-plan-generate title="Three random picks. Zero decision fatigue. Maximum dinner vibes.">Make my week</button>
         </div>
         <p class="week-plan-note">Get 3 recipe picks with built-in variety. Swap or lock any slot.</p>
       </section>
@@ -1081,11 +1081,11 @@ function buildWeekPlanSection() {
           <div class="week-plan-sub">${weekLabel} • saved on this device • no login</div>
         </div>
         <div class="week-plan-actions">
-          <button class="ghost" data-plan-use-current>Use current filters</button>
-          <button class="chip active" data-plan-reshuffle>Reshuffle</button>
-          <button class="ghost" data-plan-shopping>Shopping list</button>
-          <button class="ghost" data-plan-share>Share</button>
-          <button class="ghost" data-plan-clear>Clear</button>
+          <button class="ghost" data-plan-use-current title="Apply your picky preferences. We don't judge. Much.">Use current filters</button>
+          <button class="chip active" data-plan-reshuffle title="Not feeling it? Roll the dice again. Third time's the charm, right?">Reshuffle</button>
+          <button class="ghost" data-plan-shopping title="Ingredient list for the week. Adulting made slightly easier.">Shopping list</button>
+          <button class="ghost" data-plan-share title="Send your plan to a friend. Or an enemy. We're not here to judge.">Share</button>
+          <button class="ghost" data-plan-clear title="Start over. Clean slate. New you. Same rice cooker.">Clear</button>
         </div>
       </div>
 
@@ -1613,9 +1613,9 @@ function buildDetail(recipe, inCurrentFilters) {
     <div class="detail-header">
       <h2><span>${getProteinEmoji(recipe.proteinType)}</span> ${recipe.name}</h2>
       <div class="actions">
-        <button class="chip active" data-cook-open="${recipe.id}">👩‍🍳 Cook mode</button>
-        <button class="ghost" data-favorite="${recipe.id}">${favorite ? "★ Saved" : "☆ Save"}</button>
-        <button class="ghost" data-cooked-mark="${recipe.id}">✅ Cooked</button>
+        <button class="chip active" data-cook-open="${recipe.id}" title="Step-by-step guidance. Like GPS, but for rice. Less recalculating.">👩‍🍳 Cook mode</button>
+        <button class="ghost" data-favorite="${recipe.id}" title="${favorite ? "Unfavorite? Bold move. We'll remember this betrayal." : "Save for later. Future you will thank present you. Probably."}">${favorite ? "★ Saved" : "☆ Save"}</button>
+        <button class="ghost" data-cooked-mark="${recipe.id}" title="Mark as cooked. Claim victory. Earn bragging rights.">✅ Cooked</button>
         <button class="ghost" data-share="${recipe.id}">Share</button>
         <button class="ghost" data-copy-recipe="${recipe.id}">Copy recipe</button>
         <button class="ghost" data-copy="${recipe.id}">Copy ingredients</button>
@@ -1721,13 +1721,26 @@ function render() {
       : "mobile-list"
     : "";
 
+  // Silly rotating puns and sayings
+  const sillyTaglines = [
+    "One Zojirushi, many experiments. Not rocket science, just rice science.",
+    "Where rice meets advice. Minimal effort, maximal flavor.",
+    "Cook smarter, not harder. Then harder, because it's fun.",
+    "Not your grandma's rice cooker. Actually, maybe it is.",
+    "Turning water into flavor since... today, probably.",
+    "Rice so nice, we'll cook it thrice. Or just once. Whatever.",
+    "From chaos to crispy rice. It's a journey, not a destination.",
+    "Barely trying, definitely succeeding. The rice cooker does the work."
+  ];
+  const randomTagline = sillyTaglines[Math.floor(Math.random() * sillyTaglines.length)];
+
   app.innerHTML = `
     <div class="app-shell">
       <header>
-        <div class="hero-emoji">🇯🇵 🍚 🇯🇵</div>
+        <div class="hero-emoji" title="Click me! I'm not just here for decoration. Well, mostly decoration.">🇯🇵 🍚 🇯🇵</div>
         <h1>Kylē Don (丼) Rice Lab</h1>
-        <p class="subtitle">One Zojirushi, many experiments.</p>
-        <p class="description">Find Zojirushi-friendly one-pot rice cooker recipes. Built mobile-first for quick browsing and cooking.</p>
+        <p class="subtitle">${randomTagline}</p>
+        <p class="description">Find Zojirushi-friendly one-pot rice cooker recipes. Built mobile-first for quick browsing and cooking. Not complicated, just delicious.</p>
         <p class="credit">a project by <a href="https://www.kylebranchesi.com" target="_blank" rel="noopener noreferrer">Kyle Branchesi</a></p>
       </header>
 
@@ -1742,10 +1755,10 @@ function render() {
           <span class="count">${filterCount()}</span>
         </button>
         <div class="mode-row" role="group" aria-label="List mode">
-          <button class="chip ${state.listMode === "all" ? "active" : ""}" data-mode="all">🍚 All</button>
-          <button class="chip ${state.listMode === "favorites" ? "active" : ""}" data-mode="favorites">★ Favorites (${favoritesCount})</button>
-          <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked">✅ Cooked (${cookedCount})</button>
-          <button class="chip" data-surprise>🎲 Surprise</button>
+          <button class="chip ${state.listMode === "all" ? "active" : ""}" data-mode="all" title="Everything. The whole shebang. Not selective at all.">🍚 All</button>
+          <button class="chip ${state.listMode === "favorites" ? "active" : ""}" data-mode="favorites" title="Your greatest hits. Not your worst misses.">★ Favorites (${favoritesCount})</button>
+          <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked" title="Recipes you've conquered. Or at least attempted.">✅ Cooked (${cookedCount})</button>
+          <button class="chip" data-surprise title="Feeling lucky? Let chaos decide your dinner. What could go wrong?">🎲 Surprise Me!</button>
         </div>
         <div class="chip-row" aria-hidden="true" style="${mobile ? "display:none" : "display:flex; gap:6px; flex-wrap:wrap; padding:4px 0;"}">
           ${buildChips(proteinOptions, state.protein, "protein")}
@@ -1903,15 +1916,78 @@ function render() {
 
   const surpriseBtn = app.querySelector("[data-surprise]");
   if (surpriseBtn) {
-    surpriseBtn.addEventListener("click", () => {
+    surpriseBtn.addEventListener("click", (e) => {
       if (!filtered.length) return;
+
+      // RIDICULOUS TEMU-STYLE CHAOS ACTIVATED! 🎲💥✨
+      const btn = e.currentTarget;
+      const appShell = document.querySelector('.app-shell');
+
+      // Button animation
+      btn.classList.add('surprise-button-active');
+      setTimeout(() => btn.classList.remove('surprise-button-active'), 1200);
+
+      // Screen shake
+      if (appShell) {
+        appShell.classList.add('screen-shake-active');
+        setTimeout(() => appShell.classList.remove('screen-shake-active'), 500);
+      }
+
+      // EMOJI EXPLOSION! 🎉💥🌟⭐✨🎊🎲🍚🔥
+      const emojis = ['🎉', '💥', '🌟', '⭐', '✨', '🎊', '🎲', '🍚', '🔥', '🎆', '💫', '🌈', '🍱', '🥘', '🎯'];
+      const burstCount = 15 + Math.floor(Math.random() * 10);
+
+      for (let i = 0; i < burstCount; i++) {
+        setTimeout(() => {
+          const emoji = document.createElement('div');
+          emoji.className = 'emoji-burst';
+          emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          emoji.style.left = `${Math.random() * 100}%`;
+          emoji.style.top = `${Math.random() * 100}%`;
+          emoji.style.animationDelay = `${Math.random() * 0.3}s`;
+          emoji.style.animationDuration = `${1 + Math.random() * 0.5}s`;
+          document.body.appendChild(emoji);
+
+          setTimeout(() => emoji.remove(), 2000);
+        }, i * 40);
+      }
+
+      // Silly sound effect (using Web Audio API)
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.value = 0.1;
+
+        oscillator.start();
+
+        // Fun ascending tone
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+        oscillator.stop(audioCtx.currentTime + 0.3);
+      } catch (err) {
+        // Audio context not supported, that's okay!
+      }
+
+      // Actually pick the recipe
       const pick = filtered[Math.floor(Math.random() * filtered.length)];
       if (!pick) return;
-      state.selectedId = pick.id;
-      state.selectionSource = "list";
-      setRecipeHash(pick.id);
-      if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
-      render();
+
+      setTimeout(() => {
+        state.selectedId = pick.id;
+        state.selectionSource = "list";
+        setRecipeHash(pick.id);
+        if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
+        render();
+      }, 300);
     });
   }
 
