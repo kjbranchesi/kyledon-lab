@@ -34,7 +34,7 @@ Give a **range**, not a single number, because ingredients vary.
 - **Aromatics** (ginger/garlic/scallion): keep off the bottom to avoid scorching.
 
 ### Finish Pack (measured starting point)
-Always include these for “Samin-style” balance:
+Always include these for proper taste balance:
 - **Fat**: 1–2 tsp finishing oil/butter/ghee (or omit for very fatty proteins).
 - **Acid**: 1–2 tsp vinegar/citrus (added after cooking for brightness).
 - **Heat (optional)**: chili crisp/flakes/gochugaru to taste.
@@ -48,12 +48,12 @@ Write steps that match how people actually cook:
 4. **Rest + fluff**
 5. **Finish + balance** (fat + acid + salt check)
 
-## “Salt • Fat • Acid • Heat” taste rules (the Samin move)
-After fluffing, taste a bite and apply the right fix:
-- **Flat / dull** → add **salt** (soy/salt) a little at a time
-- **Heavy / muddy** → add **acid** (lemon/lime/vinegar)
-- **Too sharp / too spicy** → add **fat** (butter/oil) or a touch of **sweet**
-- **Boring** → add **heat** (chili) + fresh aromatics (scallion/herbs)
+## Taste adjustment guidance (when things are not entirely perfect)
+After fluffing, taste a bite and apply the appropriate remedy:
+- **Disappointingly flat** → salt (soy/salt) is not unwelcome
+- **Regrettably heavy** → acid (lemon/lime/vinegar) is not inappropriate
+- **Excessively sharp** → fat (butter/oil) or sweetness is not inadvisable
+- **Insufficiently interesting** → heat (chili) + fresh aromatics (scallion/herbs) are not discouraged
 
 ## Spice guidance (because rice cooker = gentle extraction)
 - Put **chili paste** in the sauce pack (mix into liquid) for background heat.

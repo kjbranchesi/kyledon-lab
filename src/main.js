@@ -21,6 +21,7 @@ const state = {
   favorites: new Set(),
   cooked: {}, // { [id: number]: { times: number, lastCookedAt: string, rating?: number } }
   userDataLoaded: false,
+  showLandingPage: true,
 };
 
 const proteinOptions = [
@@ -314,6 +315,7 @@ function syncFromHash() {
     if (!Number.isNaN(id)) {
       state.selectedId = id;
       state.selectionSource = "hash";
+      state.showLandingPage = false;
     }
     return;
   }
@@ -819,12 +821,12 @@ function buildChefNotes(recipe) {
           <ul>${notes.heatPack.map((s) => `<li>${s}</li>`).join("")}</ul>
         </div>
         <div class="note-card">
-          <div class="note-title">✅ Samin-style taste fix</div>
+          <div class="note-title">✅ When things are not entirely perfect</div>
           <ul>
-            <li><strong>Flat</strong> → add salt (soy/salt) a little at a time.</li>
-            <li><strong>Heavy</strong> → add acid (vinegar/citrus).</li>
-            <li><strong>Too sharp/spicy</strong> → add fat (oil/butter) or a touch of sweet.</li>
-            <li><strong>Boring</strong> → add heat + fresh aromatics.</li>
+            <li><strong>Disappointingly flat</strong> → salt (soy/salt) is not unwelcome.</li>
+            <li><strong>Regrettably heavy</strong> → acid (vinegar/citrus) is not inappropriate.</li>
+            <li><strong>Excessively sharp</strong> → fat (oil/butter) or sweetness is not inadvisable.</li>
+            <li><strong>Insufficiently interesting</strong> → heat + fresh aromatics are not discouraged.</li>
           </ul>
         </div>
       </div>
@@ -1718,9 +1720,56 @@ function filterCount() {
   return count;
 }
 
+function buildLandingPage() {
+  const taglines = [
+    "Rice, but make it not entirely effortless.",
+    "Where culinary ambition meets acceptable shortcuts.",
+    "One pot. Minimal regret. Maximum convenience.",
+    "The rice cooker: not just for rice. The possibilities are not limited.",
+    "Transforming ingredients into meals. The process is not complicated."
+  ];
+  const randomTagline = taglines[Math.floor(Math.random() * taglines.length)];
+
+  return `
+    <div class="landing-page">
+      <div class="landing-content">
+        <img src="./images/mascot.png" alt="Rice Lab Mascot" class="landing-mascot" />
+        <h1 class="landing-title">Kylē Don (丼) Rice Lab</h1>
+        <p class="landing-tagline">${randomTagline}</p>
+        <p class="landing-description">
+          A not entirely frivolous collection of Zojirushi-compatible one-pot rice cooker recipes.
+          The barrier to entry is not prohibitive. The results are not without merit.
+        </p>
+        <button class="landing-cta" data-enter-app>
+          🍚 Browse Recipes
+          <span class="landing-cta-subtitle">The journey begins. Regret is unlikely.</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function attachLandingListeners() {
+  const enterBtn = document.querySelector("[data-enter-app]");
+  if (enterBtn) {
+    enterBtn.addEventListener("click", () => {
+      state.showLandingPage = false;
+      render();
+    });
+  }
+}
+
 function render() {
   ensureCurrentWeekPlanLoaded();
   ensureUserDataLoaded();
+
+  // Show landing page if flag is set
+  if (state.showLandingPage) {
+    app.innerHTML = buildLandingPage();
+    attachLandingListeners();
+    return;
+  }
+
   const mobile = isMobile();
   const filtered = filterRecipes();
   const favoritesCount = state.favorites.size;
@@ -1828,12 +1877,12 @@ function render() {
 
       <section class="surface filter-tabs-section" style="${mobile ? "display:none" : "display:block"}">
         <div class="filter-tabs">
-          ${buildFilterDropdown("Protein", proteinOptions, state.protein, "protein")}
-          ${buildFilterDropdown("Cuisine", cuisineOptions, state.cuisine, "cuisine")}
-          ${buildFilterDropdown("Spice", spiceOptions, state.spice, "spice")}
+          ${buildFilterDropdown("The Main Event", proteinOptions, state.protein, "protein")}
+          ${buildFilterDropdown("Geographic Inspiration", cuisineOptions, state.cuisine, "cuisine")}
+          ${buildFilterDropdown("Thermal Enthusiasm", spiceOptions, state.spice, "spice")}
           <div class="filter-dropdown" data-dropdown="batch">
             <button class="filter-dropdown-button ${state.batch !== "2" ? "has-selection" : ""}" data-dropdown-toggle="batch">
-              <span class="filter-dropdown-label">Batch:</span>
+              <span class="filter-dropdown-label">Rice Ambition:</span>
               <span class="filter-dropdown-value">${state.batch === "2" ? "2 cups" : "1 cup"}</span>
               <span class="filter-dropdown-icon">▼</span>
             </button>
