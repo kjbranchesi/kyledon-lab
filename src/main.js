@@ -1751,28 +1751,18 @@ function filterCount() {
 }
 
 function buildLandingPage() {
-  const taglines = [
-    "Rice, but make it not entirely effortless.",
-    "Where culinary ambition meets acceptable shortcuts.",
-    "One pot. Minimal regret. Maximum convenience.",
-    "The rice cooker: not just for rice. The possibilities are not limited.",
-    "Transforming ingredients into meals. The process is not complicated."
-  ];
-  const randomTagline = taglines[Math.floor(Math.random() * taglines.length)];
-
   return `
     <div class="landing-page">
       <div class="landing-content">
         <img src="./images/mascot.png" alt="Rice Lab Mascot" class="landing-mascot" />
         <h1 class="landing-title">Kylē Don (丼) Rice Lab</h1>
-        <p class="landing-tagline">${randomTagline}</p>
+        <p class="landing-tagline">The rice cooker is the expert here. You're more of an assistant.</p>
         <p class="landing-description">
-          A not entirely frivolous collection of Zojirushi-compatible one-pot rice cooker recipes.
-          The barrier to entry is not prohibitive. The results are not without merit.
+          Your role: ingredient procurement and button pressing. Rice cooker's role: actual cooking knowledge. The hierarchy is clear. The results are excellent.
         </p>
         <button class="landing-cta" data-enter-app>
           🍚 Browse Recipes
-          <span class="landing-cta-subtitle">The journey begins. Regret is unlikely.</span>
+          <span class="landing-cta-subtitle">Show me the recipes I'll assist with</span>
         </button>
       </div>
     </div>
