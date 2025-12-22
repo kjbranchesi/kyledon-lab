@@ -1,0 +1,21 @@
+{
+  "name": "Kylē Don Rice Lab",
+  "short_name": "Rice Lab",
+  "description": "Zojirushi-friendly one-pot rice cooker recipes. Mobile-first for quick browsing and cooking.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff6b6b",
+  "icons": [
+    {
+      "src": "./images/mascot.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/mascot.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

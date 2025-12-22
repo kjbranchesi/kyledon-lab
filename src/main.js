@@ -6,13 +6,22 @@ const state = {
   protein: "all",
   cuisine: "all",
   spice: "all",
+  listMode: "all", // "all" | "favorites" | "cooked"
   batch: "2",
   selectedId: null,
   selectionSource: "none", // "none" | "list" | "hash" | "plan"
   ignoreNextHashChange: false,
   showFilters: false,
+  showShoppingList: false,
+  showCookMode: false,
+  cookModeId: null,
+  cookModeChecks: {}, // { [stepIndex: number]: true }
+  keepAwake: false,
   weeklyPlan: null,
   planAnimation: null, // { type: "generate"|"shuffle"|"swap", slotIndex?: number }
+  favorites: new Set(),
+  cooked: {}, // { [id: number]: { times: number, lastCookedAt: string, rating?: number } }
+  userDataLoaded: false,
 };
 
 const proteinOptions = [
@@ -56,6 +65,51 @@ const app = document.getElementById("app");
 
 const WEEK_PLAN_STORAGE_PREFIX = "riceLab.weekPlan.";
 const WEEK_PLAN_SLOTS = ["Pick 1", "Pick 2", "Pick 3"];
+const USER_DATA_STORAGE_KEY = "riceLab.userData.v1";
+const LAB_QUESTS = [
+  {
+    id: "acid",
+    emoji: "🍋",
+    title: "Acid Spark",
+    description: "Brighten at the end: lemon/lime or a splash of vinegar.",
+  },
+  {
+    id: "crunch",
+    emoji: "👹",
+    title: "Crunch Gremlin",
+    description: "Add a crunchy topper: fried shallots, sesame seeds, or nuts.",
+  },
+  {
+    id: "umami",
+    emoji: "🍄",
+    title: "Umami Button",
+    description: "Boost depth: miso, fish sauce, or a tiny pinch of MSG.",
+  },
+  {
+    id: "fat",
+    emoji: "🥄",
+    title: "Gloss Boss",
+    description: "Finish with 1 tsp good oil (sesame or olive) for sheen.",
+  },
+  {
+    id: "heat",
+    emoji: "🔥",
+    title: "Heat Dial",
+    description: "Add chili crisp/gochugaru to taste — stop when it feels alive.",
+  },
+  {
+    id: "green",
+    emoji: "🌿",
+    title: "Green Confetti",
+    description: "Finish with herbs or scallions for lift.",
+  },
+  {
+    id: "pickle",
+    emoji: "🥒",
+    title: "Pickle Pop",
+    description: "Serve with something tangy-crunchy (kimchi or quick pickle).",
+  },
+];
 
 function formatLocalDateKey(date) {
   const year = date.getFullYear();
@@ -106,6 +160,15 @@ function storageRemove(key) {
   }
 }
 
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function loadWeekPlan(weekKey) {
   const raw = storageGet(`${WEEK_PLAN_STORAGE_PREFIX}${weekKey}`);
   if (!raw) return null;
@@ -132,6 +195,110 @@ function ensureCurrentWeekPlanLoaded() {
   const weekKey = getCurrentWeekKey();
   if (state.weeklyPlan?.weekKey === weekKey) return;
   state.weeklyPlan = loadWeekPlan(weekKey);
+}
+
+function loadUserData() {
+  const raw = storageGet(USER_DATA_STORAGE_KEY);
+  if (!raw) {
+    return { favorites: new Set(), cooked: {} };
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    const favorites = new Set(
+      Array.isArray(parsed?.favorites)
+        ? parsed.favorites.filter((id) => typeof id === "number")
+        : []
+    );
+
+    const cooked = typeof parsed?.cooked === "object" && parsed.cooked ? parsed.cooked : {};
+    const normalizedCooked = {};
+    for (const [idStr, record] of Object.entries(cooked)) {
+      const id = parseInt(idStr, 10);
+      if (Number.isNaN(id)) continue;
+      if (!record || typeof record !== "object") continue;
+      const times = typeof record.times === "number" && record.times > 0 ? record.times : 1;
+      const lastCookedAt = typeof record.lastCookedAt === "string" ? record.lastCookedAt : new Date().toISOString();
+      const rating =
+        typeof record.rating === "number" && record.rating >= 1 && record.rating <= 5 ? record.rating : undefined;
+      normalizedCooked[id] = { times, lastCookedAt, ...(rating ? { rating } : {}) };
+    }
+
+    return { favorites, cooked: normalizedCooked };
+  } catch {
+    return { favorites: new Set(), cooked: {} };
+  }
+}
+
+function saveUserData() {
+  const payload = {
+    favorites: Array.from(state.favorites.values()),
+    cooked: state.cooked,
+  };
+  storageSet(USER_DATA_STORAGE_KEY, JSON.stringify(payload));
+}
+
+function ensureUserDataLoaded() {
+  if (state.userDataLoaded) return;
+  const data = loadUserData();
+  state.favorites = data.favorites;
+  state.cooked = data.cooked;
+  state.userDataLoaded = true;
+}
+
+function isFavorite(id) {
+  return state.favorites.has(id);
+}
+
+function getCookedRecord(id) {
+  return state.cooked?.[id] || null;
+}
+
+function formatShortDate(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function toggleFavorite(id) {
+  ensureUserDataLoaded();
+  if (state.favorites.has(id)) {
+    state.favorites.delete(id);
+  } else {
+    state.favorites.add(id);
+  }
+  saveUserData();
+  render();
+}
+
+function markCooked(id) {
+  ensureUserDataLoaded();
+  const existing = state.cooked[id];
+  const times = (existing?.times || 0) + 1;
+  const rating = existing?.rating;
+  state.cooked[id] = { times, lastCookedAt: new Date().toISOString(), ...(rating ? { rating } : {}) };
+  saveUserData();
+  render();
+}
+
+function clearCooked(id) {
+  ensureUserDataLoaded();
+  if (!state.cooked[id]) return;
+  delete state.cooked[id];
+  saveUserData();
+  render();
+}
+
+function setCookedRating(id, rating) {
+  ensureUserDataLoaded();
+  if (rating < 1 || rating > 5) return;
+  const existing = state.cooked[id];
+  const times = existing?.times || 1;
+  const lastCookedAt = existing?.lastCookedAt || new Date().toISOString();
+  state.cooked[id] = { times, lastCookedAt, rating };
+  saveUserData();
+  render();
 }
 
 function deepClone(value) {
@@ -176,9 +343,51 @@ window.addEventListener("hashchange", () => {
   render();
 });
 
+let wakeLockSentinel = null;
+
+async function enableWakeLock() {
+  if (!("wakeLock" in navigator) || typeof navigator.wakeLock?.request !== "function") return false;
+  try {
+    wakeLockSentinel = await navigator.wakeLock.request("screen");
+    return true;
+  } catch {
+    wakeLockSentinel = null;
+    return false;
+  }
+}
+
+async function disableWakeLock() {
+  if (!wakeLockSentinel) return;
+  try {
+    await wakeLockSentinel.release();
+  } catch {
+    // ignore
+  } finally {
+    wakeLockSentinel = null;
+  }
+}
+
+document.addEventListener("visibilitychange", async () => {
+  if (document.visibilityState === "visible" && state.keepAwake && state.showCookMode) {
+    await enableWakeLock();
+  }
+});
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && state.showFilters) {
     state.showFilters = false;
+    render();
+  }
+  if (e.key === "Escape" && state.showShoppingList) {
+    state.showShoppingList = false;
+    render();
+  }
+  if (e.key === "Escape" && state.showCookMode) {
+    state.showCookMode = false;
+    state.cookModeId = null;
+    state.cookModeChecks = {};
+    state.keepAwake = false;
+    disableWakeLock();
     render();
   }
 });
@@ -481,6 +690,7 @@ function clearCurrentWeekPlan() {
   const weekKey = getCurrentWeekKey();
   removeWeekPlan(weekKey);
   state.weeklyPlan = null;
+  state.showShoppingList = false;
   state.planAnimation = { type: "shuffle" };
   render();
   window.setTimeout(() => {
@@ -716,7 +926,11 @@ function filterRecipes() {
     const matchesProtein = state.protein === "all" || r.proteinType === state.protein;
     const matchesCuisine = state.cuisine === "all" || r.cuisine === state.cuisine;
     const matchesSpice = state.spice === "all" || getSpiceLevel(r).label.toLowerCase() === state.spice;
-    return matchesQuery && matchesProtein && matchesCuisine && matchesSpice;
+    const matchesMode =
+      state.listMode === "all" ||
+      (state.listMode === "favorites" && isFavorite(r.id)) ||
+      (state.listMode === "cooked" && Boolean(getCookedRecord(r.id)));
+    return matchesQuery && matchesProtein && matchesCuisine && matchesSpice && matchesMode;
   });
 }
 
@@ -744,6 +958,46 @@ function buildConstraintBadges(constraints) {
   }
 
   return parts.map((p) => `<span class="badge">${p}</span>`).join("");
+}
+
+function hashStringToUint32(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i += 1) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function getLabQuestForSlot(plan, slotIndex, recipe) {
+  if (!plan || !recipe) return null;
+  const text = `${recipe.protein} ${recipe.veggies} ${recipe.sauces} ${recipe.liquid}`.toLowerCase();
+  const hasAcid = /\b(vinegar|lemon|lime|yuzu|tamarind|pickled|kimchi)\b/i.test(text);
+  const hasCrunch = /\b(fried shallots?|fried garlic|garlic chips|sesame seeds?|nuts?|peanuts?|nori|crispy)\b/i.test(text);
+  const hasFat = /\b(sesame oil|olive oil|butter|ghee|coconut milk|peanut butter)\b/i.test(text);
+  const hasUmami =
+    /\b(soy sauce|tamari|oyster sauce|fish sauce|miso|msg|mushroom powder|doubanjiang|gochujang)\b/i.test(text);
+  const spiceScore = getSpiceLevel(recipe).score;
+
+  const candidateIds = [];
+  if (!hasAcid) candidateIds.push("acid");
+  if (!hasCrunch) candidateIds.push("crunch");
+  if (!hasFat) candidateIds.push("fat");
+  if (!hasUmami) candidateIds.push("umami");
+  if (spiceScore === 0) candidateIds.push("heat");
+  candidateIds.push("green");
+  candidateIds.push("pickle");
+
+  const uniqueIds = Array.from(new Set(candidateIds));
+  const candidates = uniqueIds
+    .map((id) => LAB_QUESTS.find((q) => q.id === id))
+    .filter(Boolean);
+  const pool = candidates.length ? candidates : LAB_QUESTS;
+
+  const swaps = typeof plan?.slots?.[slotIndex]?.swaps === "number" ? plan.slots[slotIndex].swaps : 0;
+  const seed = `${plan.weekKey}|${plan.shuffleCount || 0}|${slotIndex}|${recipe.id}|${swaps}`;
+  const idx = hashStringToUint32(seed) % pool.length;
+  return pool[idx] || null;
 }
 
 function buildWeekPlanSection() {
@@ -797,6 +1051,10 @@ function buildWeekPlanSection() {
       }
 
       const spice = getSpiceLevel(recipe).label;
+      const quest = getLabQuestForSlot(plan, idx, recipe);
+      const questHtml = quest
+        ? `<div class="plan-card-quest">${quest.emoji} ${quest.title} — ${quest.description}</div>`
+        : "";
       return `
         <div class="plan-slot ${swapClass}">
           <div class="plan-slot-header">
@@ -809,6 +1067,7 @@ function buildWeekPlanSection() {
           <button class="plan-card" data-plan-open="${recipe.id}">
             <div class="plan-card-title">${getProteinEmoji(recipe.proteinType)} ${recipe.name}</div>
             <div class="plan-card-meta">${recipe.cuisine} • ${recipe.proteinType} • ${spice}</div>
+            ${questHtml}
           </button>
         </div>
       `;
@@ -825,6 +1084,7 @@ function buildWeekPlanSection() {
         <div class="week-plan-actions">
           <button class="ghost" data-plan-use-current>Use current filters</button>
           <button class="chip active" data-plan-reshuffle>Reshuffle</button>
+          <button class="ghost" data-plan-shopping>Shopping list</button>
           <button class="ghost" data-plan-share>Share</button>
           <button class="ghost" data-plan-clear>Clear</button>
         </div>
@@ -832,6 +1092,7 @@ function buildWeekPlanSection() {
 
       <div class="badge-row">${badges}</div>
       ${fallbackNote}
+      <p class="week-plan-note">🎯 Lab Quests are optional: tiny finishing moves to make each cook feel like an experiment.</p>
 
       <div class="plan-grid">
         ${slotsHtml}
@@ -860,6 +1121,355 @@ function buildWeekPlanShareText(plan) {
   return lines.join("\n").trim();
 }
 
+function stripParens(text) {
+  return String(text || "").replace(/\([^)]*\)/g, "");
+}
+
+function normalizeShoppingKey(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function capitalizeFirst(text) {
+  const t = String(text || "").trim();
+  if (!t) return "";
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+function splitIngredientPhrases(text) {
+  const cleaned = stripParens(text).replace(/\s+/g, " ").trim();
+  if (!cleaned) return [];
+  return cleaned
+    .split(/[;,]/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
+function addShoppingItem(groups, group, key, label, pickIndex) {
+  if (!label) return;
+  const bucket = groups[group];
+  if (!bucket) return;
+
+  const normalizedKey = key || normalizeShoppingKey(label);
+  if (!normalizedKey) return;
+
+  if (!bucket.has(normalizedKey)) {
+    bucket.set(normalizedKey, { label, picks: new Set() });
+  }
+  bucket.get(normalizedKey).picks.add(pickIndex);
+}
+
+function formatPickRefs(pickSet) {
+  const picks = Array.from(pickSet || []).filter((n) => typeof n === "number").sort((a, b) => a - b);
+  if (!picks.length) return "";
+  const labels = picks.map((i) => WEEK_PLAN_SLOTS[i] || `Pick ${i + 1}`);
+  return ` — ${labels.join(", ")}`;
+}
+
+function extractLiquidItems(liquidText) {
+  const t = String(liquidText || "").toLowerCase();
+  const items = [];
+  if (t.includes("coconut milk")) items.push({ key: "coconut milk", label: "Coconut milk" });
+  if (t.includes("dashi")) items.push({ key: "dashi", label: "Dashi" });
+  if (/\bchicken (?:stock|broth)\b/i.test(t)) items.push({ key: "chicken stock", label: "Chicken stock/broth" });
+  else if (/\bmushroom (?:stock|broth)\b/i.test(t)) items.push({ key: "mushroom stock", label: "Mushroom broth/stock" });
+  else if (/\bvegetable (?:stock|broth)\b/i.test(t)) items.push({ key: "vegetable stock", label: "Vegetable stock/broth" });
+  else if (/\bbeef (?:stock|broth)\b/i.test(t)) items.push({ key: "beef stock", label: "Beef stock/broth" });
+  else if (/\b(stock|broth)\b/i.test(t)) items.push({ key: "stock", label: "Stock/broth" });
+  return items;
+}
+
+function canonicalizeProteinItem(phrase) {
+  let t = String(phrase || "").trim();
+  if (!t) return "";
+
+  t = t.replace(/^(?:boneless|skinless|skin-on|cooked|raw|bite[- ]?sized|small pieces? of|pieces? of)\b\s*/i, "");
+  t = t.replace(/\b(?:pressed well|pressed)\b/gi, "");
+  t = t.replace(/\s+/g, " ").trim();
+  if (!t) return "";
+
+  const lower = t.toLowerCase();
+  if (lower.includes("tofu")) {
+    if (lower.includes("silken")) return "Silken tofu";
+    if (lower.includes("firm")) return "Firm tofu";
+    return "Tofu";
+  }
+  if (lower.includes("chicken")) {
+    if (/\bthigh\b/i.test(lower)) return "Chicken thighs";
+    if (/\bbreast\b/i.test(lower)) return "Chicken breast";
+    return "Chicken";
+  }
+  if (lower.includes("beef")) {
+    if (lower.includes("ground")) return "Ground beef";
+    return "Beef";
+  }
+  if (lower.includes("pork")) {
+    if (lower.includes("ground")) return "Ground pork";
+    if (lower.includes("belly")) return "Pork belly";
+    return "Pork";
+  }
+  if (/\b(shrimp|prawn)\b/i.test(lower)) return "Shrimp";
+  if (/\bsalmon\b/i.test(lower)) return "Salmon";
+  if (/\btuna\b/i.test(lower)) return "Tuna";
+  if (/\begg\b/i.test(lower)) return "Eggs";
+  return capitalizeFirst(t);
+}
+
+function extractProteinItems(proteinText) {
+  const phrases = splitIngredientPhrases(proteinText);
+  if (!phrases.length) return [];
+
+  const first = phrases[0] || "";
+  return first
+    .replace(/\s*&\s*/g, " and ")
+    .split(/\s+and\s+/i)
+    .map((p) => canonicalizeProteinItem(p))
+    .filter(Boolean);
+}
+
+function extractProteinPantryHints(proteinText) {
+  const parts = splitIngredientPhrases(proteinText);
+  if (parts.length <= 1) return "";
+  const extras = parts.slice(1).join(", ");
+  if (!extras) return "";
+  const hasIngredientWords =
+    /\b(soy|tamari|shoyu|ganjang|oyster sauce|fish sauce|vinegar|mirin|shaoxing|sake|sesame oil|miso|gochujang|gochugaru|curry paste|chili|lime|lemon|msg|mushroom powder|tomato paste|paprika|pepper)\b/i.test(
+      extras
+    );
+  return hasIngredientWords ? extras : "";
+}
+
+function cleanProducePhrase(phrase) {
+  let t = String(phrase || "");
+  if (!t) return "";
+  t = t.replace(/\b(?:optional|fresh|frozen|young|mixed|quality|premium)\b/gi, "");
+  t = t.replace(/\b(?:stems? removed|stems?|leaves?|white parts?|green parts?|separated|separate)\b/gi, "");
+  t = t.replace(
+    /\b(?:sliced|slice|diced|dice|julienned|julienne|ribboned|cubed|cube|matchsticks|coins|halved|lengthwise|trimmed|crushed|minced|grated|shredded)\b/gi,
+    ""
+  );
+  t = t.replace(/\b(?:if available|if you like|if desired)\b/gi, "");
+  t = t.replace(/\s+/g, " ").trim();
+  return t;
+}
+
+function canonicalizeProduceItem(text) {
+  const t = String(text || "").trim();
+  if (!t) return null;
+  const lower = t.toLowerCase();
+
+  if (/\b(scallion|green onion|spring onion)\b/i.test(lower)) return { key: "scallions", label: "Scallions / green onion" };
+  if (/\bgarlic\b/i.test(lower)) return { key: "garlic", label: "Garlic" };
+  if (/\bginger\b/i.test(lower)) return { key: "ginger", label: "Ginger" };
+  if (/\bonion\b/i.test(lower)) return { key: "onion", label: "Onion" };
+  if (/\bbok choy\b/i.test(lower)) return { key: "bok choy", label: "Bok choy" };
+  if (/\bmushroom\b/i.test(lower)) return { key: "mushrooms", label: "Mushrooms" };
+  if (/\bspinach\b/i.test(lower)) return { key: "spinach", label: "Spinach" };
+  if (/\bkale\b/i.test(lower)) return { key: "kale", label: "Kale" };
+  if (/\bcarrot\b/i.test(lower)) return { key: "carrots", label: "Carrots" };
+  if (/\bbell pepper\b/i.test(lower)) return { key: "bell pepper", label: "Bell pepper" };
+  if (/\bzucchini\b/i.test(lower)) return { key: "zucchini", label: "Zucchini" };
+  if (/\beggplant\b/i.test(lower)) return { key: "eggplant", label: "Eggplant" };
+  if (/\bpeas\b/i.test(lower)) return { key: "peas", label: "Peas" };
+  if (/\bcorn\b/i.test(lower)) return { key: "corn", label: "Corn" };
+  if (/\bthai basil\b/i.test(lower)) return { key: "thai basil", label: "Thai basil" };
+  if (/\bbasil\b/i.test(lower)) return { key: "basil", label: "Basil" };
+  if (/\bcilantro\b/i.test(lower)) return { key: "cilantro", label: "Cilantro" };
+  if (/\bparsley\b/i.test(lower)) return { key: "parsley", label: "Parsley" };
+  if (/\boregano\b/i.test(lower)) return { key: "oregano", label: "Oregano" };
+  if (/\bthyme\b/i.test(lower)) return { key: "thyme", label: "Thyme" };
+  if (/\blime\b/i.test(lower)) return { key: "lime", label: "Lime" };
+  if (/\blemon\b/i.test(lower)) return { key: "lemon", label: "Lemon" };
+
+  const label = capitalizeFirst(t);
+  return { key: normalizeShoppingKey(label), label };
+}
+
+function extractProduceItems(veggiesText) {
+  const phrases = splitIngredientPhrases(veggiesText);
+  const items = [];
+  for (const phrase of phrases) {
+    const cleaned = cleanProducePhrase(phrase);
+    const canonical = canonicalizeProduceItem(cleaned);
+    if (canonical) items.push(canonical);
+  }
+  return items;
+}
+
+function cleanShoppingItemPhrase(phrase) {
+  let t = stripParens(phrase);
+  t = t.replace(/\b\d+(?:\.\d+)?\s*(?:tbsp|tablespoons?|tsp|teaspoons?|cups?|cup|cloves?)\b/gi, "");
+  t = t.replace(/\b(?:pinch|splash|dash|touch|some|a little|little|lots of|plenty of)\b/gi, "");
+  t = t.replace(/\b(?:quality|premium|homemade|freshly|fresh|raw|true|better)\b/gi, "");
+  t = t.replace(/\b(?:optional|if available|if desired|to taste)\b/gi, "");
+  t = t.replace(/^or\s+/i, "");
+  t = t.replace(/\s+/g, " ").trim();
+  return t;
+}
+
+function looksLikeInstructionFragment(text) {
+  return /\b(fill|use|replace|top(?: to)?|mix|stir|add|layer|reserve|keep|reduce|cook|set(?:ting)?|line)\b/i.test(
+    text
+  );
+}
+
+function canonicalizePantryOrFinishItem(item, wasFinish) {
+  const t = String(item || "").trim();
+  if (!t) return null;
+  const lower = t.toLowerCase();
+
+  if (/\bwater\b/i.test(lower)) return null;
+  if (/\b(salt|sea salt|kosher salt)\b/i.test(lower)) return null;
+  if (/\bsugar\b/i.test(lower) && !/\b(brown sugar|palm sugar|coconut sugar)\b/i.test(lower)) return null;
+
+  if (/\b(lemon|lime|ginger|garlic|scallion|green onion|spring onion|basil|cilantro|parsley|oregano|thyme)\b/i.test(lower)) {
+    const produce = canonicalizeProduceItem(t);
+    if (!produce) return null;
+    return { group: "produce", ...produce };
+  }
+
+  if (/\b(chili crisp|chilli crisp|chili oil|chilli oil)\b/i.test(lower)) {
+    return { group: "finish", key: "chili crisp", label: "Chili crisp / chili oil" };
+  }
+  if (/\bfried shallots?\b/i.test(lower)) return { group: "finish", key: "fried shallots", label: "Fried shallots" };
+  if (/\b(fried garlic|garlic chips)\b/i.test(lower)) return { group: "finish", key: "fried garlic", label: "Fried garlic chips" };
+  if (/\bsesame seeds?\b/i.test(lower)) return { group: "finish", key: "sesame seeds", label: "Sesame seeds" };
+  if (/\bnori\b/i.test(lower)) return { group: "finish", key: "nori", label: "Nori (strips/flakes)" };
+  if (/\bcapers\b/i.test(lower)) return { group: "finish", key: "capers", label: "Capers" };
+
+  if (/\bdark soy\b/i.test(lower)) return { group: "pantry", key: "dark soy sauce", label: "Dark soy sauce" };
+  if (/\b(soy sauce|tamari|shoyu|ganjang)\b/i.test(lower) || /\bsoy\b/i.test(lower)) {
+    return { group: "pantry", key: "soy sauce", label: "Soy sauce / tamari" };
+  }
+  if (/\boyster sauce\b/i.test(lower)) return { group: "pantry", key: "oyster sauce", label: "Oyster sauce" };
+  if (/\bfish sauce\b/i.test(lower)) return { group: "pantry", key: "fish sauce", label: "Fish sauce" };
+  if (/\bgolden mountain\b/i.test(lower)) return { group: "pantry", key: "golden mountain", label: "Golden Mountain sauce" };
+  if (/\bshaoxing\b/i.test(lower)) return { group: "pantry", key: "shaoxing wine", label: "Shaoxing wine" };
+  if (/\bmirin\b/i.test(lower)) return { group: "pantry", key: "mirin", label: "Mirin" };
+  if (/\bsake\b/i.test(lower)) return { group: "pantry", key: "sake", label: "Sake" };
+  if (/\brice vinegar\b/i.test(lower)) return { group: "pantry", key: "rice vinegar", label: "Rice vinegar" };
+  if (/\bblack vinegar\b/i.test(lower)) return { group: "pantry", key: "black vinegar", label: "Chinese black vinegar" };
+  if (/\bsesame oil\b/i.test(lower)) return { group: "pantry", key: "sesame oil", label: "Toasted sesame oil" };
+  if (/\bdashi\b/i.test(lower)) return { group: "rice", key: "dashi", label: "Dashi" };
+  if (/\bcoconut milk\b/i.test(lower)) return { group: "rice", key: "coconut milk", label: "Coconut milk" };
+  if (/\b(gochujang)\b/i.test(lower)) return { group: "pantry", key: "gochujang", label: "Gochujang" };
+  if (/\b(gochugaru)\b/i.test(lower)) return { group: "pantry", key: "gochugaru", label: "Gochugaru" };
+  if (/\bcurry paste\b/i.test(lower)) return { group: "pantry", key: "curry paste", label: "Curry paste" };
+  if (/\bmiso\b/i.test(lower)) return { group: "pantry", key: "miso", label: "Miso" };
+  if (/\bhoisin\b/i.test(lower)) return { group: "pantry", key: "hoisin", label: "Hoisin" };
+  if (/\bdoubanjiang\b/i.test(lower)) return { group: "pantry", key: "doubanjiang", label: "Doubanjiang" };
+  if (/\btomato paste\b/i.test(lower)) return { group: "pantry", key: "tomato paste", label: "Tomato paste" };
+  if (/\bpeanut butter\b/i.test(lower)) return { group: "pantry", key: "peanut butter", label: "Peanut butter" };
+  if (/\bmsg\b/i.test(lower) || /\bmushroom powder\b/i.test(lower)) {
+    return { group: "pantry", key: "msg", label: "MSG / mushroom powder (optional)" };
+  }
+  if (/\bsmoked paprika\b/i.test(lower)) return { group: "pantry", key: "smoked paprika", label: "Smoked paprika" };
+  if (/\bpaprika\b/i.test(lower)) return { group: "pantry", key: "paprika", label: "Paprika" };
+  if (/\bwhite pepper\b/i.test(lower)) return { group: "pantry", key: "white pepper", label: "White pepper" };
+  if (/\bblack pepper\b/i.test(lower)) return { group: "pantry", key: "black pepper", label: "Black pepper" };
+  if (/\b(olive oil|evoo)\b/i.test(lower)) return { group: "pantry", key: "olive oil", label: "Olive oil" };
+  if (/\b(palm sugar|coconut sugar)\b/i.test(lower)) return { group: "pantry", key: "palm sugar", label: "Palm/coconut sugar" };
+  if (/\bbrown sugar\b/i.test(lower)) return { group: "pantry", key: "brown sugar", label: "Brown sugar" };
+
+  if (looksLikeInstructionFragment(t)) return null;
+
+  const group = wasFinish ? "finish" : "pantry";
+  return { group, key: normalizeShoppingKey(t), label: capitalizeFirst(t) };
+}
+
+function extractPantryAndFinishItems(sourceText) {
+  const segments = splitIngredientPhrases(sourceText);
+  const items = [];
+  for (const segment of segments) {
+    const wasFinish = /\b(finish|after cooking|after cook|to finish|garnish)\b/i.test(segment);
+    const cleanedSegment = segment.replace(/\b(?:finish(?: with)?|after cooking|after cook|to finish|garnish(?: with)?)\b[: ]*/gi, "");
+    const parts = cleanedSegment
+      .replace(/\s*&\s*/g, " and ")
+      .split(/\s+and\s+/i)
+      .map((p) => cleanShoppingItemPhrase(p))
+      .filter(Boolean);
+
+    for (const part of parts) {
+      const canonical = canonicalizePantryOrFinishItem(part, wasFinish);
+      if (!canonical) continue;
+      items.push(canonical);
+    }
+  }
+  return items;
+}
+
+function buildShoppingListText(plan) {
+  const lines = [];
+  lines.push(`Rice Lab — Shopping List`);
+  lines.push(plan.weekLabel || "");
+  lines.push("Each line notes which pick uses it.");
+
+  const groups = {
+    rice: new Map(),
+    protein: new Map(),
+    produce: new Map(),
+    pantry: new Map(),
+    finish: new Map(),
+  };
+
+  for (let i = 0; i < (plan.slots?.length || 0); i += 1) {
+    const slot = plan.slots[i];
+    const recipe = typeof slot?.id === "number" ? recipes.find((r) => r.id === slot.id) : null;
+    if (!recipe) continue;
+
+    const riceLabel = recipe.riceType ? `${recipe.riceType} rice` : "Rice";
+    addShoppingItem(groups, "rice", `rice:${normalizeShoppingKey(riceLabel)}`, riceLabel, i);
+    for (const liquidItem of extractLiquidItems(recipe.liquid)) {
+      addShoppingItem(groups, "rice", `liquid:${liquidItem.key}`, liquidItem.label, i);
+    }
+
+    for (const proteinItem of extractProteinItems(recipe.protein || recipe.proteinType)) {
+      addShoppingItem(groups, "protein", `protein:${normalizeShoppingKey(proteinItem)}`, proteinItem, i);
+    }
+
+    for (const produceItem of extractProduceItems(recipe.veggies)) {
+      addShoppingItem(groups, "produce", `produce:${produceItem.key}`, produceItem.label, i);
+    }
+
+    const pantrySource = [recipe.sauces, extractProteinPantryHints(recipe.protein)].filter(Boolean).join(", ");
+    for (const item of extractPantryAndFinishItems(pantrySource)) {
+      addShoppingItem(groups, item.group, `${item.group}:${item.key}`, item.label, i);
+    }
+  }
+
+  const appendGroup = (title, map) => {
+    if (!map.size) return;
+    lines.push("");
+    lines.push(`== ${title} ==`);
+    const items = Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label));
+    items.forEach((item) => lines.push(`- ${item.label}${formatPickRefs(item.picks)}`));
+  };
+
+  appendGroup("Rice & Liquid", groups.rice);
+  appendGroup("Protein", groups.protein);
+  appendGroup("Produce & Aromatics", groups.produce);
+  appendGroup("Sauces & Pantry", groups.pantry);
+  appendGroup("Finishers (Optional)", groups.finish);
+
+  lines.push("");
+  lines.push("Tip: This is a smart checklist (best-effort parsing). Open each recipe for exact amounts + options.");
+
+  return lines.join("\n").trim();
+}
+
+function buildCookStepsText(recipe, batchLabel, steps) {
+  const lines = [];
+  lines.push(`${recipe.name}`);
+  lines.push(`${recipe.cuisine} • ${recipe.proteinType} • ${recipe.riceType} • ${recipe.setting}`);
+  lines.push(`Batch: ${batchLabel}`);
+  lines.push("");
+  lines.push("Cook mode steps");
+  steps.forEach((step, idx) => lines.push(`${idx + 1}) ${step}`));
+  return lines.join("\n").trim();
+}
+
 function buildList(filtered) {
   if (!filtered.length) {
     return `<div class="empty-state">No recipes match your search and filters.</div>`;
@@ -874,11 +1484,17 @@ function buildList(filtered) {
       ${filtered
         .map((recipe) => {
           const active = state.selectedId === recipe.id;
+          const favorite = isFavorite(recipe.id);
+          const cooked = Boolean(getCookedRecord(recipe.id));
           return `
             <button class="list-item ${active ? "active" : ""}" data-id="${recipe.id}" role="listitem">
               <div class="item-title">
                 <h3>${getProteinEmoji(recipe.proteinType)} ${recipe.name}</h3>
-                <span class="pill">${recipe.proteinType}</span>
+                <div class="item-right">
+                  ${favorite ? `<span class="mini-tag" title="Favorite">★</span>` : ""}
+                  ${cooked ? `<span class="mini-tag" title="Cooked">✅</span>` : ""}
+                  <span class="pill">${recipe.proteinType}</span>
+                </div>
               </div>
               <div class="item-meta">${recipe.cuisine} • ${recipe.riceType} • ${recipe.setting}</div>
             </button>
@@ -955,8 +1571,14 @@ function buildDetail(recipe, inCurrentFilters) {
   const liquid = adjustForBatch(recipe.liquid, state.batch);
   const batchLabel = state.batch === "2" ? "Standard batch (2 cups)" : "Half batch (1 cup)";
   const spice = getSpiceLevel(recipe);
+  const favorite = isFavorite(recipe.id);
+  const cooked = getCookedRecord(recipe.id);
   const hasActiveFilters =
-    state.search.trim().length > 0 || state.protein !== "all" || state.cuisine !== "all" || state.spice !== "all";
+    state.search.trim().length > 0 ||
+    state.protein !== "all" ||
+    state.cuisine !== "all" ||
+    state.spice !== "all" ||
+    state.listMode !== "all";
   const filterNote =
     hasActiveFilters && !inCurrentFilters
       ? `
@@ -970,10 +1592,31 @@ function buildDetail(recipe, inCurrentFilters) {
     .map((tag) => `<span class="badge">${tag}</span>`)
     .join("");
 
+  const cookedPanel = cooked
+    ? `
+      <div class="cooked-panel">
+        <div class="cooked-meta">✅ Cooked ${cooked.times}× • last ${formatShortDate(cooked.lastCookedAt)}</div>
+        <div class="rating" role="group" aria-label="Rating">
+          ${[1, 2, 3, 4, 5]
+            .map(
+              (n) => `
+              <button class="rating-star ${cooked.rating && cooked.rating >= n ? "on" : ""}" data-rate-id="${recipe.id}" data-rate="${n}" aria-label="Rate ${n} star${n === 1 ? "" : "s"}">★</button>
+            `
+            )
+            .join("")}
+          <button class="ghost" data-cooked-clear="${recipe.id}">Clear cooked</button>
+        </div>
+      </div>
+    `
+    : "";
+
   return `
     <div class="detail-header">
       <h2><span>${getProteinEmoji(recipe.proteinType)}</span> ${recipe.name}</h2>
       <div class="actions">
+        <button class="chip active" data-cook-open="${recipe.id}">👩‍🍳 Cook mode</button>
+        <button class="ghost" data-favorite="${recipe.id}">${favorite ? "★ Saved" : "☆ Save"}</button>
+        <button class="ghost" data-cooked-mark="${recipe.id}">✅ Cooked</button>
         <button class="ghost" data-share="${recipe.id}">Share</button>
         <button class="ghost" data-copy-recipe="${recipe.id}">Copy recipe</button>
         <button class="ghost" data-copy="${recipe.id}">Copy ingredients</button>
@@ -988,6 +1631,7 @@ function buildDetail(recipe, inCurrentFilters) {
     </div>
     ${tagsHtml ? `<div class="badge-row">${tagsHtml}</div>` : ""}
     ${filterNote}
+    ${cookedPanel}
 
     <div class="section-label">Ingredients</div>
     <div class="info-row"><strong>Rice</strong><span>${riceAmount}</span></div>
@@ -1015,8 +1659,21 @@ function filterCount() {
 
 function render() {
   ensureCurrentWeekPlanLoaded();
+  ensureUserDataLoaded();
   const mobile = isMobile();
   const filtered = filterRecipes();
+  const favoritesCount = state.favorites.size;
+  const cookedCount = Object.keys(state.cooked).length;
+  const weekKey = getCurrentWeekKey();
+  const currentPlan = state.weeklyPlan?.weekKey === weekKey ? state.weeklyPlan : null;
+  const shoppingText = currentPlan ? buildShoppingListText(currentPlan) : "Create a weekly plan first.";
+  const cookRecipe =
+    state.showCookMode && typeof state.cookModeId === "number"
+      ? recipes.find((r) => r.id === state.cookModeId)
+      : null;
+  const cookBatchLabel = state.batch === "2" ? "Standard batch (2 cups)" : "Half batch (1 cup)";
+  const cookSteps = cookRecipe ? getMethodSteps(cookRecipe, cookBatchLabel) : [];
+  const wakeLockSupported = typeof navigator !== "undefined" && typeof navigator.wakeLock?.request === "function";
 
   let selectedRecipe =
     typeof state.selectedId === "number" ? recipes.find((r) => r.id === state.selectedId) : null;
@@ -1085,6 +1742,12 @@ function render() {
           <span>🧭 Filters</span>
           <span class="count">${filterCount()}</span>
         </button>
+        <div class="mode-row" role="group" aria-label="List mode">
+          <button class="chip ${state.listMode === "all" ? "active" : ""}" data-mode="all">🍚 All</button>
+          <button class="chip ${state.listMode === "favorites" ? "active" : ""}" data-mode="favorites">★ Favorites (${favoritesCount})</button>
+          <button class="chip ${state.listMode === "cooked" ? "active" : ""}" data-mode="cooked">✅ Cooked (${cookedCount})</button>
+          <button class="chip" data-surprise>🎲 Surprise</button>
+        </div>
         <div class="chip-row" aria-hidden="true" style="${mobile ? "display:none" : "display:flex; gap:6px; flex-wrap:wrap; padding:4px 0;"}">
           ${buildChips(proteinOptions, state.protein, "protein")}
           ${buildChips(cuisineOptions, state.cuisine, "cuisine")}
@@ -1149,6 +1812,70 @@ function render() {
         <button class="chip active" data-apply>Apply</button>
       </div>
     </div>
+
+    <div class="modal-overlay ${state.showShoppingList ? "show" : ""}" data-shopping-overlay></div>
+    <div class="modal-sheet ${state.showShoppingList ? "open" : ""}" role="dialog" aria-label="Shopping list" aria-modal="true">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">🛒 Shopping list</div>
+          <div class="modal-sub">${currentPlan ? currentPlan.weekLabel : ""}</div>
+        </div>
+        <button class="icon-button" data-shopping-close aria-label="Close shopping list">✕</button>
+      </div>
+      <pre class="shopping-pre">${escapeHtml(shoppingText)}</pre>
+      <div class="modal-actions">
+        <button class="chip active" data-shopping-copy>Copy</button>
+      </div>
+    </div>
+
+    <div class="cook-overlay ${state.showCookMode ? "show" : ""}" data-cook-overlay></div>
+    <div class="cook-sheet ${state.showCookMode ? "open" : ""}" role="dialog" aria-label="Cook mode" aria-modal="true">
+      <div class="cook-header">
+        <div>
+          <div class="cook-title">👩‍🍳 Cook mode</div>
+          <div class="cook-sub">${cookRecipe ? escapeHtml(cookRecipe.name) : ""}</div>
+        </div>
+        <button class="icon-button" data-cook-close aria-label="Exit cook mode">✕</button>
+      </div>
+
+      ${
+        cookRecipe
+          ? `
+        <div class="cook-meta">
+          <span>${getCuisineEmoji(cookRecipe.cuisine)} ${escapeHtml(cookRecipe.cuisine)}</span>
+          <span>⚙️ ${escapeHtml(cookRecipe.setting)}</span>
+          <span>🍽️ ${escapeHtml(cookBatchLabel)}</span>
+        </div>
+      `
+          : ""
+      }
+
+      <div class="cook-toolbar">
+        <button class="ghost" data-cook-reset>Reset</button>
+        <button class="ghost" data-cook-copy>Copy steps</button>
+        <button class="ghost" data-keep-awake ${wakeLockSupported ? "" : "disabled"}>${
+          wakeLockSupported ? (state.keepAwake ? "Awake on" : "Keep awake") : "Keep awake (unsupported)"
+        }</button>
+      </div>
+
+      <div class="cook-steps">
+        ${
+          cookRecipe
+            ? cookSteps
+                .map((step, idx) => {
+                  const checked = state.cookModeChecks[idx] ? "checked" : "";
+                  return `
+                  <label class="cook-step">
+                    <input type="checkbox" data-cook-step="${idx}" ${checked} />
+                    <span>${escapeHtml(step)}</span>
+                  </label>
+                `;
+                })
+                .join("")
+            : `<div class="empty-state">Pick a recipe to start Cook mode.</div>`
+        }
+      </div>
+    </div>
   `;
 
   const searchInput = app.querySelector("#searchInput");
@@ -1162,6 +1889,32 @@ function render() {
     }
     render();
   });
+
+  app.querySelectorAll("[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.listMode = btn.getAttribute("data-mode") || "all";
+      if (isMobile() && state.selectedId) {
+        state.selectedId = null;
+        state.selectionSource = "none";
+        clearRecipeHash();
+      }
+      render();
+    });
+  });
+
+  const surpriseBtn = app.querySelector("[data-surprise]");
+  if (surpriseBtn) {
+    surpriseBtn.addEventListener("click", () => {
+      if (!filtered.length) return;
+      const pick = filtered[Math.floor(Math.random() * filtered.length)];
+      if (!pick) return;
+      state.selectedId = pick.id;
+      state.selectionSource = "list";
+      setRecipeHash(pick.id);
+      if (isMobile()) window.scrollTo({ top: 0, behavior: "smooth" });
+      render();
+    });
+  }
 
   app.querySelectorAll("[data-protein]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1283,6 +2036,127 @@ function render() {
     });
   }
 
+  app.querySelectorAll("[data-favorite]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-favorite"), 10);
+      if (Number.isNaN(id)) return;
+      toggleFavorite(id);
+    });
+  });
+
+  app.querySelectorAll("[data-cooked-mark]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-cooked-mark"), 10);
+      if (Number.isNaN(id)) return;
+      markCooked(id);
+    });
+  });
+
+  app.querySelectorAll("[data-cooked-clear]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-cooked-clear"), 10);
+      if (Number.isNaN(id)) return;
+      clearCooked(id);
+    });
+  });
+
+  app.querySelectorAll("[data-rate-id][data-rate]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-rate-id"), 10);
+      const rating = parseInt(btn.getAttribute("data-rate"), 10);
+      if (Number.isNaN(id) || Number.isNaN(rating)) return;
+      setCookedRating(id, rating);
+    });
+  });
+
+  app.querySelectorAll("[data-cook-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = parseInt(btn.getAttribute("data-cook-open"), 10);
+      if (Number.isNaN(id)) return;
+      state.showCookMode = true;
+      state.cookModeId = id;
+      state.cookModeChecks = {};
+      state.showFilters = false;
+      state.showShoppingList = false;
+      state.keepAwake = false;
+      disableWakeLock();
+      render();
+    });
+  });
+
+  const cookOverlay = app.querySelector("[data-cook-overlay]");
+  if (cookOverlay) {
+    cookOverlay.addEventListener("click", () => {
+      state.showCookMode = false;
+      state.cookModeId = null;
+      state.cookModeChecks = {};
+      state.keepAwake = false;
+      disableWakeLock();
+      render();
+    });
+  }
+
+  const cookClose = app.querySelector("[data-cook-close]");
+  if (cookClose) {
+    cookClose.addEventListener("click", () => {
+      state.showCookMode = false;
+      state.cookModeId = null;
+      state.cookModeChecks = {};
+      state.keepAwake = false;
+      disableWakeLock();
+      render();
+    });
+  }
+
+  const cookReset = app.querySelector("[data-cook-reset]");
+  if (cookReset) {
+    cookReset.addEventListener("click", () => {
+      state.cookModeChecks = {};
+      render();
+    });
+  }
+
+  const cookCopy = app.querySelector("[data-cook-copy]");
+  if (cookCopy) {
+    cookCopy.addEventListener("click", async () => {
+      if (!cookRecipe) return;
+      const text = buildCookStepsText(cookRecipe, cookBatchLabel, cookSteps);
+      const ok = await copyToClipboard(text);
+      if (!ok) return;
+      cookCopy.textContent = "Copied!";
+      window.setTimeout(() => (cookCopy.textContent = "Copy steps"), 1200);
+    });
+  }
+
+  const keepAwakeBtn = app.querySelector("[data-keep-awake]");
+  if (keepAwakeBtn && !keepAwakeBtn.disabled) {
+    keepAwakeBtn.addEventListener("click", async () => {
+      if (!state.showCookMode) return;
+      if (state.keepAwake) {
+        state.keepAwake = false;
+        await disableWakeLock();
+        render();
+        return;
+      }
+
+      const ok = await enableWakeLock();
+      state.keepAwake = ok;
+      render();
+    });
+  }
+
+  app.querySelectorAll("[data-cook-step]").forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      const idx = parseInt(checkbox.getAttribute("data-cook-step"), 10);
+      if (Number.isNaN(idx)) return;
+      if (checkbox.checked) {
+        state.cookModeChecks[idx] = true;
+      } else {
+        delete state.cookModeChecks[idx];
+      }
+    });
+  });
+
   app.querySelectorAll("[data-share]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = parseInt(btn.getAttribute("data-share"), 10);
@@ -1363,6 +2237,14 @@ function render() {
     });
   }
 
+  const planShopping = app.querySelector("[data-plan-shopping]");
+  if (planShopping) {
+    planShopping.addEventListener("click", () => {
+      state.showShoppingList = true;
+      render();
+    });
+  }
+
   const planClear = app.querySelector("[data-plan-clear]");
   if (planClear) {
     planClear.addEventListener("click", () => {
@@ -1390,6 +2272,33 @@ function render() {
       if (!ok) return;
       planShare.textContent = "Copied!";
       setTimeout(() => (planShare.textContent = "Share"), 1200);
+    });
+  }
+
+  const shoppingOverlay = app.querySelector("[data-shopping-overlay]");
+  if (shoppingOverlay) {
+    shoppingOverlay.addEventListener("click", () => {
+      state.showShoppingList = false;
+      render();
+    });
+  }
+
+  const shoppingClose = app.querySelector("[data-shopping-close]");
+  if (shoppingClose) {
+    shoppingClose.addEventListener("click", () => {
+      state.showShoppingList = false;
+      render();
+    });
+  }
+
+  const shoppingCopy = app.querySelector("[data-shopping-copy]");
+  if (shoppingCopy) {
+    shoppingCopy.addEventListener("click", async () => {
+      const text = currentPlan ? buildShoppingListText(currentPlan) : shoppingText;
+      const ok = await copyToClipboard(text);
+      if (!ok) return;
+      shoppingCopy.textContent = "Copied!";
+      window.setTimeout(() => (shoppingCopy.textContent = "Copy"), 1200);
     });
   }
 
