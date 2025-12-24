@@ -505,6 +505,64 @@ function getSpiceLevel(recipe) {
   return { label: "Mild", score: 0 };
 }
 
+const promiseBaseByCuisine = {
+  Chinese: ["savory, soy-forward, glossy", "gingery, umami-heavy, comfort-first"],
+  Japanese: ["clean, umami-forward, quietly rich", "dashi-bright, delicate, gently savory"],
+  Korean: ["bold, sweet-salty, gochujang-forward", "spicy, garlicky, unafraid"],
+  Thai: ["coconut-rich, lime-bright, aromatic", "curry-forward, fragrant, a little wild"],
+  Indian: ["spiced, warm, deeply savory", "curry-forward, fragrant, cozy"],
+  Mediterranean: ["bright, herby, lemony", "garlicky, olive-oil rich, sunny"],
+  Italian: ["garlicky, salty, herb-forward", "anchovy-deep, bright, unapologetic"],
+  Mexican: ["smoky, cumin-forward, lime-bright", "chili-forward, hearty, crowd-pleasing"],
+  Fusion: ["bold, umami-heavy, not quite traditional", "smoky, savory, pleasantly unruly"],
+  Vietnamese: ["light, aromatic, fish-sauce bright", "herb-forward, gently savory"],
+  Other: ["cozy, savory, weeknight-ready", "simple, buttery, dependable"],
+};
+
+function getPromiseBase(recipe) {
+  const list = promiseBaseByCuisine[recipe.cuisine] || promiseBaseByCuisine.Other;
+  const id = Number.isFinite(recipe.id) ? recipe.id : 0;
+  return list[id % list.length];
+}
+
+function getPromiseFinish(recipe, spice) {
+  const text = `${recipe.sauces} ${(recipe.tags || []).join(" ")}`.toLowerCase();
+  if (text.includes("porridge")) return "best on days that require comfort";
+  if (text.includes("breakfast")) return "best with a runny egg or an unreasonably strong coffee";
+  if (text.includes("kimchi")) return "better with extra kimchi";
+  if (text.includes("miso")) return "better with nori and scallions";
+  if (text.includes("coconut")) return "better with lime and herbs";
+  if (text.includes("lemon") || text.includes("lime") || text.includes("yuzu")) return "better with extra citrus";
+  if (text.includes("teriyaki")) return "better with sesame and greens";
+  if (text.includes("fried-rice-style")) return "better with crispy shallots";
+  if (text.includes("tomato") || text.includes("basil")) return "better with herbs and a little cheese";
+  if (text.includes("curry")) return "better with herbs and lime";
+  if (text.includes("garlic")) return "better with something crunchy";
+  if (text.includes("butter")) return "better with a little more butter";
+  if (spice.label === "Hot") return "better with something cooling";
+  return "better with whatever garnish you remember";
+}
+
+function getPromiseLitotes(recipe, spice) {
+  const tags = recipe.tags || [];
+  if (tags.includes("template") || tags.includes("simple")) return "not without utility";
+  if (tags.includes("comfort")) return "not without comfort";
+  if (tags.includes("fried-rice-style")) return "not without crunch";
+  if (tags.includes("porridge")) return "not entirely bland";
+  if (spice.label === "Hot") return "not entirely mild";
+  if (spice.label === "Medium") return "not entirely gentle";
+  return "not entirely meek";
+}
+
+function getRecipePromise(recipe) {
+  if (recipe.promise) return recipe.promise;
+  const spice = getSpiceLevel(recipe);
+  const base = getPromiseBase(recipe);
+  const finish = getPromiseFinish(recipe, spice);
+  const litotes = getPromiseLitotes(recipe, spice);
+  return `${base}; ${finish}, ${litotes}.`;
+}
+
 function normalizeConstraints(constraints) {
   return {
     protein: constraints?.protein || "all",
@@ -834,7 +892,7 @@ function getChefNotes(recipe) {
 function buildChefNotes(recipe) {
   const notes = getChefNotes(recipe);
   return `
-    <details class="details" open>
+    <details class="details">
       <summary>Chef Notes (Salt • Fat • Acid • Heat)</summary>
       <p class="details-note">${notes.amountsNote}</p>
       <div class="notes-grid">
@@ -864,6 +922,27 @@ function buildChefNotes(recipe) {
   `;
 }
 
+function buildMeasuredPacks(recipe) {
+  const notes = getChefNotes(recipe);
+  return `
+    <p class="details-note">${notes.amountsNote}</p>
+    <div class="notes-grid">
+      <div class="note-card">
+        <div class="note-title">🧂 Sauce Pack (salt + umami)</div>
+        <ul>${notes.saucePack.map((s) => `<li>${s}</li>`).join("")}</ul>
+      </div>
+      <div class="note-card">
+        <div class="note-title">🧈 Finish Pack (fat + acid)</div>
+        <ul>${notes.finishPack.map((s) => `<li>${s}</li>`).join("")}</ul>
+      </div>
+      <div class="note-card">
+        <div class="note-title">🌶️ Heat (optional) — ${notes.spiceLabel}</div>
+        <ul>${notes.heatPack.map((s) => `<li>${s}</li>`).join("")}</ul>
+      </div>
+    </div>
+  `;
+}
+
 function buildMeasurementHelp() {
   return `
     <details class="details">
@@ -888,6 +967,7 @@ function buildRecipeCopyText(recipe) {
   lines.push(`${recipe.name}`);
   lines.push(`${recipe.cuisine} • ${recipe.proteinType} • ${recipe.riceType} • ${recipe.setting}`);
   lines.push(`Batch: ${batchLabel}`);
+  lines.push(`Promise: ${getRecipePromise(recipe)}`);
   lines.push("");
   lines.push("Ingredients");
   lines.push(`- Rice: ${riceAmount}`);
@@ -1598,8 +1678,93 @@ function buildList(filtered) {
   `;
 }
 
+function applyMethodTokens(step, tokens) {
+  let result = step;
+  Object.entries(tokens).forEach(([key, value]) => {
+    result = result.split(`{${key}}`).join(value);
+  });
+  return result;
+}
+
+const methodAsides = {
+  prep: [
+    "Knife skills are not mandatory. Fingers, however, are.",
+    "Your cutting board is not decorative.",
+    "Mise en place is not a personality trait, but it helps.",
+    "Speed is not the objective.",
+  ],
+  sauce: [
+    "Salt is not optional.",
+    "Sugar is not a moral failing.",
+    "Balance is not automatic.",
+    "Measuring is not beneath you.",
+  ],
+  add: [
+    "The water line is not a suggestion.",
+    "Eyeballing is not a virtue.",
+    "Improvisational math is not recommended.",
+    "This is not the moment for heroics.",
+  ],
+  layer: [
+    "Aromatics on the bottom are not a good idea.",
+    "Stacking is not a free-for-all.",
+    "Gravity is not your sous-chef.",
+    "Delicate bits are not built for heat.",
+  ],
+  cook: [
+    "Hovering is not required.",
+    "The cooker does the work; you take the credit.",
+    "Do nothing with conviction.",
+    "Opening the lid is not an achievement.",
+  ],
+  rest: [
+    "Impatience is not seasoning.",
+    "This pause is not negotiable.",
+    "Resting is not a conspiracy.",
+    "Let it sit; the rice does not respond to begging.",
+  ],
+};
+
+function getMethodStepType(step) {
+  const text = step.trim().toLowerCase();
+  if (text.startsWith("prep:")) return "prep";
+  if (text.startsWith("sauce pack:") || text.startsWith("teriyaki:") || text.startsWith("sauce:")) return "sauce";
+  if (text.startsWith("add rice + liquid:")) return "add";
+  if (text.startsWith("layer")) return "layer";
+  if (text.startsWith("cook")) return "cook";
+  if (text.startsWith("rest")) return "rest";
+  if (text.startsWith("finish")) return "finish";
+  return null;
+}
+
+function addMethodAside(step, recipeId, index) {
+  if (step.includes("restraint is not required")) return step;
+  const type = getMethodStepType(step);
+  if (!type || type === "finish") return step;
+  const options = methodAsides[type];
+  const safeId = Number.isFinite(recipeId) ? recipeId : 0;
+  const aside = options[(safeId + index) % options.length];
+  return `${step} (${aside})`;
+}
+
 function getMethodSteps(recipe, batchLabel) {
+  const riceAmount = adjustForBatch(recipe.riceAmount, state.batch);
   const liquid = adjustForBatch(recipe.liquid, state.batch);
+  if (Array.isArray(recipe.method) && recipe.method.length > 0) {
+    const tokens = {
+      riceAmount,
+      liquid,
+      protein: recipe.protein,
+      veggies: recipe.veggies,
+      sauces: recipe.sauces,
+      setting: recipe.setting,
+      batchLabel: batchLabel.toLowerCase(),
+    };
+    return recipe.method
+      .map((step) => applyMethodTokens(step, tokens))
+      .map((step, index) => addMethodAside(step, recipe.id, index));
+  }
+
   const sauceText = recipe.sauces.toLowerCase();
   const veggieText = recipe.veggies.toLowerCase();
 
@@ -1641,7 +1806,7 @@ function getMethodSteps(recipe, batchLabel) {
   finishBits.push("add chili crisp if you want heat");
 
   steps.push(`Finish: ${finishBits.join(", ")}. Serve ${batchLabel.toLowerCase()}.`);
-  return steps;
+  return steps.map((step, index) => addMethodAside(step, recipe.id, index));
 }
 
 function buildInstructions(recipe, batchLabel) {
@@ -1722,6 +1887,7 @@ function buildDetail(recipe, inCurrentFilters) {
       <span>🍽️ ${batchLabel}</span>
       <span>🌶️ ${spice.label}</span>
     </div>
+    <p class="recipe-promise">${getRecipePromise(recipe)}</p>
     ${tagsHtml ? `<div class="badge-row">${tagsHtml}</div>` : ""}
     ${filterNote}
     ${cookedPanel}
@@ -1732,6 +1898,7 @@ function buildDetail(recipe, inCurrentFilters) {
     <div class="info-row"><strong>Protein</strong><span>${recipe.protein}</span></div>
     <div class="info-row"><strong>Veggies</strong><span>${recipe.veggies}</span></div>
     <div class="info-row"><strong>Sauces</strong><span>${recipe.sauces}</span></div>
+    ${buildMeasuredPacks(recipe)}
 
     ${buildChefNotes(recipe)}
     ${buildMeasurementHelp()}

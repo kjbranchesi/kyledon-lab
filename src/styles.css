@@ -733,6 +733,12 @@ header h1 {
   margin: 6px 0 10px;
 }
 
+.recipe-promise {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+
 .section-label {
   text-transform: uppercase;
   letter-spacing: 0.08em;

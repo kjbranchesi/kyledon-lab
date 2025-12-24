@@ -11,6 +11,15 @@ export const recipes = [
         protein: "Firm tofu, pressed well and cubed, marinated 10 min in soy sauce and white pepper if time allows",
         veggies: "Fresh bok choy (separate stems and leaves), king oyster mushrooms sliced, white and green parts of scallions separated",
         sauces: "Premium oyster sauce, light soy sauce, Shaoxing wine or mirin, toasted sesame oil and white pepper; finish with chili oil and fried shallots",
+        method: [
+          "Prep: rinse rice until water runs mostly clear; drain. Press tofu 10-15 min, then cut 3/4-inch cubes. Separate bok choy stems and leaves; slice king oyster mushrooms; slice scallions (whites/greens).",
+          "Sauce pack: whisk 1 1/2 tbsp oyster sauce, 1 tbsp light soy, 1 tbsp Shaoxing wine (or mirin), and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer add-ins: tofu, mushrooms, bok choy stems, scallion whites. Keep bok choy leaves and scallion greens for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff. Fold in bok choy leaves and scallion greens to wilt.",
+          "Finish: drizzle toasted sesame oil, add chili oil and fried shallots, and add a splash of soy if needed. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "greens", "mild", "umami"]
       },
@@ -25,6 +34,15 @@ export const recipes = [
         protein: "Firm tofu, pressed well and sliced, lightly dusted with potato starch if searing first",
         veggies: "Lacinato kale (stems removed, leaves ribboned), fresh ginger julienned, scallions",
         sauces: "Premium tamari or soy sauce, hon-mirin (true mirin), freshly grated ginger, raw sugar; finish with toasted sesame seeds and quality sesame oil",
+        method: [
+          "Prep: rinse rice; press tofu 10-15 min, then slice. Remove kale stems and ribbon the leaves. Julienne ginger; slice scallions (whites/greens).",
+          "Sauce pack: whisk 1 1/2 tbsp tamari (or soy), 1 tbsp mirin, 1 tsp sugar, 1 tsp grated ginger.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer add-ins: tofu, kale stems (if any), scallion whites. Keep tender kale and scallion greens for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff. Fold in kale and scallion greens to wilt.",
+          "Finish: drizzle 1 to 2 tsp toasted sesame oil, sprinkle sesame seeds, and add tamari to taste. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "kale", "ginger", "light"]
       },
@@ -39,6 +57,15 @@ export const recipes = [
         protein: "Cubed firm tofu",
         veggies: "Kale or bok choy, sliced onion",
         sauces: "2 tbsp gochujang (Korean chili paste), 1 tbsp ganjang (Korean soy sauce), a little sugar and sesame oil after cooking",
+        method: [
+          "Prep: rinse rice; cube tofu. Slice onion. Chop greens; separate stems and leaves if using bok choy.",
+          "Sauce pack: whisk 1 to 2 tbsp gochujang, 1 tbsp ganjang (soy sauce), 1 tsp sugar, and 2 tbsp water to loosen.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer add-ins: tofu, onion, and sturdy greens or stems. Keep tender leaves for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff. Fold in the leafy greens.",
+          "Finish: drizzle 1 to 2 tsp sesame oil and add more gochujang or soy if needed. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "spicy", "greens", "korean-inspired"]
       },
@@ -53,6 +80,15 @@ export const recipes = [
         protein: "Diced firm tofu",
         veggies: "Frozen peas, diced carrots, green onion",
         sauces: "2 tbsp light soy sauce, 1 tbsp Shaoxing wine, splash of oyster or hoisin, white pepper, pinch of MSG or mushroom powder",
+        method: [
+          "Prep: rinse rice well; dice tofu and carrots; use frozen peas; slice green onion (whites/greens).",
+          "Sauce pack: mix 2 tbsp light soy, 1 tbsp Shaoxing wine, 1 tbsp oyster or hoisin, pinch of white pepper, pinch of MSG or mushroom powder.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in sauce pack. Scatter carrots and scallion whites.",
+          "Layer tofu, then peas on top (peas last to avoid overcooking).",
+          "Cook on the {setting} setting.",
+          "Rest 10 minutes, then fluff well to break up grains and tofu.",
+          "Finish: fold in scallion greens and add a touch more soy if needed. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "peas", "comfort", "fried-rice-style"]
       },
@@ -67,6 +103,15 @@ export const recipes = [
         protein: "Firm tofu cubes, pan-fried until golden if time allows",
         veggies: "Red bell pepper julienned, fresh green beans trimmed, Thai basil leaves, makrut lime leaves if available",
         sauces: "Quality Thai curry paste (Mae Ploy or homemade), fish sauce or Golden Mountain sauce, palm sugar or coconut sugar, lime juice; finish with fresh Thai basil and crispy shallots",
+        method: [
+          "Prep: rinse rice; press tofu, then cube. Trim green beans, slice bell pepper, bruise lime leaves, and pick Thai basil.",
+          "Sauce pack: whisk 1 to 2 tbsp curry paste, 1 tsp fish sauce (or Golden Mountain), 1 tsp palm or coconut sugar, and 2 tbsp coconut milk to loosen.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack until the liquid is evenly tinted.",
+          "Layer tofu, green beans, bell pepper, and lime leaves. Keep basil for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes; remove lime leaves if desired; fluff gently.",
+          "Finish: squeeze lime juice, fold in Thai basil, and top with crispy shallots. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "curry", "coconut", "thai"]
       },
@@ -80,7 +125,16 @@ export const recipes = [
         liquid: "Fill to the 2-cup line with water or light broth",
         protein: "Cubed firm tofu",
         veggies: "Eggplant cubes, green onion, optional bok choy",
-        sauces: "1.5 tbsp dark soy sauce (for color), 2 tbsp light soy sauce, 1 tbsp black vinegar, oyster sauce, lots of garlic, chili flakes if desired",
+        sauces: "1/2 to 1 tsp dark soy sauce (for color), 2 tbsp light soy sauce, 1 tbsp black vinegar, oyster sauce, lots of garlic, chili flakes if desired",
+        method: [
+          "Prep: rinse rice; cube tofu; cut eggplant into 3/4-inch pieces; mince garlic; slice green onion (whites/greens); chop bok choy if using.",
+          "Sauce pack: mix 2 tbsp light soy, 1/2 to 1 tsp dark soy, 1 tbsp oyster sauce, 1 tbsp black vinegar, 2 to 3 cloves minced garlic, and a pinch of chili flakes.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer tofu, eggplant, scallion whites, and any bok choy stems. Keep leafy greens for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff. Fold in leafy greens to wilt.",
+          "Finish: add a splash more black vinegar if you want brightness and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "eggplant", "garlic", "savory"]
       },
@@ -95,6 +149,15 @@ export const recipes = [
         protein: "Firm tofu, pressed and cubed",
         veggies: "Red and green bell peppers, onion slices",
         sauces: "Soy sauce, 1 tbsp Shaoxing wine, oyster sauce, plenty of freshly ground black pepper, squeeze of lime juice at finish",
+        method: [
+          "Prep: rinse rice; press tofu, then cube. Slice bell peppers and onion; coarsely crack black pepper.",
+          "Sauce pack: whisk 1 1/2 tbsp soy sauce, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, and 1 tsp cracked black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer tofu, onion, and bell peppers.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add more black pepper, and add a splash of soy if needed. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "peppery", "bell-pepper"]
       },
@@ -109,6 +172,15 @@ export const recipes = [
         protein: "Silken or medium tofu cubed (add gently at the end to preserve texture)",
         veggies: "Fresh baby spinach (added at end), julienned ginger, scallions (white and green separated)",
         sauces: "Light soy sauce, white (shiro) miso paste mixed with dashi (add after cooking), hon-mirin, white pepper; finish with toasted nori strips and sesame seeds",
+        method: [
+          "Prep: rinse rice; gently cube silken or medium tofu. Julienne ginger; slice scallions (whites/greens); rinse spinach.",
+          "Sauce pack: mix 1 tbsp light soy, 1 tbsp mirin, and a pinch of white pepper. Keep miso separate.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack; scatter ginger and scallion whites.",
+          "Layer tofu on top to keep it intact. Keep spinach and scallion greens for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes. Loosen 1 to 2 tbsp miso with a few tbsp hot cooking liquid, then fold into the rice.",
+          "Finish: fold in spinach and scallion greens to wilt; top with nori strips and sesame seeds. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "miso", "spinach", "gentle"]
       },
@@ -123,6 +195,15 @@ export const recipes = [
         protein: "Firm tofu, cubed or sliced",
         veggies: "Broccoli florets, green onion",
         sauces: "Soy sauce, 1 tbsp Shaoxing wine, oyster sauce, 1 tsp rice vinegar, drizzle of toasted sesame oil after cooking, finish with chili crisp",
+        method: [
+          "Prep: rinse rice; cube tofu; cut broccoli into small florets; slice green onion (whites/greens).",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, and 1 tsp rice vinegar.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer tofu and broccoli; keep scallion greens for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle toasted sesame oil, add chili crisp, fold in scallion greens, and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "broccoli", "sesame"]
       },
@@ -137,6 +218,15 @@ export const recipes = [
         protein: "Cubed firm tofu",
         veggies: "Corn kernels, diced bell pepper, onion",
         sauces: "Soy sauce, 1 tbsp tomato paste, 1 tsp fish sauce or extra soy sauce, smoked paprika, pinch of chili, a touch of sugar, squeeze of lime at finish",
+        method: [
+          "Prep: rinse rice; cube tofu; dice onion and bell pepper; use frozen corn.",
+          "Sauce pack: whisk 1 tbsp soy, 1 tbsp tomato paste, 1 tsp fish sauce (or extra soy), 1 tsp smoked paprika, a pinch of chili flakes, 1 tsp sugar, and 2 to 3 tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack until smooth.",
+          "Layer tofu, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime, add more smoked paprika or chili if needed, and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tofu", "corn", "smoky", "fusion"]
       },
@@ -153,6 +243,15 @@ export const recipes = [
         protein: "Boneless chicken thighs (superior flavor), diced and marinated in Shaoxing wine, soy, and ginger",
         veggies: "Mixed mushrooms (shiitake, oyster, cremini) sliced, scallions separated, fresh ginger coins",
         sauces: "Premium dark soy sauce, Lee Kum Kee oyster sauce, Shaoxing wine, fresh ginger and garlic, white pepper; finish with toasted sesame oil and fried garlic chips",
+        method: [
+          "Prep: rinse rice. Cut chicken thighs into 3/4-inch pieces. Marinate 10 minutes with 1 tbsp soy, 1 tbsp Shaoxing wine, 1 tsp grated ginger, and a pinch of white pepper.",
+          "Slice mushrooms; slice scallions (whites/greens); slice ginger into coins; mince garlic.",
+          "Sauce pack: mix 1 1/2 tbsp oyster sauce, 1 tbsp light soy, 1/2 tsp dark soy, 1 tbsp Shaoxing wine, and the minced garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add ginger coins.",
+          "Layer chicken, mushrooms, and scallion whites.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F; cook a bit longer if needed.",
+          "Rest 5-10 minutes, then fluff. Finish with toasted sesame oil, fried garlic chips, and scallion greens. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "mushroom", "comfort"]
       },
@@ -167,6 +266,15 @@ export const recipes = [
         protein: "Small pieces of chicken thigh",
         veggies: "Bok choy, sliced carrot if you like",
         sauces: "2 tbsp soy sauce, 2 tbsp oyster sauce, 1 tbsp Shaoxing wine, grated ginger, sesame oil after cooking, finish with fried garlic chips",
+        method: [
+          "Prep: rinse rice; cut chicken into bite-size pieces. Slice bok choy stems and leaves; slice carrot if using; grate ginger.",
+          "Sauce pack: whisk 2 tbsp soy, 2 tbsp oyster sauce, 1 tbsp Shaoxing wine, and 1 tbsp grated ginger.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken, bok choy stems, and carrots; keep leaves for the end.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff. Fold in bok choy leaves to wilt.",
+          "Finish: drizzle sesame oil and top with fried garlic chips; adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "bok-choy", "ginger"]
       },
@@ -181,6 +289,15 @@ export const recipes = [
         protein: "Chicken thighs, diced and marinated in lemon, garlic, and herbs; or sear skin-on first for depth",
         veggies: "Young zucchini (halved lengthwise, sliced), sweet onion, baby spinach, fresh oregano sprigs",
         sauces: "Extra virgin olive oil (finish with a better EVOO), Meyer lemon zest and juice (or regular lemon), fresh oregano and thyme, garlic confit if available, sea salt, cracked black pepper; finish with capers, fresh parsley, and lemon supremes",
+        method: [
+          "Prep: rinse rice. Marinate diced chicken 15 minutes with lemon zest and juice, minced garlic, oregano/thyme, salt, pepper, and 1 tbsp olive oil. Slice zucchini and onion; rinse spinach.",
+          "Sauce pack: mix 1 tbsp olive oil, 1 tbsp lemon juice, 1 tsp oregano/thyme, and a pinch of salt and black pepper (add garlic confit if using).",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and half the lemon zest.",
+          "Layer chicken, zucchini, and onion; keep spinach for the end.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff. Fold in spinach to wilt.",
+          "Finish: drizzle good olive oil, add capers and parsley, and a final squeeze of lemon. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "lemon", "mediterranean"]
       },
@@ -195,6 +312,15 @@ export const recipes = [
         protein: "Bite-sized chicken pieces",
         veggies: "Carrot matchsticks, peas, green onion",
         sauces: "Homemade teriyaki (3 tbsp soy sauce, 3 tbsp mirin, 2 tbsp sake, 1 tbsp brown sugar reduced until glossy), finish with toasted sesame oil",
+        method: [
+          "Prep: rinse rice; cut chicken into bite-size pieces; cut carrots into matchsticks; measure peas; slice green onion (whites/greens).",
+          "Teriyaki: simmer 3 tbsp soy, 3 tbsp mirin, 2 tbsp sake, and 1 tbsp brown sugar until slightly syrupy. Use 2 to 3 tbsp for the pot; reserve the rest.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in 2 to 3 tbsp teriyaki if not already in the liquid.",
+          "Layer chicken, carrots, peas, and scallion whites.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff. Fold in scallion greens.",
+          "Finish: drizzle reserved teriyaki and 1 to 2 tsp toasted sesame oil. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "teriyaki", "family-friendly"]
       },
@@ -209,6 +335,15 @@ export const recipes = [
         protein: "Diced cooked or raw chicken",
         veggies: "Corn, peas, green onion",
         sauces: "Soy sauce, 1 tbsp oyster sauce, 1 tsp fish sauce, 2 tbsp Shaoxing wine, a little butter or oil, white pepper, finish with crispy shallots",
+        method: [
+          "Prep: rinse rice well; dice chicken; use frozen corn and peas; slice green onion (whites/greens).",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tsp fish sauce, 2 tbsp Shaoxing wine, and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and scallion whites.",
+          "Layer chicken, corn, and peas (peas on top).",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 10 minutes, then fluff well. Stir in 1 tbsp butter or oil for fried-rice aroma.",
+          "Finish: add scallion greens and crispy shallots; adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "corn", "fried-rice-style"]
       },
@@ -223,6 +358,15 @@ export const recipes = [
         protein: "Chicken pieces tossed in yogurt and tikka-style spices if possible",
         veggies: "Onion, peas, maybe bell pepper",
         sauces: "Garam masala or curry powder, 1 tbsp tomato paste, 1 tsp fish sauce, 2 tbsp yogurt marinade, garlic, ginger, salt, finish with lemon juice and cilantro",
+        method: [
+          "Prep: rinse rice. Toss chicken with 2 tbsp yogurt, 1 tsp garam masala or curry powder, 1 tsp grated garlic, 1 tsp grated ginger, and 1/2 tsp salt; marinate 15-30 minutes. Dice onion and bell pepper; measure peas.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tsp garam masala or curry powder, 1 tsp fish sauce, and 2 tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, bell pepper, peas, then chicken with its yogurt marinade.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lemon juice, sprinkle cilantro, and add extra yogurt if you want it creamier. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "spiced", "indian-inspired"]
       },
@@ -237,6 +381,15 @@ export const recipes = [
         protein: "Chicken thighs marinated in fish sauce, lime, and garlic; or sear for caramelization",
         veggies: "French green beans or sugar snap peas, shallots, makrut lime leaves, Thai chili",
         sauces: "Premium fish sauce (Red Boat or Three Crabs), fresh lime zest and juice (key limes if available), palm sugar, lemongrass, galangal or ginger, Thai bird chilies; finish with fresh Thai basil, cilantro, and toasted coconut flakes",
+        method: [
+          "Prep: rinse rice. Marinate chicken 15 minutes with 1 tsp fish sauce, lime zest, minced garlic, and a pinch of palm sugar. Slice shallots, trim beans, bruise lemongrass, tear lime leaves, and slice Thai chili.",
+          "Sauce pack: mix 1 to 2 tsp fish sauce, 1 tsp palm sugar, 1 tbsp lime juice, and 2 tbsp coconut milk to loosen.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add lemongrass and lime leaves; stir in the sauce pack.",
+          "Layer chicken, shallots, and beans or snap peas. Keep chilies on top.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes; remove lemongrass and lime leaves; fluff.",
+          "Finish: add more lime juice, Thai basil or cilantro, and toasted coconut flakes. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "coconut", "lime", "thai-inspired"]
       },
@@ -251,6 +404,15 @@ export const recipes = [
         protein: "Chicken pieces",
         veggies: "Onion, bell pepper, spinach",
         sauces: "2 anchovy fillets OR 1 tbsp tomato paste, 1 tsp fish sauce, garlic, dried basil or Italian herbs, olive oil, salt, black pepper, finish with Parmigiano-Reggiano and lemon zest",
+        method: [
+          "Prep: rinse rice. Cut chicken pieces. Dice onion and bell pepper; rinse spinach.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 1 tbsp tomato paste), add 1 tsp fish sauce, 2 minced garlic cloves, 1/2 tsp dried basil or Italian herbs, and black pepper; loosen with a few tbsp crushed tomato.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken, onion, and bell pepper; keep spinach for the end.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff. Fold in spinach to wilt.",
+          "Finish: drizzle olive oil, add lemon zest and Parmigiano-Reggiano, and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "tomato", "herb"]
       },
@@ -265,6 +427,15 @@ export const recipes = [
         protein: "Chicken pieces and canned black beans (rinsed)",
         veggies: "Corn, bell pepper, onion",
         sauces: "Chipotle chili, cumin, garlic, splash of lime after cooking",
+        method: [
+          "Prep: rinse rice. Cut chicken; rinse and drain black beans; dice onion and bell pepper; use frozen corn.",
+          "Sauce pack: mix 1 to 2 tsp chipotle chili (or 1 tbsp adobo), 1 tsp cumin, 1 tsp minced garlic, and 2 tbsp water to loosen.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken, beans, corn, onion, and bell pepper.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add more chipotle or cumin if needed, and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "beans", "spicy", "mexican-inspired"]
       },
@@ -279,6 +450,15 @@ export const recipes = [
         protein: "Chicken pieces",
         veggies: "Green beans, onion",
         sauces: "Butter, 1 tbsp oyster sauce, 1 tsp fish sauce, garlic, black pepper, squeeze of lemon at finish",
+        method: [
+          "Prep: rinse rice. Cut chicken into bite-size pieces; trim green beans; slice onion; mince garlic.",
+          "Sauce pack: mix 1 tbsp oyster sauce, 1 tsp fish sauce, 2 tbsp melted butter (or add butter after), 2 to 3 cloves garlic, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack (or dot butter on top).",
+          "Layer chicken, onion, and green beans.",
+          "Cook on the {setting} setting. Check that chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff. Fold in remaining butter if not already added.",
+          "Finish: squeeze lemon, add more black pepper, and adjust salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "butter", "green-bean", "comfort"]
       },
@@ -295,6 +475,15 @@ export const recipes = [
         protein: "Flank steak or ribeye, sliced against the grain, marinated in soy, Shaoxing, cornstarch, and baking soda (velvet technique)",
         veggies: "Chinese broccoli (gai lan) or regular broccoli crowns, ginger coins, scallions separated",
         sauces: "Premium oyster sauce, dark soy sauce, Shaoxing wine, fresh garlic and ginger, white pepper, touch of brown sugar; finish with toasted sesame oil and crispy beef fat if available",
+        method: [
+          "Prep: rinse rice. Slice beef thin; marinate 15 minutes with 1 tbsp soy, 1 tbsp Shaoxing wine, 1 tsp cornstarch, and a small pinch of baking soda. Cut broccoli into small florets; slice scallions (whites/greens); add ginger coins.",
+          "Sauce pack: mix 1 1/2 tbsp oyster sauce, 1 tbsp soy, 1/2 tsp dark soy, 1 tbsp Shaoxing wine, 1 tsp brown sugar, and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and ginger coins.",
+          "Layer add-ins: beef, broccoli, scallion whites. Keep scallion greens for the end.",
+          "Cook on the {setting} setting. Check that beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle toasted sesame oil, add scallion greens and crispy beef fat if you have it. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "broccoli", "classic"]
       },
@@ -309,6 +498,15 @@ export const recipes = [
         protein: "Sliced beef",
         veggies: "Onion slices, bell pepper if you like",
         sauces: "Soy sauce, 1 tbsp Shaoxing wine, oyster sauce, 1 tsp rice vinegar or black vinegar, heavy black pepper, garlic, finish with scallions",
+        method: [
+          "Prep: rinse rice. Slice beef thin; slice onion and bell pepper; crack plenty of black pepper; mince garlic.",
+          "Sauce pack: whisk 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, 1 tsp rice or black vinegar, and 1 tsp cracked black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, onion, bell pepper, and garlic. Keep scallion greens for the end.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add scallion greens and another grind of pepper. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "peppery", "onion"]
       },
@@ -323,6 +521,15 @@ export const recipes = [
         protein: "Ground or finely chopped beef",
         veggies: "Carrots, peas, onion",
         sauces: "2 tbsp Worcestershire sauce, 1 tsp apple cider vinegar, garlic, a little butter or oil, finish with fresh herbs",
+        method: [
+          "Prep: rinse rice. Dice carrot and onion; use frozen peas; mince garlic.",
+          "Sauce pack: mix 2 tbsp Worcestershire, 1 tsp apple cider vinegar, 1 tbsp melted butter or oil, and a pinch of black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and garlic.",
+          "Layer beef, carrots, and onion. Add peas on top.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: fold in fresh herbs and add a small pat of butter if you want it richer. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "peas", "comfort"]
       },
@@ -337,6 +544,15 @@ export const recipes = [
         protein: "Ribeye or sirloin, sliced paper-thin (partially freeze for easier slicing), marinated 2+ hours in soy, Asian pear puree, garlic, ginger, sesame oil, mirin",
         veggies: "Sweet onion, matchstick carrots, scallions, shiitake mushrooms, toasted sesame seeds",
         sauces: "Premium soy sauce, grated Asian pear or apple, fresh garlic and ginger, toasted sesame oil, gochugaru (Korean chili flakes), brown sugar, mirin; finish with more sesame seeds, scallions, and kimchi on the side",
+        method: [
+          "Prep: rinse rice. Slice beef very thin and marinate 2 hours (or 30 minutes in a pinch) with 2 tbsp soy, 1 tbsp pear puree, 1 tsp brown sugar, 1 tsp sesame oil, 1 tbsp mirin, and grated garlic/ginger.",
+          "Slice onion, carrots, and mushrooms; slice scallions (whites/greens).",
+          "Sauce pack: mix 1 tbsp soy, 1 tsp pear puree, 1 tsp mirin, 1 tsp brown sugar, and a pinch of gochugaru.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, carrots, mushrooms, then beef. Keep scallion greens and sesame seeds for the end.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Finish: add scallion greens, sesame seeds, and serve with kimchi. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "sweet-savory", "korean-inspired"]
       },
@@ -351,6 +567,15 @@ export const recipes = [
         protein: "Ground or sliced beef",
         veggies: "Chopped kimchi, green onion",
         sauces: "Kimchi juice, soy sauce, sesame oil after cooking",
+        method: [
+          "Prep: rinse rice. Chop kimchi; slice green onion; keep a few tablespoons of kimchi juice.",
+          "Sauce pack: mix 1 tbsp kimchi juice and 1 tbsp soy sauce.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef and kimchi. Keep scallion greens for the end.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle 1 to 2 tsp sesame oil, add scallions, and a little more kimchi juice if needed. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "kimchi", "spicy"]
       },
@@ -365,6 +590,15 @@ export const recipes = [
         protein: "Ground beef",
         veggies: "Diced eggplant, onion, maybe tomato",
         sauces: "Olive oil, 2 tbsp tomato paste, 1 tbsp red wine vinegar, garlic, oregano, paprika, salt, black pepper, finish with lemon juice and fresh parsley",
+        method: [
+          "Prep: rinse rice. Dice eggplant and onion; chop tomato if using; mince garlic.",
+          "Sauce pack: mix 2 tbsp tomato paste, 1 tbsp red wine vinegar, 1 tbsp olive oil, 1 tsp oregano, 1/2 tsp paprika, and a pinch of salt and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, eggplant, onion, and tomato if using.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lemon juice and add fresh parsley. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "eggplant", "mediterranean"]
       },
@@ -379,6 +613,15 @@ export const recipes = [
         protein: "Ground beef",
         veggies: "Onion, bell pepper, corn",
         sauces: "2 tbsp tomato paste, 1 tbsp apple cider vinegar, cumin, chili powder, garlic, canned beans, finish with lime juice and cilantro",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain beans; mince garlic.",
+          "Sauce pack: mix 2 tbsp tomato paste, 1 tbsp apple cider vinegar, 1 tsp cumin, 1 tsp chili powder, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, onion, bell pepper, corn, and beans.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime and add cilantro. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "beans", "chili-style"]
       },
@@ -393,6 +636,15 @@ export const recipes = [
         protein: "Beef chunks or strips",
         veggies: "Mushrooms, onion, maybe carrot",
         sauces: "Soy sauce, 1 tbsp balsamic vinegar, 2 tbsp red wine, black pepper, a touch of Worcestershire, finish with fresh thyme",
+        method: [
+          "Prep: rinse brown rice. Slice mushrooms and onion; cut beef into bite-size pieces; dice carrot if using.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp balsamic vinegar, 2 tbsp red wine, 1 tsp Worcestershire, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, mushrooms, onion, and carrot.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 10 minutes, then fluff.",
+          "Finish: add fresh thyme and a small pat of butter if desired. Taste and adjust; restraint is not required."
+        ],
         setting: "Brown",
         tags: ["beef", "brown-rice", "mushroom"]
       },
@@ -407,6 +659,15 @@ export const recipes = [
         protein: "Ground or minced beef",
         veggies: "Onion, carrot, maybe peas",
         sauces: "Curry spices, 1 tbsp tomato paste, juice of 1 lemon, garlic, ginger, salt, finish with fresh cilantro and yogurt drizzle",
+        method: [
+          "Prep: rinse rice and lentils; dice onion and carrot; use frozen peas if using; mince garlic and ginger.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tsp curry spices, 1 tsp grated ginger, 1 tsp garlic, and a pinch of salt with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, onion, carrot, and peas.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lemon juice, add cilantro, and drizzle yogurt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "lentil", "spiced"]
       },
@@ -421,6 +682,15 @@ export const recipes = [
         protein: "Thin strips of beef",
         veggies: "Green beans, onion",
         sauces: "Soy sauce, 1 tbsp Shaoxing wine, 1 tsp black vinegar, ginger, garlic, touch of sugar, finish with chili oil",
+        method: [
+          "Prep: rinse rice. Slice beef thin; trim green beans; slice onion; grate ginger; mince garlic.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp Shaoxing wine, 1 tsp black vinegar, 1 tsp grated ginger, 1 tsp garlic, and 1 tsp sugar.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beef, green beans, and onion.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle chili oil and add extra ginger if you like. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "green-bean", "ginger"]
       },
@@ -437,6 +707,15 @@ export const recipes = [
         protein: "Thin-sliced pork",
         veggies: "Onion slices, maybe cabbage",
         sauces: "Soy sauce, mirin, sake if available, grated ginger, sugar, finish with toasted sesame seeds, pickled ginger, and benishoga (red pickled ginger)",
+        method: [
+          "Prep: rinse rice. Slice pork thin; slice onion (and cabbage if using); grate ginger.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp mirin, 1 tbsp sake (or water), 1 tsp sugar, and 1 tsp grated ginger.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, onion, and cabbage.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: top with sesame seeds, pickled ginger, and benishoga. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "ginger", "japanese"]
       },
@@ -451,6 +730,15 @@ export const recipes = [
         protein: "Ground pork or small pieces",
         veggies: "Shredded cabbage, carrot, green onion",
         sauces: "Soy sauce, 1 tbsp Shaoxing wine, oyster sauce, sugar, garlic, finish with chili oil and crispy fried garlic",
+        method: [
+          "Prep: rinse rice. Shred cabbage; dice carrot; slice green onion (whites/greens); mince garlic.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, 1 tsp sugar, and 1 tsp garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, cabbage, carrot, and scallion whites.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add scallion greens, chili oil, and crispy garlic. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "cabbage", "sweet-savory"]
       },
@@ -465,6 +753,15 @@ export const recipes = [
         protein: "Thin sliced pork belly or shoulder",
         veggies: "Kimchi, green onion",
         sauces: "Kimchi juice, 1 tbsp gochugaru, soy sauce, sesame oil after cooking, finish with fried egg, extra sesame oil, and toasted sesame seeds",
+        method: [
+          "Prep: rinse rice. Slice pork thin; chop kimchi; slice green onion; save a few tbsp kimchi juice.",
+          "Sauce pack: mix 1 tbsp kimchi juice, 1 tbsp soy sauce, and 1 tbsp gochugaru.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork and kimchi. Keep scallion greens for the end.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle 1 to 2 tsp sesame oil, add scallion greens, sesame seeds, and a fried egg on top. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "kimchi", "spicy"]
       },
@@ -479,6 +776,15 @@ export const recipes = [
         protein: "Char siu-style marinated pork pieces",
         veggies: "Bok choy or other greens, green onion",
         sauces: "Char siu marinade (2 tbsp hoisin, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, 1 tbsp honey, 1 tsp five-spice, red food coloring optional), soy sauce, finish with scallion oil",
+        method: [
+          "Prep: rinse rice. Marinate pork with 2 tbsp hoisin, 1 tbsp oyster sauce, 1 tbsp Shaoxing wine, 1 tbsp honey, and 1 tsp five-spice. Slice bok choy stems and leaves; slice green onion.",
+          "Sauce pack: reserve 2 tbsp of the char siu marinade and thin with 2 tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork and bok choy stems. Keep bok choy leaves and scallion greens for the end.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff. Fold in bok choy leaves to wilt.",
+          "Finish: drizzle scallion oil and a little extra char siu glaze. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "sweet-savory", "char-siu-inspired"]
       },
@@ -493,6 +799,15 @@ export const recipes = [
         protein: "Small pork pieces or sausage",
         veggies: "Onion slices and small apple cubes",
         sauces: "Butter or oil, 1 tbsp apple cider vinegar, 1 tsp Dijon mustard, thyme, salt, black pepper, finish with fresh thyme and cracked black pepper",
+        method: [
+          "Prep: rinse rice. Slice onion; dice apple; cut pork or sausage into bite-size pieces.",
+          "Sauce pack: mix 1 tbsp apple cider vinegar, 1 tsp Dijon mustard, 1 tbsp melted butter or oil, 1/2 tsp thyme, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, onion, and apple.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add fresh thyme and extra black pepper. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "apple", "comfort"]
       },
@@ -507,6 +822,15 @@ export const recipes = [
         protein: "Pork strips or ground pork",
         veggies: "Bell peppers, onion, corn optional",
         sauces: "1 tbsp tomato paste, cumin, chili powder, garlic, salt, black pepper, finish with lime juice, cilantro, and crumbled queso fresco",
+        method: [
+          "Prep: rinse rice. Slice pork; slice bell peppers and onion; use frozen corn if using; mince garlic.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tsp cumin, 1 tsp chili powder, 1 tsp garlic, and a pinch of salt and black pepper with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, peppers, onion, and corn if using.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, and crumble queso fresco. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "bell-pepper", "mexican-inspired"]
       },
@@ -521,6 +845,15 @@ export const recipes = [
         protein: "Pork pieces or leftover roast pork",
         veggies: "Onion, bell pepper",
         sauces: "Canned black beans, 1 tbsp adobo seasoning, 1 tbsp sofrito, cumin, garlic, oregano, salt, bay leaf, finish with lime wedges and cilantro",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; drain and rinse black beans; mince garlic.",
+          "Sauce pack: mix 1 tbsp adobo seasoning, 1 tbsp sofrito, 1 tsp cumin, 1 tsp oregano, and a pinch of salt.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add a bay leaf.",
+          "Layer pork, onion, bell pepper, and black beans.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff and remove the bay leaf.",
+          "Finish: add cilantro and serve with lime wedges. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "beans", "cuban-inspired"]
       },
@@ -535,6 +868,15 @@ export const recipes = [
         protein: "Pork chunks or sausage",
         veggies: "Bell pepper, onion",
         sauces: "Soy sauce, 1 tbsp fish sauce, 1 tbsp rice vinegar, a little sugar, pineapple chunks, finish with Thai basil, cilantro, and crushed peanuts",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; cut pork or sausage; drain pineapple chunks.",
+          "Sauce pack: mix 1 tbsp soy, 1 tbsp fish sauce, 1 tbsp rice vinegar, and 1 tsp sugar with a splash of pineapple juice.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, onion, bell pepper, and pineapple chunks.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add Thai basil, cilantro, and crushed peanuts. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "pineapple", "sweet-savory"]
       },
@@ -549,6 +891,15 @@ export const recipes = [
         protein: "Crumbled or sliced sausage",
         veggies: "Kale, onion, maybe carrot",
         sauces: "1 tsp fish sauce or anchovy paste, garlic, herbs, black pepper, salt, red pepper flakes, finish with lemon zest, Parmigiano-Reggiano, and red pepper flakes",
+        method: [
+          "Prep: rinse rice. Slice or crumble sausage; slice onion; chop kale; dice carrot if using; mince garlic.",
+          "Sauce pack: mix 1 tsp fish sauce or anchovy paste, 1 tbsp olive oil or butter, 1 tsp dried herbs, and a pinch of black pepper and red pepper flakes.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer sausage, onion, carrot, and kale stems. Keep tender kale for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in tender kale.",
+          "Finish: add lemon zest, Parmigiano-Reggiano, and extra red pepper flakes. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "sausage", "kale"]
       },
@@ -563,6 +914,15 @@ export const recipes = [
         protein: "Pork chunks or sausage",
         veggies: "Mushrooms, onion, greens if desired",
         sauces: "Soy sauce, 1 tsp balsamic vinegar, black pepper, thyme or rosemary, finish with fresh parsley and butter",
+        method: [
+          "Prep: rinse brown rice. Slice mushrooms and onion; cut pork or sausage; chop greens if using.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tsp balsamic vinegar, 1 tsp thyme or rosemary, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, mushrooms, onion, and greens if using.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 10 minutes, then fluff.",
+          "Finish: add fresh parsley and a small pat of butter. Taste and adjust; restraint is not required."
+        ],
         setting: "Brown",
         tags: ["pork", "brown-rice", "mushroom"]
       },
@@ -579,6 +939,14 @@ export const recipes = [
         protein: "Wild-caught salmon fillet (skin-on, scored), brushed with homemade teriyaki (soy, mirin, sake, sugar)",
         veggies: "Edamame, scallions, pickled ginger, nori",
         sauces: "Homemade teriyaki (reduce soy sauce, hon-mirin, sake, brown sugar until glossy), fresh ginger, white pepper; finish with toasted sesame seeds, nori strips, and microgreens",
+        method: [
+          "Prep: rinse rice. Make teriyaki by simmering 3 tbsp soy, 3 tbsp mirin, 2 tbsp sake, and 1 tbsp brown sugar until glossy; set aside. Score salmon; use frozen edamame; slice scallions (whites/greens).",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add a pinch of white pepper and a few ginger slices if you like.",
+          "Layer edamame and scallion whites, then set salmon on top, skin side down. Brush lightly with teriyaki.",
+          "Cook on the {setting} setting. Check that salmon flakes easily.",
+          "Rest 5-10 minutes, then fluff and flake the salmon.",
+          "Finish: brush with more teriyaki, add sesame seeds, nori strips, scallion greens, and pickled ginger. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["salmon", "teriyaki", "seafood"]
       },
@@ -593,6 +961,15 @@ export const recipes = [
         protein: "Shrimp scattered on top",
         veggies: "Peas, green onion, maybe spinach",
         sauces: "Butter, 1 tsp fish sauce, 1 tbsp white wine, garlic, lemon juice and zest after cooking, salt, white pepper, Parmesan",
+        method: [
+          "Prep: rinse rice. Thaw shrimp; mince garlic; slice green onion; use frozen peas; rinse spinach if using.",
+          "Sauce pack: mix 1 tbsp melted butter, 1 tsp fish sauce, 1 tbsp white wine, and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and garlic.",
+          "Layer peas, then shrimp on top. Keep spinach and scallion greens for the end.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 5-10 minutes, then fluff. Fold in spinach and scallion greens.",
+          "Finish: add lemon zest and juice, and a shower of Parmesan. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "garlic", "butter"]
       },
@@ -607,6 +984,15 @@ export const recipes = [
         protein: "Shrimp pieces",
         veggies: "Corn, bell pepper, onion",
         sauces: "1 tsp fish sauce, 1 tbsp adobo seasoning, chili powder, cumin, garlic, lime zest and juice, finish with cilantro, cotija cheese, and lime crema",
+        method: [
+          "Prep: rinse rice. Thaw shrimp; dice onion and bell pepper; use frozen corn; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 tsp fish sauce, 1 tbsp adobo seasoning, 1 tsp chili powder, 1 tsp cumin, 1 tsp garlic, and lime zest with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, bell pepper, corn, and shrimp on top.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, cotija, and a little lime crema. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "corn", "chili-lime"]
       },
@@ -621,6 +1007,15 @@ export const recipes = [
         protein: "Shrimp",
         veggies: "Green beans or peas, onion",
         sauces: "2 tbsp Thai curry paste (Mae Ploy brand recommended), 1 tbsp fish sauce, 1 tsp palm sugar, lime, finish with fresh Thai basil and crispy shallots",
+        method: [
+          "Prep: rinse rice. Thaw shrimp; slice onion; trim green beans or use frozen peas.",
+          "Sauce pack: whisk 2 tbsp curry paste, 1 tbsp fish sauce, 1 tsp palm sugar, and 2 tbsp coconut milk to loosen.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, green beans or peas, and shrimp on top.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add Thai basil and crispy shallots. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "coconut", "curry"]
       },
@@ -635,6 +1030,15 @@ export const recipes = [
         protein: "Canned tuna drained and folded in after cooking",
         veggies: "Green onions, maybe corn",
         sauces: "2 tbsp soy sauce, 1 tbsp mirin, 1 tsp rice vinegar, sesame oil, finish with furikake seasoning and nori strips",
+        method: [
+          "Prep: rinse rice. Slice green onions; drain tuna; use frozen corn if using.",
+          "Sauce pack: mix 2 tbsp soy, 1 tbsp mirin, 1 tsp rice vinegar, and 1 tsp sesame oil.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer corn if using.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in tuna and green onions.",
+          "Finish: top with furikake and nori strips. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["tuna", "pantry", "simple"]
       },
@@ -649,6 +1053,15 @@ export const recipes = [
         protein: "Wild salmon fillet, marinated 2-24hrs in white miso, mirin, sake, sugar (Nobu-style black cod technique)",
         veggies: "Baby spinach (add at end), shiitake mushrooms, scallions, ginger",
         sauces: "White (shiro) miso paste, hon-mirin, sake, brown sugar for marinade; light soy sauce, yuzu or lemon; finish with toasted sesame oil, sesame seeds, and shichimi togarashi",
+        method: [
+          "Prep: rinse rice. Marinate salmon 2 hours (or overnight) with 2 tbsp white miso, 1 tbsp mirin, 1 tbsp sake, and 1 tsp sugar. Slice mushrooms, scallions, and ginger; rinse spinach.",
+          "Sauce pack: mix 1 tbsp light soy, 1 tbsp mirin, and a pinch of ginger. Keep miso for finishing.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add mushrooms.",
+          "Place salmon on top (wipe off heavy marinade to avoid scorching).",
+          "Cook on the {setting} setting. Salmon should flake easily.",
+          "Rest 5-10 minutes. Loosen 1 to 2 tbsp miso with a few tbsp hot liquid, then fold into the rice.",
+          "Finish: fold in spinach to wilt, add sesame oil, sesame seeds, and shichimi. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["salmon", "miso", "spinach"]
       },
@@ -663,6 +1076,15 @@ export const recipes = [
         protein: "White fish fillets on top",
         veggies: "Zucchini, bell pepper, onion",
         sauces: "Olive oil, anchovy paste or Parmesan (required), 2 tbsp white wine, lemon zest, garlic, herbs, salt, white pepper, finish with capers and fresh dill",
+        method: [
+          "Prep: rinse rice. Slice zucchini, bell pepper, and onion; mince garlic; season fish lightly with salt and white pepper.",
+          "Sauce pack: mix 1 tbsp olive oil, 2 tbsp white wine, 1 tsp anchovy paste or 2 tbsp Parmesan, 1 tsp lemon zest, 1 tsp dried herbs, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer veggies, then set fish on top.",
+          "Cook on the {setting} setting. Fish should flake easily.",
+          "Rest 5-10 minutes, then fluff gently around the fish.",
+          "Finish: add capers, fresh dill, and a squeeze of lemon. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["fish", "lemon", "herb"]
       },
@@ -677,6 +1099,15 @@ export const recipes = [
         protein: "Shrimp added on top",
         veggies: "Peas, carrot, green onion",
         sauces: "Soy sauce, 1 tbsp oyster sauce, 1 tsp fish sauce, 2 tbsp Shaoxing wine, sesame oil after cooking, white pepper, finish with fried garlic",
+        method: [
+          "Prep: rinse rice well. Dice carrot; use frozen peas; slice green onion (whites/greens); thaw shrimp.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tsp fish sauce, 2 tbsp Shaoxing wine, and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and scatter carrots.",
+          "Layer shrimp, then peas on top.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 10 minutes, then fluff well.",
+          "Finish: drizzle sesame oil, add fried garlic and scallion greens. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "peas", "fried-rice-style"]
       },
@@ -691,6 +1122,15 @@ export const recipes = [
         protein: "Quality anchovy fillets (Ortiz or Agostino Recca), melted into extra virgin olive oil with garlic confit",
         veggies: "Slow-cooked garlic cloves (confit style), Italian parsley, baby spinach, optional chili flakes",
         sauces: "Premium olive oil infused with anchovies and garlic, lemon zest, cracked black pepper, colatura di alici if available; finish with more EVOO, fresh parsley, toasted breadcrumbs, and Parmigiano-Reggiano",
+        method: [
+          "Prep: rinse rice. Melt anchovy fillets into 2 tbsp olive oil with garlic confit. Chop parsley; rinse spinach.",
+          "Sauce pack: use the anchovy-garlic oil plus 1 tsp lemon zest and cracked black pepper (add 1 tsp colatura if using).",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer spinach if using; keep parsley for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add parsley, toasted breadcrumbs, Parmigiano-Reggiano, and a drizzle of EVOO. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["anchovy", "garlic", "umami"]
       },
@@ -705,6 +1145,15 @@ export const recipes = [
         protein: "Salmon pieces or fillet",
         veggies: "Kale, mushrooms, onion",
         sauces: "Soy sauce, black pepper, a little butter or oil",
+        method: [
+          "Prep: rinse brown rice. Slice mushrooms and onion; chop kale; cut salmon into pieces if not using a fillet.",
+          "Sauce pack: mix 1 1/2 tbsp soy, black pepper, and 1 tbsp melted butter or oil.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, mushrooms, and kale stems, then set salmon on top. Keep tender kale for the end.",
+          "Cook on the {setting} setting. Salmon should flake easily.",
+          "Rest 10 minutes, then fluff and fold in tender kale.",
+          "Finish: add a small extra pat of butter and more pepper. Taste and adjust; restraint is not required."
+        ],
         setting: "Brown",
         tags: ["salmon", "kale", "brown-rice"]
       },
@@ -721,6 +1170,15 @@ export const recipes = [
         protein: "Canned chickpeas rinsed",
         veggies: "Spinach, onion, tomato",
         sauces: "Curry powder or garam masala, 2 tbsp tomato paste, 1 tbsp tamarind paste, garlic, ginger, salt, turmeric, finish with fresh cilantro and lemon juice",
+        method: [
+          "Prep: rinse rice. Dice onion and tomato; rinse spinach; drain chickpeas; mince garlic and ginger.",
+          "Sauce pack: mix 1 tbsp curry powder or garam masala, 2 tbsp tomato paste, 1 tbsp tamarind paste, 1/2 tsp turmeric, 1 tsp garlic, 1 tsp ginger, and a pinch of salt with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, tomato, and chickpeas. Keep spinach for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach to wilt.",
+          "Finish: squeeze lemon juice and add cilantro. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "chickpea", "curry"]
       },
@@ -735,6 +1193,15 @@ export const recipes = [
         protein: "Brown or green lentils",
         veggies: "Carrots, onion, peas",
         sauces: "Garam masala, 2 tbsp tomato paste, 1 tsp amchur (dried mango powder) or lemon juice, cumin, coriander, garlic, ginger, salt, turmeric, ghee or coconut oil, finish with fried curry leaves and yogurt drizzle",
+        method: [
+          "Prep: rinse rice and lentils; dice onion and carrots; use frozen peas; mince garlic and ginger.",
+          "Sauce pack: mix 2 tbsp tomato paste, 1 tsp garam masala, 1 tsp cumin, 1 tsp coriander, 1/2 tsp turmeric, 1 tsp garlic, 1 tsp ginger, and a pinch of salt with 1 tbsp oil or ghee.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack (add 1 tsp amchur or lemon juice now or at finish).",
+          "Layer lentils, onion, carrots, and peas.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add fried curry leaves and a yogurt drizzle. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "lentil", "spiced"]
       },
@@ -749,6 +1216,15 @@ export const recipes = [
         protein: "Black beans",
         veggies: "Corn, bell pepper, onion",
         sauces: "1 tbsp tomato paste, 1 tbsp adobo seasoning, 1 chipotle in adobo (minced), cumin, chili powder, garlic, lime, finish with cilantro and pepitas",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain black beans; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tbsp adobo seasoning, 1 minced chipotle, 1 tsp cumin, 1 tsp chili powder, 1 tsp garlic, and lime zest with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, and pepitas. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "beans", "mexican-inspired"]
       },
@@ -763,6 +1239,15 @@ export const recipes = [
         protein: "Red kidney beans or similar",
         veggies: "Kale, onion, carrot",
         sauces: "2 tbsp soy sauce or nutritional yeast (required), 1 tsp liquid smoke, garlic, smoked paprika, black pepper, salt, finish with lemon juice and tahini drizzle (after cooking)",
+        method: [
+          "Prep: rinse rice. Dice onion and carrot; chop kale; drain beans; mince garlic.",
+          "Sauce pack: mix 2 tbsp soy sauce (or nutritional yeast), 1 tsp liquid smoke, 1 tsp smoked paprika, 1 tsp garlic, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, onion, carrot, and kale stems. Keep tender kale for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in tender kale.",
+          "Finish: squeeze lemon juice and drizzle tahini. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "kale", "beans"]
       },
@@ -777,6 +1262,15 @@ export const recipes = [
         protein: "Split lentils (dal)",
         veggies: "Onion, tomato, spinach",
         sauces: "1 tbsp tamarind paste, tadka (cumin seeds, mustard seeds, curry leaves fried in ghee or oil), turmeric, cumin, coriander, garlic, ginger, finish with fresh cilantro",
+        method: [
+          "Prep: rinse rice and lentils; dice onion and tomato; rinse spinach; mince garlic and ginger.",
+          "Sauce pack: mix 1 tbsp tamarind paste, 1 tsp cumin, 1 tsp coriander, 1/2 tsp turmeric, 1 tsp garlic, and 1 tsp ginger with 1 tbsp oil.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer lentils, onion, and tomato. Keep spinach for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add tadka and cilantro. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "lentil", "coconut"]
       },
@@ -791,6 +1285,15 @@ export const recipes = [
         protein: "Canned white beans",
         veggies: "Onion, spinach, maybe zucchini",
         sauces: "2 anchovy fillets OR 2 tbsp nutritional yeast, 1 tbsp balsamic vinegar, garlic, basil or Italian herbs, olive oil, finish with Parmigiano-Reggiano and fresh basil",
+        method: [
+          "Prep: rinse rice. Dice onion and zucchini if using; rinse spinach; drain beans; mince garlic.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 2 tbsp nutritional yeast), add 1 tbsp balsamic vinegar, 1 tsp dried basil, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, onion, and zucchini. Keep spinach for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add Parmigiano-Reggiano (if using) and fresh basil. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "beans", "tomato"]
       },
@@ -805,6 +1308,15 @@ export const recipes = [
         protein: "Chickpeas",
         veggies: "Carrot, zucchini, onion",
         sauces: "2 tbsp harissa or tomato paste (required), 1 tbsp tomato paste, preserved lemon, cumin, coriander, cinnamon, paprika, salt, garlic, olive oil, finish with fresh mint and toasted almonds",
+        method: [
+          "Prep: rinse rice. Dice carrot, zucchini, and onion; drain chickpeas; mince garlic.",
+          "Sauce pack: mix 2 tbsp harissa (or tomato paste), 1 tbsp tomato paste, 1 tsp cumin, 1/2 tsp coriander, a pinch of cinnamon, 1 tsp paprika, 1 tbsp olive oil, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chickpeas, carrot, zucchini, and onion.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: fold in preserved lemon, mint, and toasted almonds. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "chickpea", "spiced"]
       },
@@ -819,6 +1331,15 @@ export const recipes = [
         protein: "Mixed beans or black beans",
         veggies: "Onion, bell pepper, corn",
         sauces: "1 tbsp tomato paste, 1 tsp liquid smoke or chipotle in adobo, smoked paprika, garlic, chili, a little oil, finish with lime juice and cilantro",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain beans; mince garlic.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tsp liquid smoke or chipotle, 1 tsp smoked paprika, 1 tsp garlic, a pinch of chili, and 1 tbsp oil.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime and add cilantro. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "beans", "smoky"]
       },
@@ -833,6 +1354,15 @@ export const recipes = [
         protein: "Chickpeas",
         veggies: "Spinach or kale, onion",
         sauces: "3 tbsp nutritional yeast (required), olive oil, lemon zest and juice, herbs, garlic, salt, black pepper, finish with tahini drizzle (after cooking), sumac, and toasted pine nuts",
+        method: [
+          "Prep: rinse brown rice. Slice onion; chop greens; drain chickpeas; mince garlic; zest a lemon.",
+          "Sauce pack: mix 3 tbsp nutritional yeast, 1 tbsp olive oil, 1 tsp lemon zest, 1 tsp dried herbs, 1 tsp garlic, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chickpeas, onion, and greens (keep tender leaves for the end).",
+          "Cook on the {setting} setting.",
+          "Rest 10 minutes, then fluff and fold in tender greens.",
+          "Finish: add lemon juice, tahini drizzle, sumac, and toasted pine nuts. Taste and adjust; restraint is not required."
+        ],
         setting: "Brown",
         tags: ["vegan", "brown-rice", "lemon"]
       },
@@ -847,6 +1377,15 @@ export const recipes = [
         protein: "Any mix of canned beans",
         veggies: "Corn, bell pepper, onion, greens",
         sauces: "2 tbsp tomato paste (required), 2 tbsp soy sauce (required), 1 tbsp nutritional yeast, garlic, chili, cumin, salt, black pepper, finish with lime juice and fresh herbs",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain beans; mince garlic; chop greens.",
+          "Sauce pack: mix 2 tbsp tomato paste, 2 tbsp soy sauce, 1 tbsp nutritional yeast, 1 tsp cumin, 1 tsp chili, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, onion, bell pepper, corn, and greens (keep tender leaves for the end).",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in tender greens.",
+          "Finish: squeeze lime juice and add fresh herbs. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "beans", "pantry"]
       },
@@ -863,6 +1402,15 @@ export const recipes = [
         protein: "Shredded chicken or small pieces",
         veggies: "Ginger slices, green onion, maybe carrot",
         sauces: "2-inch piece of ginger (smashed), 1 tbsp Shaoxing wine, salt, white pepper, finish with crispy fried shallots, scallion oil, soy sauce at the table, and white pepper",
+        method: [
+          "Prep: rinse rice. Slice ginger; slice green onion; cut chicken into small pieces if using raw.",
+          "Sauce pack: mix 1 tbsp Shaoxing wine, a pinch of salt, and white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add ginger and the sauce pack.",
+          "Add chicken pieces now, or fold in shredded chicken after cooking.",
+          "Cook on the {setting} setting.",
+          "Stir, then rest 5-10 minutes.",
+          "Finish: add scallion oil, crispy shallots, and soy sauce at the table. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "chicken", "congee-style"]
       },
@@ -877,6 +1425,14 @@ export const recipes = [
         protein: "Soft tofu cubes or silken tofu added after cooking",
         veggies: "Ginger, green onion, maybe a bit of bok choy",
         sauces: "1 tbsp light soy sauce, sesame oil, white pepper, finish with century egg, pickled vegetables, chili oil, and fried peanuts",
+        method: [
+          "Prep: rinse rice. Slice ginger and green onion; chop bok choy if using; cube tofu.",
+          "Sauce pack: mix 1 tbsp light soy, 1 tsp sesame oil, and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add ginger and the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fold in tofu and bok choy to warm through.",
+          "Finish: add green onion, chili oil, pickles, and fried peanuts. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "tofu", "ginger"]
       },
@@ -891,6 +1447,14 @@ export const recipes = [
         protein: "Optional tofu or leftover chicken",
         veggies: "Mushrooms, kale or spinach, green onion",
         sauces: "Soy sauce, 1 tbsp sake, 2 tbsp white miso (required, not optional), a little mirin, finish with soft-boiled egg and nori",
+        method: [
+          "Prep: rinse rice (or use cooked rice); slice mushrooms and green onion; chop kale or spinach.",
+          "Sauce pack: mix 1 tbsp soy, 1 tbsp sake, and 1 tsp mirin. Keep miso for the end.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add mushrooms.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in 2 tbsp miso loosened with hot liquid and fold in greens.",
+          "Finish: top with soft-boiled egg and nori. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "mushroom", "kale"]
       },
@@ -905,6 +1469,14 @@ export const recipes = [
         protein: "Egg stirred in at the end or cracked on top",
         veggies: "Kimchi, green onion",
         sauces: "Kimchi juice, 1 tbsp gochugaru, 1 tsp doenjang (Korean soybean paste), soy sauce, sesame oil, finish with extra kimchi and gim (roasted seaweed)",
+        method: [
+          "Prep: rinse rice. Chop kimchi; slice green onion; save a few tbsp kimchi juice.",
+          "Sauce pack: mix 1 tbsp kimchi juice, 1 tbsp gochugaru, 1 tsp doenjang, and 1 tbsp soy sauce.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add kimchi.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in a beaten egg or crack eggs on top and let them set.",
+          "Finish: drizzle sesame oil, add extra kimchi, and top with gim. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "kimchi", "egg"]
       },
@@ -919,6 +1491,15 @@ export const recipes = [
         protein: "Small bits of beef or tofu, optional",
         veggies: "Garlic, onion, greens if you like",
         sauces: "2 tbsp soy sauce (required), 1 tbsp fish sauce, salt, pepper, finish with soft-boiled egg, scallions, and fried garlic",
+        method: [
+          "Prep: rinse rice. Slice garlic and onion; chop greens; cut beef if using.",
+          "Sauce pack: mix 2 tbsp soy sauce, 1 tbsp fish sauce, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack, garlic, and onion.",
+          "Add beef if using.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir well.",
+          "Finish: top with soft-boiled egg, scallions, and fried garlic. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "bone-broth", "garlic"]
       },
@@ -933,6 +1514,15 @@ export const recipes = [
         protein: "Shrimp and small fish pieces",
         veggies: "Ginger, green onion, maybe carrot",
         sauces: "1 tbsp fish sauce (required), 1 tsp sesame oil, white pepper, finish with crispy fried shallots, cilantro, and lime wedges",
+        method: [
+          "Prep: rinse rice. Slice ginger and green onion; thaw shrimp; dice carrot if using.",
+          "Sauce pack: mix 1 tbsp fish sauce and a pinch of white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add ginger and the sauce pack.",
+          "Add shrimp and fish pieces (or add in the last 10 minutes if your cooker allows).",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir.",
+          "Finish: drizzle sesame oil, add cilantro, lime wedges, and crispy shallots. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "seafood"]
       },
@@ -947,6 +1537,15 @@ export const recipes = [
         protein: "Chicken pieces",
         veggies: "Carrot, celery, onion",
         sauces: "1 tbsp fish sauce, turmeric, pepper, garlic, 1 tsp ginger, finish with lime juice, cilantro, and fried shallots",
+        method: [
+          "Prep: rinse rice. Dice carrot, celery, and onion; cut chicken into small pieces; mince garlic and ginger.",
+          "Sauce pack: mix 1 tbsp fish sauce, 1 tsp turmeric, 1 tsp ginger, 1 tsp garlic, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken and veggies.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then stir.",
+          "Finish: squeeze lime juice, add cilantro and fried shallots. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "chicken", "turmeric"]
       },
@@ -961,6 +1560,14 @@ export const recipes = [
         protein: "Optional tofu",
         veggies: "Carrot, greens, mushrooms",
         sauces: "2 tbsp white miso paste stirred in after cooking (required, not optional), 1 tbsp sake, soy sauce to taste, finish with soft-boiled egg and scallion oil",
+        method: [
+          "Prep: rinse rice. Slice mushrooms; dice carrots; chop greens; cube tofu if using.",
+          "Sauce pack: mix 1 tbsp sake and 1 tsp soy sauce. Keep miso for the end.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add mushrooms and carrots.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in 2 tbsp miso loosened with hot liquid.",
+          "Finish: add greens, scallion oil, and a soft-boiled egg if desired. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "miso", "veggie"]
       },
@@ -975,6 +1582,15 @@ export const recipes = [
         protein: "Optional tofu or chickpeas",
         veggies: "Greens, onion, carrot",
         sauces: "1 tbsp fish sauce (required), 1 tbsp palm sugar, lemongrass, lime juice, chili, finish with Thai basil, cilantro, and crushed peanuts",
+        method: [
+          "Prep: rinse rice. Slice onion and carrot; chop greens; bruise lemongrass; slice chili.",
+          "Sauce pack: mix 1 tbsp fish sauce, 1 tbsp palm sugar, and 1 tbsp lime juice with a splash of coconut milk.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Add lemongrass and stir in the sauce pack.",
+          "Add tofu or chickpeas if using.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir.",
+          "Finish: add Thai basil, cilantro, crushed peanuts, and extra lime. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "coconut", "lime"]
       },
@@ -989,6 +1605,14 @@ export const recipes = [
         protein: "Optional beans or chickpeas",
         veggies: "Onion, carrot, greens",
         sauces: "2 anchovy fillets OR 1 tbsp tomato paste, 1 tbsp balsamic vinegar, garlic, basil or Italian herbs, olive oil, finish with Parmigiano rind, fresh basil, and EVOO",
+        method: [
+          "Prep: rinse rice. Dice onion and carrot; chop greens; mince garlic.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 1 tbsp tomato paste), add 1 tbsp balsamic vinegar, 1 tsp dried basil, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add beans if using.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir and add greens to wilt.",
+          "Finish: add a Parmigiano rind (if using), fresh basil, and EVOO. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "tomato", "herb"]
       },
@@ -1005,6 +1629,15 @@ export const recipes = [
         protein: "Chicken pieces",
         veggies: "Spinach, onion",
         sauces: "Olive oil, feta or Parmesan (required, not optional), 2 anchovy fillets OR 1 tbsp tomato paste, lemon zest and juice, oregano, garlic, salt, black pepper, finish with fresh dill and kalamata olives",
+        method: [
+          "Prep: rinse rice. Dice onion; rinse spinach; cut chicken into bite-size pieces; mince garlic; zest a lemon.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 1 tbsp tomato paste), add 1 tsp oregano, 1 tsp garlic, lemon zest, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken and onion. Keep spinach for the end.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add lemon juice, feta or Parmesan, dill, and kalamata olives. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "lemon", "greek-inspired"]
       },
@@ -1019,6 +1652,15 @@ export const recipes = [
         protein: "Optional chickpeas or white beans",
         veggies: "Bell pepper, onion, spinach",
         sauces: "2 anchovy fillets OR 2 tbsp nutritional yeast, 1 tbsp capers, olives, garlic, herbs, olive oil, finish with fresh basil and EVOO",
+        method: [
+          "Prep: rinse rice. Dice bell pepper and onion; rinse spinach; drain beans if using; mince garlic.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 2 tbsp nutritional yeast), add 1 tbsp capers, 1 tsp dried herbs, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, bell pepper, and onion. Keep spinach and olives for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add olives, fresh basil, and a drizzle of EVOO. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "olive", "tomato"]
       },
@@ -1033,6 +1675,15 @@ export const recipes = [
         protein: "Lentils",
         veggies: "Onion, carrot, celery",
         sauces: "Olive oil, 2 tbsp nutritional yeast (required), 1 tbsp tomato paste, bay leaf, herbs, garlic, salt, black pepper, finish with lemon zest, fresh parsley, and toasted pine nuts",
+        method: [
+          "Prep: rinse rice and lentils. Dice onion, carrot, and celery; mince garlic.",
+          "Sauce pack: mix 2 tbsp nutritional yeast, 1 tbsp tomato paste, 1 tbsp olive oil, 1 tsp dried herbs, and garlic; add a bay leaf.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer lentils and veggies.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and remove the bay leaf.",
+          "Finish: add lemon zest, parsley, and toasted pine nuts. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "lentil", "pilaf"]
       },
@@ -1047,6 +1698,15 @@ export const recipes = [
         protein: "Optional beans or tofu",
         veggies: "Mushrooms, onion, parsley",
         sauces: "2 tbsp soy sauce or nutritional yeast (required), 1 tbsp white wine, garlic, thyme, olive oil, salt, black pepper, finish with truffle oil and fresh parsley",
+        method: [
+          "Prep: rinse rice. Slice mushrooms and onion; chop parsley; mince garlic.",
+          "Sauce pack: mix 2 tbsp soy (or nutritional yeast), 1 tbsp white wine, 1 tbsp olive oil, 1 tsp thyme, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer mushrooms and onion (add beans or tofu if using).",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: drizzle truffle oil and add fresh parsley. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "mushroom", "garlic"]
       },
@@ -1061,6 +1721,15 @@ export const recipes = [
         protein: "Chorizo or spicy sausage slices",
         veggies: "Onion, bell pepper, peas",
         sauces: "Pinch of saffron OR 1 tsp turmeric, 1 tbsp tomato paste, garlic, smoked paprika, olive oil, finish with lemon wedges and aioli",
+        method: [
+          "Prep: rinse rice. Slice chorizo; dice onion and bell pepper; use frozen peas.",
+          "Sauce pack: bloom a pinch of saffron in 2 tbsp warm water (or use 1 tsp turmeric), then mix with 1 tbsp tomato paste, 1 tsp smoked paprika, 1 tbsp olive oil, and minced garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chorizo, onion, bell pepper, and peas.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: serve with lemon wedges and aioli. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "chorizo", "spanish-inspired"]
       },
@@ -1075,6 +1744,14 @@ export const recipes = [
         protein: "Optional beans or tofu",
         veggies: "Green onion or herbs",
         sauces: "Butter or olive oil, 1 tsp chicken or vegetable bouillon, 1 bay leaf, mixed herbs, salt, pepper, finish with fresh herbs, lemon zest, and flaky salt",
+        method: [
+          "Prep: rinse rice. Slice green onion; chop herbs.",
+          "Sauce pack: mix 1 tsp bouillon, 1 tbsp butter or olive oil, 1 tsp mixed herbs, and black pepper; add a bay leaf.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and remove the bay leaf.",
+          "Finish: add fresh herbs, lemon zest, and flaky salt. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["simple", "herb", "side-or-base"]
       },
@@ -1089,6 +1766,15 @@ export const recipes = [
         protein: "Optional chickpeas",
         veggies: "Roasted red peppers, onion, spinach",
         sauces: "Feta or Parmesan (required), 1 tbsp balsamic vinegar, garlic, olive oil, herbs, salt, black pepper, finish with fresh basil, pine nuts, and EVOO",
+        method: [
+          "Prep: rinse rice. Slice onion; chop roasted peppers; rinse spinach; drain chickpeas if using; mince garlic.",
+          "Sauce pack: mix 1 tbsp balsamic vinegar, 1 tbsp olive oil, 1 tsp dried herbs, garlic, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer peppers, onion, and chickpeas. Keep spinach for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add feta or Parmesan, fresh basil, pine nuts, and EVOO. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "pepper", "mediterranean"]
       },
@@ -1103,6 +1789,15 @@ export const recipes = [
         protein: "Shrimp on top",
         veggies: "Zucchini or spinach, onion",
         sauces: "Olive oil, anchovy paste or Parmesan (required, not optional), 2 tbsp white wine, garlic, lemon, parsley, salt, white pepper, finish with fresh dill and lemon zest",
+        method: [
+          "Prep: rinse rice. Slice onion and zucchini; mince garlic; thaw shrimp; chop parsley; zest a lemon.",
+          "Sauce pack: mix 1 tbsp olive oil, 2 tbsp white wine, 1 tsp anchovy paste or 2 tbsp Parmesan, 1 tsp lemon zest, garlic, and white pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion and zucchini, then place shrimp on top.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add parsley, dill, and lemon juice. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "lemon", "garlic"]
       },
@@ -1117,6 +1812,15 @@ export const recipes = [
         protein: "Sausage slices",
         veggies: "Onion, bell pepper, maybe spinach",
         sauces: "2 anchovy fillets OR 1 tbsp tomato paste, Parmesan (required), garlic, basil, olive oil, salt, black pepper, red pepper flakes, finish with fresh basil and EVOO",
+        method: [
+          "Prep: rinse rice. Slice sausage; dice onion and bell pepper; rinse spinach if using; mince garlic.",
+          "Sauce pack: mash 2 anchovy fillets into 1 tbsp olive oil (or use 1 tbsp tomato paste), add 1 tsp dried basil, garlic, black pepper, and a pinch of red pepper flakes.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer sausage, onion, and bell pepper. Keep spinach for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in spinach.",
+          "Finish: add Parmesan, fresh basil, and EVOO. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["sausage", "tomato", "italian-inspired"]
       },
@@ -1131,6 +1835,15 @@ export const recipes = [
         protein: "Chickpeas",
         veggies: "Onion, greens",
         sauces: "1 tbsp tomato paste, 1 tbsp lemon juice, olives, garlic, herbs, olive oil, finish with feta, fresh mint, and toasted pine nuts",
+        method: [
+          "Prep: rinse rice. Slice onion; chop greens; drain chickpeas; mince garlic.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tbsp lemon juice, 1 tbsp olive oil, 1 tsp dried herbs, and garlic.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chickpeas and onion. Keep greens and olives for the end.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and fold in greens.",
+          "Finish: add olives, feta, fresh mint, and toasted pine nuts. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "olive", "chickpea"]
       },
@@ -1147,6 +1860,15 @@ export const recipes = [
         protein: "Chicken strips",
         veggies: "Bell peppers, onion, corn",
         sauces: "1 tbsp adobo seasoning, 1 tsp fish sauce, cumin, chili powder, garlic, lime, finish with cilantro, lime wedges, and crema",
+        method: [
+          "Prep: rinse rice. Slice chicken; slice bell peppers and onion; use frozen corn; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 tbsp adobo seasoning, 1 tsp fish sauce, 1 tsp cumin, 1 tsp chili powder, 1 tsp garlic, and lime zest with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken, peppers, onion, and corn.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, lime wedges, and crema. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "fajita", "mexican-inspired"]
       },
@@ -1161,6 +1883,15 @@ export const recipes = [
         protein: "Seasoned ground beef",
         veggies: "Onion, corn, bell pepper",
         sauces: "Taco seasoning, 1 tbsp tomato paste, 1 tsp fish sauce, garlic, optional salsa, finish with lime juice, cilantro, cotija cheese, and pickled jalapeños",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; mince garlic.",
+          "Sauce pack: mix 1 tbsp taco seasoning, 1 tbsp tomato paste, 1 tsp fish sauce, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack (add a spoon of salsa if you want).",
+          "Layer beef, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting. Ensure beef is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime, add cilantro, cotija, and pickled jalapenos. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["beef", "taco", "mexican-inspired"]
       },
@@ -1175,6 +1906,15 @@ export const recipes = [
         protein: "Black beans or chickpeas",
         veggies: "Bell peppers, onion, corn",
         sauces: "1 tbsp nutritional yeast, 1 tsp liquid smoke, cumin, chili, garlic, lime, finish with cilantro and cashew crema",
+        method: [
+          "Prep: rinse rice. Dice bell peppers and onion; use frozen corn; drain beans; mince garlic.",
+          "Sauce pack: mix 1 tbsp nutritional yeast, 1 tsp liquid smoke, 1 tsp cumin, 1 tsp chili powder, 1 tsp garlic, and a squeeze of lime.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer beans, peppers, onion, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add cilantro and cashew crema. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "pepper", "fajita"]
       },
@@ -1189,6 +1929,15 @@ export const recipes = [
         protein: "Chorizo or spicy sausage",
         veggies: "Onion, bell pepper, corn",
         sauces: "1 tbsp tomato paste, 1 chipotle in adobo, cumin, chili powder, garlic, black beans, finish with lime juice, cilantro, and crema",
+        method: [
+          "Prep: rinse rice. Slice chorizo; dice onion and bell pepper; use frozen corn; drain black beans; mince garlic.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 minced chipotle, 1 tsp cumin, 1 tsp chili powder, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chorizo, onion, bell pepper, corn, and beans.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro and crema. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "chorizo", "beans"]
       },
@@ -1203,6 +1952,15 @@ export const recipes = [
         protein: "Chicken pieces",
         veggies: "Corn, onion, bell pepper",
         sauces: "Chipotle, 1 tbsp adobo seasoning, 1 tsp fish sauce, garlic, cumin, lime, finish with cilantro, lime crema, and cotija cheese",
+        method: [
+          "Prep: rinse rice. Cut chicken; dice onion and bell pepper; use frozen corn; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 minced chipotle, 1 tbsp adobo seasoning, 1 tsp fish sauce, 1 tsp cumin, 1 tsp garlic, and lime zest with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer chicken, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting. Ensure chicken reaches 165F.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, lime crema, and cotija. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["chicken", "chipotle", "spicy"]
       },
@@ -1217,6 +1975,15 @@ export const recipes = [
         protein: "Black or pinto beans",
         veggies: "Corn, onion, bell pepper",
         sauces: "1 tbsp tomato paste, 1 tsp adobo seasoning, cumin, chili, garlic, finish with lime juice, cilantro, and pepitas",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain beans; mince garlic.",
+          "Sauce pack: mix 1 tbsp tomato paste, 1 tsp adobo seasoning, 1 tsp cumin, 1 tsp chili powder, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack (use salsa in the liquid if desired).",
+          "Layer beans, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro and pepitas. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "salsa", "beans"]
       },
@@ -1231,6 +1998,15 @@ export const recipes = [
         protein: "Pork pieces",
         veggies: "Onion, corn, bell pepper",
         sauces: "Green chili, 1 tbsp adobo seasoning, 1 tsp fish sauce, garlic, cumin, finish with lime juice, cilantro, and Mexican crema",
+        method: [
+          "Prep: rinse rice. Cut pork; dice onion and bell pepper; use frozen corn; mince garlic.",
+          "Sauce pack: mix 1 tbsp green chili sauce, 1 tbsp adobo seasoning, 1 tsp fish sauce, 1 tsp cumin, and 1 tsp garlic with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer pork, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting. Ensure pork is cooked through.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro and Mexican crema. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["pork", "green-chili", "spicy"]
       },
@@ -1245,6 +2021,15 @@ export const recipes = [
         protein: "Pinto beans",
         veggies: "Corn, onion",
         sauces: "1 tsp adobo seasoning, 1 bay leaf during cooking, lime juice and zest, chopped cilantro, garlic, salt, finish with extra lime zest and toasted pepitas",
+        method: [
+          "Prep: rinse rice. Dice onion; use frozen corn; drain beans; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 tsp adobo seasoning, 1 tsp garlic, and a pinch of salt; add a bay leaf.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add the bay leaf.",
+          "Layer beans, onion, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and remove the bay leaf.",
+          "Finish: add lime juice, cilantro, extra lime zest, and toasted pepitas. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["vegan", "cilantro-lime", "beans"]
       },
@@ -1259,6 +2044,15 @@ export const recipes = [
         protein: "Shrimp",
         veggies: "Corn, bell pepper, onion",
         sauces: "1 tbsp fish sauce (required), 1 tbsp adobo seasoning, chili powder, cumin, lime, garlic, salt, finish with cilantro, lime wedges, and avocado",
+        method: [
+          "Prep: rinse rice. Thaw shrimp; dice onion and bell pepper; use frozen corn; mince garlic; zest a lime.",
+          "Sauce pack: mix 1 tbsp fish sauce, 1 tbsp adobo seasoning, 1 tsp chili powder, 1 tsp cumin, 1 tsp garlic, and lime zest with a few tbsp water.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer onion, bell pepper, corn, and shrimp.",
+          "Cook on the {setting} setting. Shrimp should be opaque.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: squeeze lime juice, add cilantro, lime wedges, and avocado. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["shrimp", "chili-lime", "mexican-inspired"]
       },
@@ -1273,6 +2067,15 @@ export const recipes = [
         protein: "Beans cooked in with rice; eggs added at end or on top",
         veggies: "Onion, maybe bell pepper and corn",
         sauces: "Salsa, 1 tbsp adobo seasoning, cumin, chili, cheese if you use dairy, finish with cilantro, lime, avocado, and hot sauce",
+        method: [
+          "Prep: rinse rice. Dice onion and bell pepper; use frozen corn; drain beans.",
+          "Sauce pack: mix 1 tbsp adobo seasoning, 1 tsp cumin, 1 tsp chili powder, and a spoon of salsa.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add more salsa if you like.",
+          "Layer beans, onion, bell pepper, and corn.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff. Stir in beaten eggs while hot, or crack eggs on top and let them set.",
+          "Finish: add cilantro, lime, avocado, cheese, and hot sauce. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["egg", "breakfast", "beans"]
       },
@@ -1289,6 +2092,14 @@ export const recipes = [
         protein: "Eggs stirred into hot rice after cooking",
         veggies: "Green onion",
         sauces: "Soy sauce, 1 tsp mirin, butter, pepper, finish with furikake, toasted nori, and pickled ginger",
+        method: [
+          "Prep: rinse rice. Slice green onion; beat eggs.",
+          "Sauce pack: mix 1 tbsp soy sauce, 1 tsp mirin, 1 tbsp melted butter, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and stir in beaten eggs until just set.",
+          "Finish: add green onion, furikake, nori, and pickled ginger. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["egg", "butter", "simple"]
       },
@@ -1303,6 +2114,14 @@ export const recipes = [
         protein: "Beaten eggs added in last minutes or right after cooking",
         veggies: "Green onion, maybe spinach",
         sauces: "Soy sauce, 1 tbsp dashi powder in liquid, mirin, sugar to taste, finish with bonito flakes, nori, and pickled plum",
+        method: [
+          "Prep: rinse rice. Slice green onion; beat eggs; rinse spinach if using.",
+          "Sauce pack: mix 1 tbsp soy, 1 tbsp dashi powder, 1 tbsp mirin, and 1 tsp sugar.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in eggs until softly set. Fold in spinach if using.",
+          "Finish: add bonito flakes, nori, and pickled plum. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["egg", "tamago-style", "japanese"]
       },
@@ -1317,6 +2136,14 @@ export const recipes = [
         protein: "Eggs cracked on top or stirred in after cooking",
         veggies: "Mushrooms, green onions",
         sauces: "Soy sauce, 1 tbsp oyster sauce, 1 tsp sesame oil, butter or oil, pepper, finish with scallions and fried garlic",
+        method: [
+          "Prep: rinse rice. Slice mushrooms and green onions; beat eggs if stirring in.",
+          "Sauce pack: mix 1 1/2 tbsp soy, 1 tbsp oyster sauce, 1 tsp sesame oil, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add mushrooms.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in eggs until set.",
+          "Finish: add scallions, fried garlic, and a small pat of butter if you want. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["egg", "mushroom", "comfort"]
       },
@@ -1331,6 +2158,15 @@ export const recipes = [
         protein: "Breakfast sausage pieces; eggs added at the end",
         veggies: "Onion, maybe bell pepper",
         sauces: "1 tsp Worcestershire sauce, salt, pepper, herbs, a little butter, finish with hot sauce, fresh herbs, and cheese",
+        method: [
+          "Prep: rinse rice. Slice sausage; dice onion and bell pepper; beat eggs.",
+          "Sauce pack: mix 1 tsp Worcestershire, 1 tbsp melted butter, 1 tsp dried herbs, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Layer sausage, onion, and bell pepper.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and stir in eggs until set.",
+          "Finish: add hot sauce, fresh herbs, and cheese. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["sausage", "egg", "breakfast"]
       },
@@ -1345,6 +2181,14 @@ export const recipes = [
         protein: "Oats and optional nuts",
         veggies: "None, or small fruit pieces",
         sauces: "Pinch of salt (critical for sweet porridge), sugar or honey, cinnamon, vanilla, finish with fresh fruit, nuts, and maple syrup drizzle",
+        method: [
+          "Prep: rinse rice. Measure oats and any nuts; dice fruit if using.",
+          "Sauce pack: mix a pinch of salt, 1/2 tsp cinnamon, 1 tsp vanilla, and 1 to 2 tbsp sugar or honey.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in oats and the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir well.",
+          "Finish: add fresh fruit, nuts, and a maple syrup drizzle. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "breakfast", "sweet"]
       },
@@ -1359,6 +2203,14 @@ export const recipes = [
         protein: "Optional nuts or seeds",
         veggies: "Apple cubes",
         sauces: "Pinch of salt (required), 1 tsp vanilla extract, cinnamon, sugar or honey, finish with toasted walnuts and cream",
+        method: [
+          "Prep: rinse rice. Dice apple; measure cinnamon and vanilla.",
+          "Sauce pack: mix a pinch of salt, 1 tsp vanilla, 1 tsp cinnamon, and 1 to 2 tbsp sugar or honey.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack and add apples.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir.",
+          "Finish: add toasted walnuts and cream. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "apple", "sweet"]
       },
@@ -1373,6 +2225,14 @@ export const recipes = [
         protein: "Optional nuts or seeds",
         veggies: "Banana slices added after cooking",
         sauces: "Pinch of salt (required), 1 tsp vanilla extract, sugar or honey, finish with toasted coconut flakes and honey drizzle",
+        method: [
+          "Prep: rinse rice. Measure coconut milk and water; slice banana.",
+          "Sauce pack: mix a pinch of salt, 1 tsp vanilla, and 1 to 2 tbsp sugar or honey.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in banana slices.",
+          "Finish: add toasted coconut flakes and a honey drizzle. Taste and adjust; restraint is not required."
+        ],
         setting: "Porridge",
         tags: ["porridge", "banana", "coconut"]
       },
@@ -1387,6 +2247,14 @@ export const recipes = [
         protein: "Optional tofu or egg",
         veggies: "Spinach or kale, green onion",
         sauces: "2 tbsp white miso stirred in after cooking, 1 tbsp sake, soy sauce, sesame oil, finish with soft-boiled egg, nori, and pickled vegetables",
+        method: [
+          "Prep: rinse rice. Slice green onion; chop greens; cube tofu if using.",
+          "Sauce pack: mix 1 tbsp sake and 1 tsp soy sauce. Keep miso for the end.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then stir in 2 tbsp miso loosened with hot liquid and fold in greens.",
+          "Finish: drizzle sesame oil, add a soft-boiled egg, nori, and pickled vegetables. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["miso", "breakfast", "greens"]
       },
@@ -1401,6 +2269,14 @@ export const recipes = [
         protein: "Eggs stirred in or served on top; cheese if you use dairy",
         veggies: "Green onion, maybe spinach",
         sauces: "Butter or oil, Parmesan or cheddar (required, not optional), 1 tsp Dijon mustard, mixed herbs, salt, black pepper, finish with fresh chives and hot sauce",
+        method: [
+          "Prep: rinse rice. Slice green onion; beat eggs; chop herbs.",
+          "Sauce pack: mix 1 tbsp butter or oil, 1 tsp Dijon, 1 tsp mixed herbs, and black pepper.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the sauce pack.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff and stir in eggs if using.",
+          "Finish: add cheese, chives, and hot sauce. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["egg", "cheesy", "breakfast"]
       },
@@ -1415,6 +2291,14 @@ export const recipes = [
         protein: "Add leftover protein on top after cooking",
         veggies: "Any quick-cooking veggies stirred in at the end",
         sauces: "Season base rice with 1 tsp salt or 1 tbsp soy sauce minimum; add butter, sesame oil, or EVOO for richness; season at the table with additional soy, chili oil, or your sauces",
+        method: [
+          "Prep: rinse rice. Decide on protein and veggies; keep quick greens for the end.",
+          "Sauce pack: mix 1 tsp salt or 1 tbsp soy sauce into the cooking liquid.",
+          "Add rice + liquid: {riceAmount}; {liquid}. Stir in the base seasoning.",
+          "Cook on the {setting} setting.",
+          "Rest 5-10 minutes, then fluff.",
+          "Finish: add finishing oil, acid, herbs, and any leftover protein. Taste and adjust; restraint is not required."
+        ],
         setting: "White",
         tags: ["base", "template", "simple"]
       }
