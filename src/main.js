@@ -22,6 +22,7 @@ const state = {
   cooked: {}, // { [id: number]: { times: number, lastCookedAt: string, rating?: number } }
   userDataLoaded: false,
   showLandingPage: true,
+  garnishPicks: {}, // { [id: number]: { index: number, label: string, kind: "real"|"ridiculous" } }
 };
 
 const proteinOptions = [
@@ -111,6 +112,38 @@ const LAB_QUESTS = [
   },
 ];
 
+const GARNISH_ITEM_HEIGHT = 34;
+const GARNISH_LOOP_COUNT = 3;
+const GARNISH_OPTIONS = [
+  { label: "Scallion greens", kind: "real" },
+  { label: "Toasted sesame seeds", kind: "real" },
+  { label: "Chili crisp", kind: "real" },
+  { label: "Chili oil", kind: "real" },
+  { label: "Soy drizzle", kind: "real" },
+  { label: "Lime wedge", kind: "real" },
+  { label: "Lemon zest", kind: "real" },
+  { label: "Rice vinegar splash", kind: "real" },
+  { label: "Fresh cilantro", kind: "real" },
+  { label: "Thai basil", kind: "real" },
+  { label: "Parsley", kind: "real" },
+  { label: "Furikake", kind: "real" },
+  { label: "Nori strips", kind: "real" },
+  { label: "Crispy shallots", kind: "real" },
+  { label: "Fried garlic", kind: "real" },
+  { label: "Toasted peanuts", kind: "real" },
+  { label: "Soft-boiled egg", kind: "real" },
+  { label: "Parmigiano-Reggiano", kind: "real" },
+  { label: "Sesame oil drizzle", kind: "real" },
+  { label: "Ceremonial lime slice (purely symbolic)", kind: "ridiculous" },
+  { label: "One dramatic herb you cannot name", kind: "ridiculous" },
+  { label: "Crunchy bits of future regret", kind: "ridiculous" },
+  { label: "A suspiciously photogenic sprig", kind: "ridiculous" },
+  { label: "A garnish you swear you bought", kind: "ridiculous" },
+  { label: "The most expensive thing in your pantry", kind: "ridiculous" },
+  { label: "Toasted breadcrumbs of destiny", kind: "ridiculous" },
+  { label: "Chef's choice (whatever falls out)", kind: "ridiculous" },
+];
+
 function formatLocalDateKey(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -167,6 +200,28 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function buildGarnishTrackHtml() {
+  const items = [];
+  for (let loop = 0; loop < GARNISH_LOOP_COUNT; loop += 1) {
+    for (const option of GARNISH_OPTIONS) {
+      items.push(
+        `<div class="roulette-item" data-kind="${option.kind}">${escapeHtml(option.label)}</div>`
+      );
+    }
+  }
+  return items.join("");
+}
+
+function buildGarnishResultHtml(pick) {
+  if (!pick) {
+    return `<span class="roulette-muted">Spin for a garnish. The outcome is not entirely under your control.</span>`;
+  }
+  const label = escapeHtml(pick.label);
+  const tone = pick.kind === "ridiculous" ? "Proceed with caution." : "Proceed as if this was the plan.";
+  const tag = pick.kind === "ridiculous" ? "Ridiculous" : "Sensible";
+  return `<span class="roulette-chip ${pick.kind}">${tag}</span><span class="roulette-result-text">Landed on <strong>${label}</strong>. ${tone}</span>`;
 }
 
 function loadWeekPlan(weekKey) {
@@ -1846,6 +1901,10 @@ function buildDetail(recipe, inCurrentFilters) {
         </div>
       `
       : "";
+  const garnishPick = state.garnishPicks[recipe.id];
+  const garnishTrackHtml = buildGarnishTrackHtml();
+  const garnishOffset = garnishPick ? garnishPick.index : 0;
+  const garnishResultHtml = buildGarnishResultHtml(garnishPick);
   const tagsHtml = (recipe.tags || [])
     .map((tag) => `<span class="badge">${tag}</span>`)
     .join("");
@@ -1900,12 +1959,71 @@ function buildDetail(recipe, inCurrentFilters) {
     <div class="info-row"><strong>Sauces</strong><span>${recipe.sauces}</span></div>
     ${buildMeasuredPacks(recipe)}
 
+    <div class="section-label">Garnish Roulette</div>
+    <div class="roulette-card" style="--roulette-item-height: ${GARNISH_ITEM_HEIGHT}px;">
+      <div class="roulette-header">
+        <div>
+          <div class="roulette-title">Spin for a garnish</div>
+          <div class="roulette-subtitle">70% sensible, 30% ridiculous. The odds are not in your favor.</div>
+        </div>
+        <button class="ghost" data-garnish-spin="${recipe.id}">Spin</button>
+      </div>
+      <div class="roulette-window">
+        <div class="roulette-track" data-garnish-track="${recipe.id}" style="transform: translateY(-${garnishOffset * GARNISH_ITEM_HEIGHT}px);">
+          ${garnishTrackHtml}
+        </div>
+        <div class="roulette-highlight" aria-hidden="true"></div>
+      </div>
+      <div class="roulette-result" data-garnish-result="${recipe.id}" aria-live="polite">${garnishResultHtml}</div>
+    </div>
+
     ${buildChefNotes(recipe)}
     ${buildMeasurementHelp()}
 
     <div class="section-label">Method</div>
     ${buildInstructions(recipe, batchLabel)}
   `;
+}
+
+function spinGarnish(btn) {
+  const id = parseInt(btn.getAttribute("data-garnish-spin"), 10);
+  if (Number.isNaN(id)) return;
+  const track = app.querySelector(`[data-garnish-track="${id}"]`);
+  const result = app.querySelector(`[data-garnish-result="${id}"]`);
+  if (!track || !result) return;
+  if (track.dataset.spinning === "true") return;
+
+  const originalLabel = btn.textContent;
+  btn.textContent = "Spinning...";
+  btn.disabled = true;
+  track.dataset.spinning = "true";
+  track.classList.add("spinning");
+
+  const pickIndex = Math.floor(Math.random() * GARNISH_OPTIONS.length);
+  const maxLoops = Math.max(1, GARNISH_LOOP_COUNT - 1);
+  const loops = 1 + Math.floor(Math.random() * maxLoops);
+  const targetIndex = loops * GARNISH_OPTIONS.length + pickIndex;
+  const duration = 1400 + Math.floor(Math.random() * 300);
+
+  track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.72, 0.2, 1)`;
+  track.style.transform = `translateY(-${targetIndex * GARNISH_ITEM_HEIGHT}px)`;
+
+  window.setTimeout(() => {
+    track.style.transition = "none";
+    track.style.transform = `translateY(-${pickIndex * GARNISH_ITEM_HEIGHT}px)`;
+    track.offsetHeight;
+    track.style.transition = "";
+    track.dataset.spinning = "false";
+    track.classList.remove("spinning");
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+
+    const pick = GARNISH_OPTIONS[pickIndex];
+    state.garnishPicks[id] = { index: pickIndex, label: pick.label, kind: pick.kind };
+    result.innerHTML = buildGarnishResultHtml(pick);
+    result.classList.add("roulette-result-active");
+    window.setTimeout(() => result.classList.remove("roulette-result-active"), 900);
+  }, duration + 60);
 }
 
 function filterCount() {
@@ -2602,6 +2720,10 @@ function render() {
       btn.textContent = "Copied!";
       setTimeout(() => (btn.textContent = "Copy ingredients"), 1200);
     });
+  });
+
+  app.querySelectorAll("[data-garnish-spin]").forEach((btn) => {
+    btn.addEventListener("click", () => spinGarnish(btn));
   });
 
   const planGenerate = app.querySelector("[data-plan-generate]");
