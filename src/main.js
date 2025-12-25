@@ -112,8 +112,10 @@ const LAB_QUESTS = [
   },
 ];
 
-const GARNISH_ITEM_HEIGHT = 34;
-const GARNISH_LOOP_COUNT = 3;
+const GARNISH_ITEM_HEIGHT = 44;
+const GARNISH_LOOP_COUNT = 5;
+const GARNISH_WINDOW_ROWS = 3;
+const GARNISH_CENTER_ROW = Math.floor(GARNISH_WINDOW_ROWS / 2);
 const GARNISH_OPTIONS = [
   { label: "Scallion greens", kind: "real" },
   { label: "Toasted sesame seeds", kind: "real" },
@@ -143,6 +145,7 @@ const GARNISH_OPTIONS = [
   { label: "Toasted breadcrumbs of destiny", kind: "ridiculous" },
   { label: "Chef's choice (whatever falls out)", kind: "ridiculous" },
 ];
+const GARNISH_CENTER_OFFSET = Math.floor(GARNISH_LOOP_COUNT / 2) * GARNISH_OPTIONS.length;
 
 function formatLocalDateKey(date) {
   const year = date.getFullYear();
@@ -560,6 +563,74 @@ function getSpiceLevel(recipe) {
   return { label: "Mild", score: 0 };
 }
 
+const NOTE_GUIDE = {
+  "soy sauce": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "soy sauce / tamari" },
+  "dark soy sauce": { pack: "base", min: 0.5, max: 1, unit: "tsp", label: "dark soy (color boost)" },
+  "oyster sauce": { pack: "base", min: 1, max: 1.5, unit: "tbsp", label: "oyster sauce" },
+  "hoisin": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "hoisin" },
+  "fish sauce": { pack: "base", min: 1, max: 2, unit: "tsp", label: "fish sauce" },
+  "shaoxing wine": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "Shaoxing wine (or mirin)" },
+  "mirin": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "mirin" },
+  "gochujang": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "gochujang" },
+  "curry paste": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "curry paste" },
+  "doubanjiang": { pack: "base", min: 0.5, max: 1.5, unit: "tbsp", label: "doubanjiang" },
+  "tomato paste": { pack: "base", min: 1, max: 1, unit: "tbsp", label: "tomato paste" },
+  "peanut butter": { pack: "base", min: 1, max: 2, unit: "tbsp", label: "peanut butter" },
+  "msg": { pack: "base", label: "MSG / mushroom powder (a pinch, optional)" },
+  "smoked paprika": { pack: "base", min: 0.5, max: 1, unit: "tsp", label: "smoked paprika" },
+  "paprika": { pack: "base", min: 0.5, max: 1, unit: "tsp", label: "paprika" },
+  "white pepper": { pack: "base", min: 0.25, max: 0.75, unit: "tsp", label: "white pepper" },
+  "black pepper": { pack: "base", min: 0.5, max: 1, unit: "tsp", label: "black pepper" },
+  "palm sugar": { pack: "base", min: 0.5, max: 1.5, unit: "tsp", label: "palm/coconut sugar" },
+  "brown sugar": { pack: "base", min: 0.5, max: 1.5, unit: "tsp", label: "brown sugar" },
+  "miso": { pack: "finish", min: 1, max: 1.5, unit: "tbsp", label: "miso (stir in after cooking)" },
+  "sesame oil": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "toasted sesame oil (finish)" },
+  "olive oil": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "olive oil (finish)" },
+  "butter": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "butter (finish)" },
+  "ghee": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "ghee (finish)" },
+  "neutral oil": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "neutral oil (finish)" },
+  "rice vinegar": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "rice vinegar (finish)" },
+  "black vinegar": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "black vinegar (finish)" },
+  "lime": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "lime juice (finish)" },
+  "lemon": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "lemon juice (finish)" },
+  "yuzu": { pack: "finish", min: 1, max: 2, unit: "tsp", label: "yuzu or citrus (finish)" },
+  "capers": { pack: "finish", label: "capers (finish pop)" },
+  "fried shallots": { pack: "finish", label: "fried shallots (finish crunch)" },
+  "fried garlic": { pack: "finish", label: "fried garlic chips (finish crunch)" },
+  "sesame seeds": { pack: "finish", label: "sesame seeds (finish crunch)" },
+  "nori": { pack: "finish", label: "nori strips/flakes (finish)" },
+  "chili crisp": { pack: "heat", min: 0.5, max: 2, unit: "tsp", label: "chili crisp / chili oil" },
+  "gochugaru": { pack: "heat", min: 0.5, max: 2, unit: "tsp", label: "gochugaru" },
+};
+
+const NOTE_REGEX = {
+  heat: /\b(chili|chilli|gochujang|gochugaru|chili crisp|chili oil|curry paste|doubanjiang|sambal|harissa|chipotle)\b/i,
+  finish: /\b(vinegar|citrus|lime|lemon|yuzu|sesame oil|olive oil|butter|ghee|fried shallots|fried garlic|sesame seeds|nori|capers)\b/i,
+  acid: /\b(vinegar|citrus|lime|lemon|yuzu)\b/i,
+  fat: /\b(sesame oil|olive oil|butter|ghee|oil)\b/i,
+  fresh: /\b(scallion|green onion|spring onion|cilantro|basil|thai basil|parsley|mint|herb|chive|nori|sesame seeds|fried shallots|fried garlic)\b/i,
+};
+
+const NOTE_PACK_LIMITS = {
+  base: 4,
+  finish: 4,
+  heat: 3,
+};
+
+function formatLabelList(items, limit = 4) {
+  const list = (items || []).filter(Boolean).slice(0, limit);
+  if (!list.length) return "";
+  if (list.length === 1) return list[0];
+  if (list.length === 2) return `${list[0]} and ${list[1]}`;
+  return `${list.slice(0, -1).join(", ")}, and ${list[list.length - 1]}`;
+}
+
+function pickFirstMatch(list, regex) {
+  if (!Array.isArray(list)) return "";
+  const match = list.find((item) => regex.test(item));
+  return match || "";
+}
+
 const promiseBaseByCuisine = {
   Chinese: ["savory, soy-forward, glossy", "gingery, umami-heavy, comfort-first"],
   Japanese: ["clean, umami-forward, quietly rich", "dashi-bright, delicate, gently savory"],
@@ -845,132 +916,195 @@ function clearCurrentWeekPlan() {
 
 function getChefNotes(recipe) {
   const factor = state.batch === "1" ? 0.5 : 1;
-  const cuisine = recipe.cuisine;
-  const sauceText = recipe.sauces.toLowerCase();
+  const sauceText = String(recipe.sauces || "");
+  const sauceItems = extractPantryAndFinishItems(recipe.sauces || "");
+  const produceItems = extractProduceItems(recipe.veggies || "");
+  const spice = getSpiceLevel(recipe);
+
+  const baseLineup = [];
+  const finishLineup = [];
+  const heatLineup = [];
+  const baseKeys = new Set();
+  const finishKeys = new Set();
+  const heatKeys = new Set();
+
+  const addLineup = (list, keySet, label) => {
+    if (!label) return;
+    const key = normalizeShoppingKey(label);
+    if (!key || keySet.has(key)) return;
+    keySet.add(key);
+    list.push(label);
+  };
+
+  const isHeatLabel = (label) => NOTE_REGEX.heat.test(label);
+  const isFinishLabel = (label) => NOTE_REGEX.finish.test(label);
+
+  for (const item of sauceItems) {
+    if (!item?.label) continue;
+    if (isHeatLabel(item.label)) addLineup(heatLineup, heatKeys, item.label);
+    if (item.group === "finish" || item.group === "produce" || isFinishLabel(item.label)) {
+      addLineup(finishLineup, finishKeys, item.label);
+    }
+    if ((item.group === "pantry" || item.group === "rice") && !isFinishLabel(item.label)) {
+      addLineup(baseLineup, baseKeys, item.label);
+    }
+  }
+
+  for (const produce of produceItems) {
+    if (!produce?.label) continue;
+    if (NOTE_REGEX.fresh.test(produce.label)) {
+      addLineup(finishLineup, finishKeys, produce.label);
+    }
+  }
 
   const saucePack = [];
   const finishPack = [];
   const heatPack = [];
-
-  const addSauce = (min, max, unit, ingredient) => {
-    saucePack.push(`${formatRange(min, max, unit, factor)} ${ingredient}`);
-  };
-  const addFinish = (min, max, unit, ingredient) => {
-    finishPack.push(`${formatRange(min, max, unit, factor)} ${ingredient}`);
-  };
-  const addHeat = (min, max, unit, ingredient) => {
-    heatPack.push(`${formatRange(min, max, unit, factor)} ${ingredient}`);
+  const seenPack = {
+    base: new Set(),
+    finish: new Set(),
+    heat: new Set(),
   };
 
-  const addSauceText = (text) => saucePack.push(text);
-  const addFinishText = (text) => finishPack.push(text);
-  const addHeatText = (text) => heatPack.push(text);
+  const addPackLine = (pack, line, key) => {
+    if (!line) return;
+    const bucket = pack === "finish" ? finishPack : pack === "heat" ? heatPack : saucePack;
+    const seen = pack === "finish" ? seenPack.finish : pack === "heat" ? seenPack.heat : seenPack.base;
+    const limit = NOTE_PACK_LIMITS[pack] || NOTE_PACK_LIMITS.base;
+    const safeKey = key || normalizeShoppingKey(line);
+    if (!safeKey || seen.has(safeKey) || bucket.length >= limit) return;
+    seen.add(safeKey);
+    bucket.push(line);
+  };
 
-  if (cuisine === "Japanese") {
-    addSauce(1, 2, "tbsp", "soy sauce (or tamari)");
-    if (sauceText.includes("mirin")) addSauce(1, 2, "tbsp", "mirin");
-    if (sauceText.includes("miso")) addSauce(1, 1.5, "tbsp", "miso (stir in after cooking)");
-    addSauce(0.5, 1, "tsp", "sugar (optional, balances salt)");
-    addFinish(1, 2, "tsp", "toasted sesame oil (finish)");
-    addFinish(1, 2, "tsp", "rice vinegar or yuzu/lemon (finish)");
-    addHeat(0.5, 1.5, "tsp", "shichimi togarashi or chili crisp (optional)");
-  } else if (cuisine === "Korean") {
-    addSauce(1, 2, "tbsp", "gochujang (mix into liquid)");
-    addSauce(1, 2, "tbsp", "soy sauce");
-    addSauce(0.5, 1.5, "tsp", "sugar (balances heat)");
-    addFinish(1, 2, "tsp", "toasted sesame oil (finish)");
-    addFinish(1, 2, "tsp", "rice vinegar (finish, optional but great)");
-    addHeat(0.5, 2, "tsp", "gochugaru or chili crisp (optional)");
-  } else if (cuisine === "Thai") {
-    addSauce(1, 2, "tbsp", "curry paste (mix into liquid)");
-    addSauce(1, 2, "tsp", "fish sauce (or soy sauce)");
-    addSauce(1, 2, "tsp", "sugar (balances curry + salt)");
-    addFinish(1, 2, "tsp", "lime juice (finish)");
-    addFinish(1, 2, "tsp", "neutral oil or coconut cream (finish, optional)");
-    addHeat(0.5, 2, "tsp", "chili oil or fresh chili (optional)");
-  } else if (cuisine === "Vietnamese") {
-    addSauce(1, 2, "tsp", "fish sauce (or soy sauce)");
-    addSauce(1, 2, "tsp", "sugar");
-    addSauceText("Garlic + black pepper are your best friends here.");
-    addFinish(1, 2, "tsp", "lime (finish)");
-    addFinish(1, 2, "tsp", "neutral oil (finish, optional)");
-    addHeat(0.5, 2, "tsp", "chili crisp or sliced chili (optional)");
-  } else if (cuisine === "Indian") {
-    addSauce(0.5, 1, "tsp", "salt (plus more to taste)");
-    addSauce(0.5, 1.5, "tsp", "garam masala or curry powder");
-    addSauce(0.25, 0.5, "tsp", "turmeric (optional)");
-    addFinish(1, 2, "tsp", "ghee or butter (finish)");
-    addFinish(1, 2, "tsp", "lemon (finish)");
-    addHeat(0.5, 2, "tsp", "chili flakes or chili crisp (optional)");
-  } else if (cuisine === "Mediterranean" || cuisine === "Italian") {
-    addSauce(0.5, 1, "tsp", "salt (plus more to taste)");
-    addSauce(1, 1, "tbsp", "extra-virgin olive oil (in pot or finish)");
-    addSauceText("Oregano/thyme + garlic + black pepper = instant depth.");
-    addFinish(1, 2, "tsp", "lemon (finish)");
-    addHeatText("Aleppo pepper or chili flakes (optional).");
-  } else if (cuisine === "Mexican") {
-    addSauce(0.5, 1, "tsp", "salt (plus more to taste)");
-    addSauce(0.5, 1.5, "tsp", "cumin + chili powder (or taco spice)");
-    addSauce(0.5, 1, "tsp", "smoked paprika (optional)");
-    addFinish(1, 2, "tsp", "lime (finish)");
-    addFinish(1, 2, "tsp", "butter or oil (finish, optional)");
-    addHeat(0.5, 2, "tsp", "chipotle/chili flakes (optional)");
-  } else if (cuisine === "Chinese" || cuisine === "Fusion") {
-    addSauce(1, 2, "tbsp", "soy sauce");
-    if (sauceText.includes("oyster")) addSauce(1, 1.5, "tbsp", "oyster sauce");
-    if (sauceText.includes("shaoxing") || sauceText.includes("mirin")) addSauce(1, 2, "tbsp", "Shaoxing wine (or mirin)");
-    if (sauceText.includes("dark soy")) addSauce(0.5, 1, "tsp", "dark soy (color, optional)");
-    addSauce(0.5, 1.5, "tsp", "sugar (balances salt)");
-    addFinish(1, 2, "tsp", "toasted sesame oil (finish)");
-    addFinish(1, 2, "tsp", "black vinegar or rice vinegar (finish, optional but great)");
-    addHeat(0.5, 2, "tsp", "chili crisp (optional)");
-  } else {
-    addSauceText("Use the recipe’s sauce list as your guide; start low on salt and adjust after cooking.");
-    addFinishText("Finish with a little fat (oil/butter) and a little acid (vinegar/citrus).");
-    addHeatText("Optional: chili crisp or chili flakes for heat.");
+  const addAmountLine = (pack, min, max, unit, label, key) => {
+    addPackLine(pack, `${formatRange(min, max, unit, factor)} ${label}`, key);
+  };
+
+  for (const item of sauceItems) {
+    const guide = NOTE_GUIDE[item.key];
+    if (guide) {
+      const pack = guide.pack || "base";
+      if (guide.min != null && guide.max != null && guide.unit) {
+        addAmountLine(pack, guide.min, guide.max, guide.unit, guide.label || item.label, guide.key || item.key);
+      } else {
+        addPackLine(pack, guide.label || item.label, guide.key || item.key);
+      }
+      continue;
+    }
+
+    if (isHeatLabel(item.label)) {
+      addPackLine("heat", `${item.label} (to taste)`, item.key);
+      continue;
+    }
+    if (isFinishLabel(item.label) || item.group === "finish" || item.group === "produce") {
+      addPackLine("finish", `${item.label} (finish)`, item.key);
+      continue;
+    }
+    if (item.group === "pantry" || item.group === "rice") {
+      addPackLine("base", item.label, item.key);
+    }
   }
 
-  const spice = getSpiceLevel(recipe);
+  const sweetenerPresent = /\b(sugar|honey|maple|syrup|palm sugar|coconut sugar|brown sugar)\b/i.test(sauceText);
+  if (sweetenerPresent && !saucePack.some((line) => /sugar|honey|maple|syrup/i.test(line))) {
+    addAmountLine("base", 0.5, 1.5, "tsp", "sugar or honey (balances salt)", "sweetener");
+  }
+
+  if (finishPack.length < NOTE_PACK_LIMITS.finish) {
+    const herbFinish = formatLabelList(
+      finishLineup.filter((label) => NOTE_REGEX.fresh.test(label)),
+      2
+    );
+    if (herbFinish) {
+      addPackLine("finish", `Fold in ${herbFinish} at the end.`, `herb:${herbFinish}`);
+    }
+  }
+
+  const baseRoster = formatLabelList(baseLineup, 4);
+  if (baseRoster && saucePack.length < 2) {
+    saucePack.unshift(`Lineup: ${baseRoster}.`);
+    if (saucePack.length > NOTE_PACK_LIMITS.base) saucePack.length = NOTE_PACK_LIMITS.base;
+  }
+  if (!baseRoster && saucePack.length === 0) {
+    addPackLine("base", "Use the sauce list as written. Start small, adjust after cooking.", "base-fallback");
+  }
+
+  const finishRoster = formatLabelList(finishLineup, 3);
+  if (finishRoster && finishPack.length < 2) {
+    finishPack.unshift(`Finish roster: ${finishRoster}.`);
+    if (finishPack.length > NOTE_PACK_LIMITS.finish) finishPack.length = NOTE_PACK_LIMITS.finish;
+  }
+  if (!finishRoster && finishPack.length === 0) {
+    addPackLine("finish", "Finish with a brightener + a gloss if you have them.", "finish-fallback");
+  }
+
+  const heatRoster = formatLabelList(heatLineup, 3);
+  if (heatRoster && heatPack.length < 1) {
+    heatPack.unshift(`Heat roster: ${heatRoster}.`);
+    if (heatPack.length > NOTE_PACK_LIMITS.heat) heatPack.length = NOTE_PACK_LIMITS.heat;
+  }
+  if (!heatRoster && heatPack.length === 0) {
+    addPackLine("heat", "Optional: no heat required. Congratulations.", "heat-fallback");
+  }
+
   if (spice.score === 0) {
-    addHeatText("Want more kick? Add heat at the finish so you can control it.");
+    addPackLine("heat", "Add heat at the end if you want drama.", "heat-drama");
   } else if (spice.score === 2) {
-    addHeatText("High heat: start small, then build at the finish.");
+    addPackLine("heat", "High heat: add at the end so you can stop.", "heat-hot");
+  } else {
+    addPackLine("heat", "Medium heat: taste, then decide if you want more.", "heat-medium");
   }
 
   const amountsNote = hasMeasuredAmounts(recipe.sauces)
-    ? "This recipe already includes some measured amounts — use those first, and treat the suggestions below as a balancing guide."
-    : "Suggested starting point (not gospel): tweak to taste after cooking.";
+    ? "Some amounts are already specified. Follow those first; the lab is not here to argue."
+    : "Starting point only. Adjust after cooking; confidence is not a seasoning.";
 
-  return { amountsNote, saucePack, finishPack, heatPack, spiceLabel: spice.label };
+  const baseHint = baseLineup[0] || "your main sauce";
+  const acidHint = pickFirstMatch(finishLineup, NOTE_REGEX.acid) || "a brightener (citrus/vinegar)";
+  const fatHint = pickFirstMatch(finishLineup, NOTE_REGEX.fat) || "a finishing oil or butter";
+  const heatHint = heatLineup[0] || "your heat item";
+  const freshHint = pickFirstMatch(finishLineup, NOTE_REGEX.fresh) || "something fresh or crunchy";
+
+  const rescuePack = [
+    `Disappointingly flat -> add ${baseHint}. This is not a failure.`,
+    `Regrettably heavy -> add ${acidHint}. Light is allowed.`,
+    `Excessively sharp -> add ${fatHint}. The gloss is the apology.`,
+    `Insufficiently interesting -> add ${heatHint} or ${freshHint}. Chaos is optional.`,
+  ];
+
+  return {
+    amountsNote,
+    saucePack,
+    finishPack,
+    heatPack,
+    rescuePack,
+    spiceLabel: spice.label,
+  };
 }
 
 function buildChefNotes(recipe) {
   const notes = getChefNotes(recipe);
   return `
     <details class="details">
-      <summary>Chef Notes (Salt • Fat • Acid • Heat)</summary>
+      <summary>Lab Notes (Flavor Calibration)</summary>
       <p class="details-note">${notes.amountsNote}</p>
       <div class="notes-grid">
-        <div class="note-card">
-          <div class="note-title">🧂 Sauce Pack (salt + umami)</div>
+        <div class="note-card note-core">
+          <div class="note-title"><span class="note-emoji" aria-hidden="true">🧪</span><span>Sauce Protocol</span></div>
           <ul>${notes.saucePack.map((s) => `<li>${s}</li>`).join("")}</ul>
         </div>
-        <div class="note-card">
-          <div class="note-title">🧈 Finish Pack (fat + acid)</div>
+        <div class="note-card note-finish">
+          <div class="note-title"><span class="note-emoji" aria-hidden="true">✨</span><span>Finish Ritual</span></div>
           <ul>${notes.finishPack.map((s) => `<li>${s}</li>`).join("")}</ul>
         </div>
-        <div class="note-card">
-          <div class="note-title">🌶️ Heat (optional) — ${notes.spiceLabel}</div>
+        <div class="note-card note-heat">
+          <div class="note-title"><span class="note-emoji" aria-hidden="true">🔥</span><span>Heat Clause — ${notes.spiceLabel}</span></div>
           <ul>${notes.heatPack.map((s) => `<li>${s}</li>`).join("")}</ul>
         </div>
-        <div class="note-card">
-          <div class="note-title">✅ When things are not entirely perfect</div>
-          <ul>
-            <li><strong>Disappointingly flat</strong> → salt (soy/salt) is not unwelcome.</li>
-            <li><strong>Regrettably heavy</strong> → acid (vinegar/citrus) is not inappropriate.</li>
-            <li><strong>Excessively sharp</strong> → fat (oil/butter) or sweetness is not inadvisable.</li>
-            <li><strong>Insufficiently interesting</strong> → heat + fresh aromatics are not discouraged.</li>
-          </ul>
+        <div class="note-card note-rescue">
+          <div class="note-title"><span class="note-emoji" aria-hidden="true">🧯</span><span>Course Correction</span></div>
+          <ul>${notes.rescuePack.map((s) => `<li>${s}</li>`).join("")}</ul>
         </div>
       </div>
     </details>
@@ -982,16 +1116,16 @@ function buildMeasuredPacks(recipe) {
   return `
     <p class="details-note">${notes.amountsNote}</p>
     <div class="notes-grid">
-      <div class="note-card">
-        <div class="note-title">🧂 Sauce Pack (salt + umami)</div>
+      <div class="note-card note-core">
+        <div class="note-title"><span class="note-emoji" aria-hidden="true">🧪</span><span>Sauce Protocol</span></div>
         <ul>${notes.saucePack.map((s) => `<li>${s}</li>`).join("")}</ul>
       </div>
-      <div class="note-card">
-        <div class="note-title">🧈 Finish Pack (fat + acid)</div>
+      <div class="note-card note-finish">
+        <div class="note-title"><span class="note-emoji" aria-hidden="true">✨</span><span>Finish Ritual</span></div>
         <ul>${notes.finishPack.map((s) => `<li>${s}</li>`).join("")}</ul>
       </div>
-      <div class="note-card">
-        <div class="note-title">🌶️ Heat (optional) — ${notes.spiceLabel}</div>
+      <div class="note-card note-heat">
+        <div class="note-title"><span class="note-emoji" aria-hidden="true">🔥</span><span>Heat Clause — ${notes.spiceLabel}</span></div>
         <ul>${notes.heatPack.map((s) => `<li>${s}</li>`).join("")}</ul>
       </div>
     </div>
@@ -1031,13 +1165,15 @@ function buildRecipeCopyText(recipe) {
   lines.push(`- Veggies: ${recipe.veggies}`);
   lines.push(`- Sauces: ${recipe.sauces}`);
   lines.push("");
-  lines.push("Chef Notes (starting point)");
-  lines.push("Sauce Pack (salt + umami):");
+  lines.push("Lab Notes (starting point)");
+  lines.push("Sauce Protocol:");
   notes.saucePack.forEach((s) => lines.push(`- ${s}`));
-  lines.push("Finish Pack (fat + acid):");
+  lines.push("Finish Ritual:");
   notes.finishPack.forEach((s) => lines.push(`- ${s}`));
-  lines.push(`Heat (optional) — ${notes.spiceLabel}:`);
+  lines.push(`Heat Clause — ${notes.spiceLabel}:`);
   notes.heatPack.forEach((s) => lines.push(`- ${s}`));
+  lines.push("Course Correction:");
+  notes.rescuePack.forEach((s) => lines.push(`- ${s}`));
   lines.push("");
   lines.push("Method");
   steps.forEach((step, index) => {
@@ -1903,7 +2039,8 @@ function buildDetail(recipe, inCurrentFilters) {
       : "";
   const garnishPick = state.garnishPicks[recipe.id];
   const garnishTrackHtml = buildGarnishTrackHtml();
-  const garnishOffset = garnishPick ? garnishPick.index : 0;
+  const garnishTrackIndex = garnishPick ? GARNISH_CENTER_OFFSET + garnishPick.index : GARNISH_CENTER_OFFSET;
+  const garnishTranslate = (garnishTrackIndex - GARNISH_CENTER_ROW) * GARNISH_ITEM_HEIGHT;
   const garnishResultHtml = buildGarnishResultHtml(garnishPick);
   const tagsHtml = (recipe.tags || [])
     .map((tag) => `<span class="badge">${tag}</span>`)
@@ -1960,16 +2097,16 @@ function buildDetail(recipe, inCurrentFilters) {
     ${buildMeasuredPacks(recipe)}
 
     <div class="section-label">Garnish Roulette</div>
-    <div class="roulette-card" style="--roulette-item-height: ${GARNISH_ITEM_HEIGHT}px;">
+    <div class="roulette-card" style="--roulette-item-height: ${GARNISH_ITEM_HEIGHT}px; --roulette-window-rows: ${GARNISH_WINDOW_ROWS};">
       <div class="roulette-header">
         <div>
-          <div class="roulette-title">Spin for a garnish</div>
-          <div class="roulette-subtitle">70% sensible, 30% ridiculous. The odds are not in your favor.</div>
+          <div class="roulette-title"><span class="roulette-emoji" aria-hidden="true">🎰</span> Garnish Roulette</div>
+          <div class="roulette-subtitle">Spin the wheel. 70% sensible, 30% ridiculous. The odds are not in your favor.</div>
         </div>
-        <button class="ghost" data-garnish-spin="${recipe.id}">Spin</button>
+        <button class="roulette-spin" data-garnish-spin="${recipe.id}">Spin the wheel</button>
       </div>
       <div class="roulette-window">
-        <div class="roulette-track" data-garnish-track="${recipe.id}" style="transform: translateY(-${garnishOffset * GARNISH_ITEM_HEIGHT}px);">
+        <div class="roulette-track" data-garnish-track="${recipe.id}" style="transform: translateY(-${garnishTranslate}px);">
           ${garnishTrackHtml}
         </div>
         <div class="roulette-highlight" aria-hidden="true"></div>
@@ -2000,17 +2137,21 @@ function spinGarnish(btn) {
   track.classList.add("spinning");
 
   const pickIndex = Math.floor(Math.random() * GARNISH_OPTIONS.length);
-  const maxLoops = Math.max(1, GARNISH_LOOP_COUNT - 1);
-  const loops = 1 + Math.floor(Math.random() * maxLoops);
-  const targetIndex = loops * GARNISH_OPTIONS.length + pickIndex;
+  const totalItems = GARNISH_OPTIONS.length * GARNISH_LOOP_COUNT;
+  const centerIndex = GARNISH_CENTER_OFFSET + pickIndex;
+  const maxExtraLoops = Math.floor((totalItems - 2 - centerIndex) / GARNISH_OPTIONS.length);
+  const extraLoops = maxExtraLoops > 0 ? 1 + Math.floor(Math.random() * maxExtraLoops) : 0;
+  const targetIndex = centerIndex + extraLoops * GARNISH_OPTIONS.length;
   const duration = 1400 + Math.floor(Math.random() * 300);
+  const targetTranslate = (targetIndex - GARNISH_CENTER_ROW) * GARNISH_ITEM_HEIGHT;
 
   track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.72, 0.2, 1)`;
-  track.style.transform = `translateY(-${targetIndex * GARNISH_ITEM_HEIGHT}px)`;
+  track.style.transform = `translateY(-${targetTranslate}px)`;
 
   window.setTimeout(() => {
     track.style.transition = "none";
-    track.style.transform = `translateY(-${pickIndex * GARNISH_ITEM_HEIGHT}px)`;
+    const finalTranslate = (centerIndex - GARNISH_CENTER_ROW) * GARNISH_ITEM_HEIGHT;
+    track.style.transform = `translateY(-${finalTranslate}px)`;
     track.offsetHeight;
     track.style.transition = "";
     track.dataset.spinning = "false";

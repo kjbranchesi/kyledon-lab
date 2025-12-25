@@ -765,37 +765,90 @@ header h1 {
 }
 
 .roulette-card {
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  background: rgba(248, 250, 252, 0.7);
-  box-shadow: var(--shadow-soft);
+  border: 2px solid rgba(255, 107, 107, 0.55);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  background: linear-gradient(140deg, rgba(255, 248, 236, 0.92), rgba(255, 255, 255, 0.92));
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.roulette-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 107, 107, 0.12), rgba(255, 203, 103, 0.12));
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.roulette-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .roulette-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .roulette-title {
-  font-weight: 800;
+  font-weight: 900;
+  font-size: var(--text-xl);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.roulette-emoji {
+  font-size: 1.4rem;
 }
 
 .roulette-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.roulette-spin {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 16px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(255, 107, 107, 0.35);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  white-space: nowrap;
+}
+
+.roulette-spin:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 14px 28px rgba(255, 107, 107, 0.4);
+}
+
+.roulette-spin:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .roulette-window {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  background: rgba(255, 255, 255, 0.9);
-  height: calc(var(--roulette-item-height) * 3);
+  border: 2px solid rgba(17, 24, 39, 0.15);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 248, 236, 0.88));
+  height: calc(var(--roulette-item-height) * var(--roulette-window-rows));
 }
 
 .roulette-window::before,
@@ -807,7 +860,7 @@ header h1 {
   height: 22px;
   pointer-events: none;
   z-index: 2;
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0));
+  background: linear-gradient(180deg, rgba(255, 249, 240, 0.98), rgba(255, 249, 240, 0));
 }
 
 .roulette-window::after {
@@ -826,7 +879,7 @@ header h1 {
 }
 
 .roulette-track.spinning {
-  filter: blur(0.2px);
+  filter: blur(0.5px) saturate(1.05);
 }
 
 .roulette-item {
@@ -834,14 +887,15 @@ header h1 {
   display: flex;
   align-items: center;
   padding: 0 12px;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: #111827;
   border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
 }
 
 .roulette-item[data-kind="ridiculous"] {
   font-style: italic;
-  color: #6b7280;
+  color: #a15c14;
 }
 
 .roulette-highlight {
@@ -851,20 +905,46 @@ header h1 {
   top: 50%;
   height: var(--roulette-item-height);
   transform: translateY(-50%);
-  border: 1px solid rgba(99, 102, 241, 0.22);
-  background: rgba(255, 255, 255, 0.72);
+  border: 2px solid rgba(255, 107, 107, 0.5);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 0 0 6px rgba(255, 107, 107, 0.08);
   pointer-events: none;
   z-index: 1;
 }
 
+.roulette-highlight::before,
+.roulette-highlight::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  transform: translateY(-50%);
+}
+
+.roulette-highlight::before {
+  left: -1px;
+  border-left-color: rgba(255, 107, 107, 0.75);
+}
+
+.roulette-highlight::after {
+  right: -1px;
+  border-right-color: rgba(255, 107, 107, 0.75);
+}
+
 .roulette-result {
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: #374151;
+  margin-top: 12px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: #1f2937;
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.08);
 }
 
 .roulette-result-text {
@@ -876,9 +956,9 @@ header h1 {
 }
 
 .roulette-chip {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 4px 6px;
   border-radius: var(--radius-pill);
@@ -1416,20 +1496,48 @@ ol li {
 .notes-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .note-card {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 240, 0.9));
+  border: 2px solid rgba(15, 23, 42, 0.08);
+  border-left: 5px solid rgba(255, 107, 107, 0.35);
   border-radius: var(--radius-md);
-  padding: 10px 10px 8px;
+  padding: 12px 12px 10px;
   box-shadow: var(--shadow-soft);
+  position: relative;
+}
+
+.note-card.note-core {
+  border-left-color: rgba(255, 107, 107, 0.8);
+}
+
+.note-card.note-finish {
+  border-left-color: rgba(245, 158, 11, 0.8);
+}
+
+.note-card.note-heat {
+  border-left-color: rgba(239, 68, 68, 0.85);
+}
+
+.note-card.note-rescue {
+  border-left-color: rgba(10, 132, 255, 0.75);
 }
 
 .note-title {
-  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
   margin-bottom: 6px;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.note-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
 .note-card ul {
